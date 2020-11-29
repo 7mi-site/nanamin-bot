@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group 'xyz.n7mn.dev'
+version '1.0'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        name = 'bintray-jcenter'
+        url  = 'https://jcenter.bintray.com'
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile     'net.dv8tion:JDA:4.2.0_222'
+    compile     'com.jagrosh:jda-utilities:3.0.4'
+    compile     'club.minnced:opus-java-api:1.0.4'
+    compile     'club.minnced:opus-java-natives:1.0.4'
+    compile    ('club.minnced:opus-java:1.0.4@pom') {transitive = true}
+}
+
+jar {
+
+    manifest {
+        attributes 'Main-Class': 'xyz.n7mn.dev.NanaminBot'
+    }
+
+    from configurations.compile.findAll { !it.name.endsWith('pom') }.collect { it.isDirectory() ? it : zipTree(it) }
+}
