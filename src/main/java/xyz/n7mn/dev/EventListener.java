@@ -1,11 +1,13 @@
 package xyz.n7mn.dev;
 
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.requests.RestAction;
 
+import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.temporal.TemporalField;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -39,17 +41,54 @@ class EventListener extends ListenerAdapter {
 
         }
 
+        if (text.toLowerCase().equals("n.ping")){
+
+            OffsetDateTime idLong = event.getMessage().getTimeCreated();
+
+            Date date = Date.from(idLong.toInstant());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+
+            event.getMessage().getTextChannel().sendMessage("応答したよっ\n(送信元メッセージの日時：" + sdf.format(date) + " (JST))").queue();
+            return;
+
+        }
+
+        if (text.toLowerCase().equals("n.nullpo") || text.toLowerCase().equals("n.ぬるぽ")){
+
+            String[] msg = new String[]{
+                    "がっ！",
+                    "ガッ！",
+                    "`" +
+                            "." +
+                            "　　Λ＿Λ　　＼＼\n" +
+                            "　 （　・∀・）　　　|　|　ｶﾞｯ\n" +
+                            "　と　　　　）　 　 |　|\n" +
+                            "　　 Ｙ　/ノ　　　 人\n" +
+                            "　　　 /　）　 　 < 　>_Λ∩\n" +
+                            "　 ＿/し'　／／. Ｖ｀Д´）/\n" +
+                            "　（＿フ彡　　　　　 　　/　`"
+            };
+
+            event.getMessage().getTextChannel().sendMessage(msg[new Random().nextInt(msg.length)]).queue();
+            return;
+
+        }
+
+
+        // 投票はn7mn-VoteBotがいたら動かさない
+        TextChannel textChannel = event.getTextChannel();
+        List<Member> members = textChannel.getMembers();
+        for (Member member : members){
+
+            if (member.getUser().getId().equals("781130665906274317")){
+                return;
+            }
+
+        }
+
         if (text.toLowerCase().equals("n.vote")){
 
-            TextChannel textChannel = event.getTextChannel();
-            List<Member> members = textChannel.getMembers();
-            for (Member member : members){
 
-                if (member.getUser().getId().equals("781130665906274317")){
-                    return;
-                }
-
-            }
 
             Message message = event.getMessage();
             message.delete().queue();
@@ -66,17 +105,9 @@ class EventListener extends ListenerAdapter {
 
         }
 
-        if (text.toLowerCase().startsWith("n.vote")){
+        if (text.toLowerCase().startsWith("n.vote") && !text.startsWith("n.voteNt")){
 
-            TextChannel textChannel = event.getTextChannel();
-            List<Member> members = textChannel.getMembers();
-            for (Member member : members){
-
-                if (member.getUser().getId().equals("781130665906274317")){
-                    return;
-                }
-
-            }
+            boolean matches = text.matches(" ");
 
         }
     }
