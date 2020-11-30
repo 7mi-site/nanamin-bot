@@ -1,5 +1,6 @@
 package xyz.n7mn.dev;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -16,10 +17,14 @@ class EventListener extends ListenerAdapter {
         User author = event.getAuthor();
         String text = event.getMessage().getContentRaw();
 
-        if (author.isBot()){
+        if (event.getChannelType() == ChannelType.PRIVATE && !event.getAuthor().getId().equals("781323086624456735")){
+            event.getMessage().getPrivateChannel().sendMessage("ふぬ？\n\nhttps://discord.com/api/oauth2/authorize?client_id=742696480854245387&permissions=8&scope=bot").queue();
             return;
         }
 
+        if (author.isBot()){
+            return;
+        }
 
         if (text.toLowerCase().startsWith("n.")){
             System.out.println("---- Debug ----\n" + author.getAsTag() + "\n" + text + "\n----- Debug -----");
@@ -30,6 +35,7 @@ class EventListener extends ListenerAdapter {
 
             int i = new Random().nextInt(5) + 1;
             event.getMessage().getTextChannel().sendMessage("さいころの結果は" + i + "です。").queue();
+            return;
 
         }
 
@@ -39,7 +45,7 @@ class EventListener extends ListenerAdapter {
             List<Member> members = textChannel.getMembers();
             for (Member member : members){
 
-                if (member.getUser().getAsTag().equals("n7mn-VoteBot#6771")){
+                if (member.getUser().getId().equals("781130665906274317")){
                     return;
                 }
 
@@ -66,7 +72,7 @@ class EventListener extends ListenerAdapter {
             List<Member> members = textChannel.getMembers();
             for (Member member : members){
 
-                if (member.getUser().getAsTag().equals("n7mn-VoteBot#6771")){
+                if (member.getUser().getId().equals("781130665906274317")){
                     return;
                 }
 
