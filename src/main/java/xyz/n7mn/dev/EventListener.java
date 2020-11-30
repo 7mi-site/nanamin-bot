@@ -1,8 +1,11 @@
 package xyz.n7mn.dev;
 
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
+import xyz.n7mn.dev.api.Earthquake;
 
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
@@ -11,6 +14,12 @@ import java.util.List;
 import java.util.Random;
 
 class EventListener extends ListenerAdapter {
+
+    private final Earthquake earthquake;
+
+    public EventListener(Earthquake earthquake){
+        this.earthquake = earthquake;
+    }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -111,4 +120,15 @@ class EventListener extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onReady(ReadyEvent event) {
+        List<TextChannel> textChannels = event.getJDA().getTextChannels();
+        System.out.println("----- Debug ------");
+        for (TextChannel channel : textChannels){
+
+            System.out.println(channel.getIdLong() + ":" + channel.getName());
+
+        }
+        System.out.println("----- Debug ------");
+    }
 }
