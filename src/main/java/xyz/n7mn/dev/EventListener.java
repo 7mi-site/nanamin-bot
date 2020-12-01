@@ -1,17 +1,21 @@
 package xyz.n7mn.dev;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.api.Earthquake;
+import xyz.n7mn.dev.api.data.EarthquakeResult;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 class EventListener extends ListenerAdapter {
 
@@ -54,7 +58,7 @@ class EventListener extends ListenerAdapter {
             OffsetDateTime idLong = event.getMessage().getTimeCreated();
 
             Date date = Date.from(idLong.toInstant());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
             event.getMessage().getTextChannel().sendMessage("応答したよっ\n(送信元メッセージの日時：" + sdf.format(date) + " (JST))").queue();
             return;
@@ -122,13 +126,69 @@ class EventListener extends ListenerAdapter {
 
     @Override
     public void onReady(ReadyEvent event) {
-        List<TextChannel> textChannels = event.getJDA().getTextChannels();
-        System.out.println("----- Debug ------");
-        for (TextChannel channel : textChannels){
 
-            System.out.println(channel.getIdLong() + ":" + channel.getName());
+        JDA jda = event.getJDA();
+        Earthquake earthquake = new Earthquake();
 
-        }
-        System.out.println("----- Debug ------");
+        Timer timer = new Timer();
+        final List<TextChannel>[] textChannels = new List[]{jda.getTextChannels()};
+        List<TextChannel> EarthChannel = new ArrayList<>();
+        final long[] chCount = {-1};
+
+        TimerTask task = new TimerTask() {
+            public void run() {
+
+                if (chCount[0] != jda.getTextChannels().size()){
+                    textChannels[0] = jda.getTextChannels();
+                    chCount[0] =textChannels[0].size();
+
+                    for (TextChannel channel : textChannels[0]){
+
+                        if (channel.getName().equals("nanami_setting")){
+
+                            channel.getHistoryAfter(1, 10).queue((messageHistory -> {
+                                List<Message> retrievedHistory = messageHistory.getRetrievedHistory();
+
+                                for (Message message : retrievedHistory){
+
+                                    String text = message.getContentRaw();
+                                    if (text.startsWith("jisin: ")){
+
+                                        String s = text.replaceAll("jisin: ", "");
+                                        EarthChannel.add(jda.getTextChannelById(s));
+
+                                    }
+
+                                }
+
+                            }));
+
+                        }
+
+                    }
+                }
+
+                if (earthquake.getLastEventID() != -1){
+
+                    EarthquakeResult data = earthquake.getData();
+
+                    if (new Date().getTime() - data.getHead().getReportDateTime().getTime() > 300000){
+                        return;
+                    }
+
+                    for (TextChannel ch : EarthChannel){
+
+                        ch.sendMessage(data.getHead().getHeadline()).queue();
+
+                    }
+
+                }
+
+
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, 0, (1000 * 60));
+
     }
 }

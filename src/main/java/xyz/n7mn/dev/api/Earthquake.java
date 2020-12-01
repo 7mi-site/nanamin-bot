@@ -20,6 +20,8 @@ public class Earthquake {
 
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
+    private EarthquakeResult result = null;
+
     public Earthquake(){
 
         Timer timer = new Timer();
@@ -35,7 +37,7 @@ public class Earthquake {
 
                     try {
                         Response response = client.newCall(request).execute();
-                        EarthquakeResult result = gson.fromJson(response.body().string(), EarthquakeResult.class);
+                        result = gson.fromJson(response.body().string(), EarthquakeResult.class);
 
                         if (result.getControl().getStatus().equals("通常")){
 
@@ -62,24 +64,13 @@ public class Earthquake {
 
     }
 
-    public EarthquakeResult getData(String LastDate){
+    public EarthquakeResult getData(){
 
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url("https://dev.narikakun.net/webapi/earthquake/xml/"+LastDate+".json").build();
+        return result;
 
-        try {
-
-            Response response = client.newCall(request).execute();
-            return gson.fromJson(response.body().string(), EarthquakeResult.class);
-
-        } catch (Exception e){
-
-            e.printStackTrace();
-
-        }
-
-        return null;
     }
 
-
+    public long getLastEventID() {
+        return LastEventID;
+    }
 }
