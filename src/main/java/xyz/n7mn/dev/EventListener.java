@@ -5,14 +5,11 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
+import xyz.n7mn.dev.api.data.eq.intensity.Area;
+import xyz.n7mn.dev.api.data.eq.intensity.Pref;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -178,7 +175,43 @@ class EventListener extends ListenerAdapter {
 
                     for (TextChannel ch : EarthChannel){
 
-                        ch.sendMessage(data.getHead().getHeadline()).queue();
+                        StringBuffer sb = new StringBuffer();
+                        sb.append(data.getHead().getHeadline());
+                        sb.append("\n");
+                        sb.append("震源地は");
+                        sb.append(data.getBody().getEarthquake().getHypocenter().getName());
+                        sb.append("(");
+                        sb.append(data.getBody().getEarthquake().getHypocenter().getLongitude());
+                        sb.append(",");
+                        sb.append(data.getBody().getEarthquake().getHypocenter().getLatitude());
+                        sb.append(")\n");
+                        sb.append("マグニチュードは M ");
+                        sb.append(data.getBody().getEarthquake().getMagnitude());
+                        sb.append("と推定されています。\n");
+                        sb.append(data.getBody().getComments().getObservation());
+                        sb.append("\n");
+                        sb.append("最大震度は ");
+                        sb.append(data.getBody().getIntensity().getObservation().getMaxInt());
+                        sb.append(" です。\n");
+
+                        sb.append("---- 各地の震度 --- \n");
+                        Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
+                        for (Pref perf : prefList){
+                            Area[] areaList = perf.getArea();
+
+                            for (Area area : areaList){
+
+                                sb.append(area.getName());
+                                sb.append(" 震度 ");
+                                sb.append(area.getMaxInt());
+                                sb.append("\n");
+
+                            }
+
+                        }
+
+
+                        ch.sendMessage(sb.toString()).queue();
 
                     }
 
