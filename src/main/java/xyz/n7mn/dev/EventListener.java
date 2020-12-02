@@ -131,6 +131,7 @@ class EventListener extends ListenerAdapter {
         final List<TextChannel>[] textChannels = new List[]{jda.getTextChannels()};
         List<TextChannel> EarthChannel = new ArrayList<>();
         final long[] chCount = {-1};
+        final long[] lastId = {-1};
 
         TimerTask task = new TimerTask() {
             public void run() {
@@ -173,9 +174,16 @@ class EventListener extends ListenerAdapter {
                         return;
                     }
 
+                    if (data.getHead().getEventID() == lastId[0]){
+                        return;
+                    }
+
+                    lastId[0] = data.getHead().getEventID();
+
                     for (TextChannel ch : EarthChannel){
 
                         StringBuffer sb = new StringBuffer();
+                        sb.append("------ 地震情報 ------\n");
                         sb.append(data.getHead().getHeadline());
                         sb.append("\n");
                         sb.append("震源地は");
