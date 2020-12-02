@@ -73,11 +73,8 @@ class EventListener extends ListenerAdapter {
 
             PrivateChannel sendUserDM = author.openPrivateChannel().complete();
             sendUserDM.sendMessage(helpText).queue();
-            // event.getMessage().getPrivateChannel().sendMessage().queue();
 
-            MessageAction message = event.getMessage().getTextChannel().sendMessage("ななみちゃんbotのヘルプをDMにお送りいたしましたっ！");
-            message.queue();
-            // event.getMessage().reply(message.complete()).queue();
+            event.getMessage().reply("ななみちゃんbotのヘルプをDMにお送りいたしましたっ！").queue();
             return;
 
         }
@@ -181,8 +178,8 @@ class EventListener extends ListenerAdapter {
             String msg = message.getAuthor().getAsTag()+"さんっ！\n" +
                     "n.voteのヘルプですっ！\n" +
                     "コマンドの書き方は\n" +
-                    "`n.vote <タイトル> <選択肢1> <選択肢2> <選択肢3> <...> <選択肢20>` または\n" +
-                    "`n.vote\n<タイトル>\n<選択肢1>\n<選択肢2>\n<選択肢3>\n<...>\n<選択肢20>`\nですっ！\n" +
+                    "`n.vote <タイトル> <選択肢1> <選択肢2> <選択肢3> <...> <選択肢19>` または\n" +
+                    "`n.vote\n<タイトル>\n<選択肢1>\n<選択肢2>\n<選択肢3>\n<...>\n<選択肢19>`\nですっ！\n" +
                     "タイトルが必要じゃない場合はn.voteNtとつけて同じようにしてくださいっ！！";
 
             event.getMessage().getTextChannel().sendMessage(msg).queue();
@@ -190,17 +187,71 @@ class EventListener extends ListenerAdapter {
 
         }
 
+        String[] regional = new String[]{
+                "\uD83C\uDDE6",
+                "\uD83C\uDDE7",
+                "\uD83C\uDDE8",
+                "\uD83C\uDDE9",
+                "\uD83C\uDDEA",
+                "\uD83C\uDDEB",
+                "\uD83C\uDDEC",
+                "\uD83C\uDDED",
+                "\uD83C\uDDEE",
+                "\uD83C\uDDEF",
+                "\uD83C\uDDF0",
+                "\uD83C\uDDF1",
+                "\uD83C\uDDF2",
+                "\uD83C\uDDF3",
+                "\uD83C\uDDF4",
+                "\uD83C\uDDF5",
+                "\uD83C\uDDF6",
+                "\uD83C\uDDF7",
+                "\uD83C\uDDF8",
+                "\uD83C\uDDF9"
+        };
+
+
         if (text.toLowerCase().startsWith("n.vote") && !text.startsWith("n.voteNt")){
 
-            if (text.matches("\n")){
-
-                System.out.println("改行モード");
-
+            String[] string;
+            if (text.split("\n",-1).length >= 3){
+                string = text.split("\n", -1);
             } else {
+                string = text.split(" ", -1);
+            }
 
-                System.out.println("スペースモード");
+            if ((string.length - 2) >= regional.length){
+                event.getMessage().reply("えらーですっ！選択肢が多すぎます！！").queue();
+                return;
+            }
+
+            event.getMessage().delete().queue();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---\n投票内容：");
+            sb.append(string[1]);
+            sb.append("\n\n");
+
+
+            for (int i = 0; i < (string.length - 2); i++){
+
+                sb.append(regional[i]);
+                sb.append(" : ");
+                sb.append(string[i + 2]);
+                sb.append("\n");
 
             }
+            sb.append("\n(");
+            sb.append(event.getAuthor().getName());
+            sb.append(" さんが投票を開始しました)");
+
+            event.getChannel().sendMessage(sb.toString()).queue(message -> {
+
+                for (int i = 1; i < string.length; i++){
+                    message.addReaction(regional[i - 1]).queue();
+                }
+
+            });
 
         }
     }
