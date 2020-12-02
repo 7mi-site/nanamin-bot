@@ -16,12 +16,6 @@ import java.util.*;
 
 class EventListener extends ListenerAdapter {
 
-    private final Earthquake earthquake;
-
-    public EventListener(Earthquake earthquake){
-        this.earthquake = earthquake;
-    }
-
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
@@ -83,6 +77,13 @@ class EventListener extends ListenerAdapter {
 
         }
 
+        if (text.toLowerCase().startsWith("n.random")){
+
+            String[] split = text.split(" ", -1);
+            event.getMessage().getTextChannel().sendMessage("選ばれたのは「" + split[new Random().nextInt(split.length - 1) + 1]+"」だよっ！").queue();
+
+            return;
+        }
 
         // 投票はn7mn-VoteBotがいたら動かさない
         TextChannel textChannel = event.getTextChannel();
@@ -96,8 +97,6 @@ class EventListener extends ListenerAdapter {
         }
 
         if (text.toLowerCase().equals("n.vote")){
-
-
 
             Message message = event.getMessage();
             message.delete().queue();
@@ -116,7 +115,15 @@ class EventListener extends ListenerAdapter {
 
         if (text.toLowerCase().startsWith("n.vote") && !text.startsWith("n.voteNt")){
 
-            boolean matches = text.matches(" ");
+            if (text.matches("\n")){
+
+                System.out.println("改行モード");
+
+            } else {
+
+                System.out.println("スペースモード");
+
+            }
 
         }
     }
