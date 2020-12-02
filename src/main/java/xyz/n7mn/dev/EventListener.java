@@ -170,7 +170,7 @@ class EventListener extends ListenerAdapter {
 
         }
 
-        if (text.toLowerCase().equals("n.vote")){
+        if (text.toLowerCase().equals("n.vote") || text.equals("n.voteNt")){
 
             Message message = event.getMessage();
             message.delete().queue();
