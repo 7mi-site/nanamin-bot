@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
 import xyz.n7mn.dev.api.data.eq.intensity.Area;
@@ -33,8 +35,52 @@ class EventListener extends ListenerAdapter {
 
         if (text.toLowerCase().startsWith("n.")){
             System.out.println("---- Debug ----\n" + author.getAsTag() + "\n" + text + "\n----- Debug -----");
+            try {
+
+                RestAction<User> nanami = event.getJDA().retrieveUserById("529463370089234466");
+                PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
+
+                String debug = "----- Debug ----- \n" +
+                        "サーバ名: " + event.getGuild().getName() +"\n" +
+                        "発言チャンネル名: " + event.getMessage().getTextChannel().getName() + "\n" +
+                        "発言者: " + author.getAsTag() + "\n" +
+                        "発言内容：`"+text+"`";
+                dm.sendMessage(debug).queue();
+
+
+            } catch (Exception e){
+
+                e.printStackTrace();
+
+            }
+
+
         }
 
+        if (text.toLowerCase().startsWith("n.help")){
+
+            String helpText = "----- ななみちゃんbot ヘルプ Start -----\n" +
+                    "**※このメッセージは送信専用です。返信しても何もできませんのでご注意ください。**\n" +
+                    "`n.vote`、`n.voteNt` -- アンケートを表示する(詳細はn.voteと打って詳細ヘルプを出してください)\n" +
+                    "`n.ping` -- 応答を返す\n"+
+                    "`n.nullpo` または `n.ぬるぽ` -- ガッ\n"+
+                    "`n.dice` -- さいころを振る\n"+
+                    "`n.random <文字列1> <文字列2> <...> <文字列n>` -- 指定された文字列の中から一つを表示する\n\n" +
+                    "--- 地震情報機能について ---\n" +
+                    "地震情報機能は「nanami_setting」という名前でチャンネルを作成し\n" +
+                    "「jisin: <情報を流したいテキストチャンネルのID>」とメッセージを送ってください。\n" +
+                    "----- ななみちゃんbot ヘルプ End ----";
+
+            PrivateChannel sendUserDM = author.openPrivateChannel().complete();
+            sendUserDM.sendMessage(helpText).queue();
+            // event.getMessage().getPrivateChannel().sendMessage().queue();
+
+            MessageAction message = event.getMessage().getTextChannel().sendMessage("ななみちゃんbotのヘルプをDMにお送りいたしましたっ！");
+            message.queue();
+            // event.getMessage().reply(message.complete()).queue();
+            return;
+
+        }
 
         if (text.toLowerCase().equals("n.dice")){
 
@@ -83,6 +129,37 @@ class EventListener extends ListenerAdapter {
             event.getMessage().getTextChannel().sendMessage("選ばれたのは「" + split[new Random().nextInt(split.length - 1) + 1]+"」だよっ！").queue();
 
             return;
+        }
+
+        if (text.toLowerCase().startsWith("n.send")){
+
+            event.getMessage().delete().queue();
+
+            String[] split = text.split(" ", -1);
+
+            if (split.length == 4){
+
+                try {
+
+                    RestAction<User> user = event.getJDA().retrieveUserById(split[1]);
+                    PrivateChannel dm = user.complete().openPrivateChannel().complete();
+
+                    int count = Integer.parseInt(split[2]);
+
+                    for (int i = 1; i <= count; i++){
+
+                        dm.sendMessage(split[3]).queue();
+
+                    }
+
+                } catch (Exception e){
+
+                    e.printStackTrace();
+
+                }
+
+            }
+
         }
 
         // 投票はn7mn-VoteBotがいたら動かさない
@@ -144,11 +221,12 @@ class EventListener extends ListenerAdapter {
             public void run() {
 
                 if (chCount[0] != jda.getTextChannels().size()){
+
+                    EarthChannel.clear();
                     textChannels[0] = jda.getTextChannels();
                     chCount[0] =textChannels[0].size();
 
                     for (TextChannel channel : textChannels[0]){
-
                         if (channel.getName().equals("nanami_setting")){
 
                             channel.getHistoryAfter(1, 10).queue((messageHistory -> {
@@ -169,7 +247,6 @@ class EventListener extends ListenerAdapter {
                             }));
 
                         }
-
                     }
                 }
 
