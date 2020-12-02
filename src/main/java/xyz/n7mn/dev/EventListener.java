@@ -228,7 +228,7 @@ class EventListener extends ListenerAdapter {
             event.getMessage().delete().queue();
 
             StringBuffer sb = new StringBuffer();
-            sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---\n投票内容：");
+            sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---\n投票タイトル：");
             sb.append(string[1]);
             sb.append("\n\n");
 
@@ -252,8 +252,50 @@ class EventListener extends ListenerAdapter {
                 }
 
             });
-
+            return;
         }
+
+        if (text.startsWith("n.voteNt")){
+
+            String[] string;
+            if (text.split("\n",-1).length >= 2){
+                string = text.split("\n", -1);
+            } else {
+                string = text.split(" ", -1);
+            }
+
+            if ((string.length - 1) >= regional.length){
+                event.getMessage().reply("えらーですっ！選択肢が多すぎます！！").queue();
+                return;
+            }
+
+            event.getMessage().delete().queue();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---");
+            sb.append("\n\n");
+
+            for (int i = 0; i < (string.length - 1); i++){
+
+                sb.append(regional[i]);
+                sb.append(" : ");
+                sb.append(string[i + 1]);
+                sb.append("\n");
+
+            }
+            sb.append("\n(");
+            sb.append(event.getAuthor().getName());
+            sb.append(" さんが投票を開始しました)");
+
+            event.getChannel().sendMessage(sb.toString()).queue(message -> {
+
+                for (int i = 0; i < (string.length - 1); i++){
+                    message.addReaction(regional[i]).queue();
+                }
+
+            });
+        }
+
     }
 
     @Override
