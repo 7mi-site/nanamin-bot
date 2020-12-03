@@ -1,31 +1,44 @@
 package xyz.n7mn.dev;
 
+
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.managers.ChannelManager;
 import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
 import xyz.n7mn.dev.api.data.eq.intensity.Area;
 import xyz.n7mn.dev.api.data.eq.intensity.Pref;
+import xyz.n7mn.dev.music.GuildMusicManager;
+import xyz.n7mn.dev.music.PlayerManager;
 
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.List;
 
 class EventListener extends ListenerAdapter {
 
-    @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    private VoiceChannel voiceChannel;
 
+    @Override
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         User author = event.getAuthor();
         String text = event.getMessage().getContentRaw();
 
-        if (event.getChannelType() == ChannelType.PRIVATE && !event.getAuthor().getId().equals("781323086624456735")){
-            event.getMessage().getPrivateChannel().sendMessage("ふぬ？\n\nhttps://discord.com/api/oauth2/authorize?client_id=742696480854245387&permissions=8&scope=bot").queue();
+        if (event.getChannel().getType() == ChannelType.PRIVATE && !event.getAuthor().getId().equals("781323086624456735")){
+            event.getMessage().getPrivateChannel().sendMessage("ふぬ？\n\nhttps://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot").queue();
             return;
         }
 
@@ -65,7 +78,8 @@ class EventListener extends ListenerAdapter {
                     "`n.ping` -- 応答を返す\n"+
                     "`n.nullpo` または `n.ぬるぽ` -- ガッ\n"+
                     "`n.dice` -- さいころを振る\n"+
-                    "`n.random <文字列1> <文字列2> <...> <文字列n>` -- 指定された文字列の中から一つを表示する\n\n" +
+                    "`n.random <文字列1> <文字列2> <...> <文字列n>` -- 指定された文字列の中から一つを表示する\n" +
+                    "`n.play <URL>` -- 音楽を再生する(停止する場合は`n.stop`)\n\n" +
                     "--- 地震情報機能について ---\n" +
                     "地震情報機能は「nanami_setting」という名前でチャンネルを作成し\n" +
                     "「jisin: <情報を流したいテキストチャンネルのID>」とメッセージを送ってください。\n" +
@@ -159,6 +173,92 @@ class EventListener extends ListenerAdapter {
 
         }
 
+        // 音楽
+        if (text.toLowerCase().startsWith("n.play")){
+
+            if (event.isWebhookMessage() || event.getAuthor().isBot()){
+                return;
+            }
+            AudioManager audioManager = event.getGuild().getAudioManager();
+
+            String[] split = text.split(" ", -1);
+            if (split.length != 2 && split.length != 3){
+                event.getMessage().reply("音楽を再生するには\nボイスチャンネルに入ってから\n`n.play <URL>` または `n.play <URL> <0-100>`でお願いしますっ！").queue();
+                return;
+            }
+
+            boolean find = false;
+
+            List<VoiceChannel> voiceChannels = event.getGuild().getVoiceChannels();
+            // voiceChannel = voiceChannels.get(0);
+
+            for (VoiceChannel vc : voiceChannels){
+
+                try {
+
+                    // System.out.println(vc.getName() + " : " + vc.getMembers().size());
+
+                    if (vc.getMembers().size() != 0){
+                        List<Member> members = vc.getMembers();
+
+                        for (Member member : members){
+
+                            if (author.getId().equals(member.getId())){
+                                find = true;
+                                voiceChannel = vc;
+                            }
+
+                        }
+
+                    }
+
+                } catch (Exception e){
+                    // e.printStackTrace();
+                }
+
+            }
+
+            if (!find){
+                event.getMessage().reply("どこかのボイスチャンネルに入ってくださいっ！！").queue();
+                return;
+            }
+
+            if (!split[1].toLowerCase().startsWith("http")){
+                event.getMessage().reply("わたしの知ってるURLじゃないみたい...").queue();
+                return;
+            }
+
+            event.getMessage().delete().queue();
+            Guild guild = event.getJDA().getGuildById(event.getGuild().getId());
+
+
+            audioManager.openAudioConnection(voiceChannel);
+
+
+            PlayerManager Playermanager = PlayerManager.getINSTANCE();
+            Playermanager.loadAndPlay(event.getTextChannel(), split[1]);
+
+            if (split.length == 3){
+                Playermanager.getGuildMusicManager(guild).player.setVolume(Integer.parseInt(split[2]));
+            } else {
+                Playermanager.getGuildMusicManager(guild).player.setVolume(100);
+            }
+
+        }
+
+        if (text.toLowerCase().startsWith("n.stop")){
+            PlayerManager Playermanager = PlayerManager.getINSTANCE();
+            GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(event.getGuild());
+            guildMusicManager.player.stopTrack();
+
+            AudioManager audioManager = event.getGuild().getAudioManager();
+            audioManager.closeAudioConnection();
+
+            event.getMessage().delete().queue();
+            event.getMessage().getTextChannel().sendMessage("再生を終了しましたっ！").queue();
+
+        }
+
         // 投票はn7mn-VoteBotがいたら動かさない
         TextChannel textChannel = event.getTextChannel();
         List<Member> members = textChannel.getMembers();
@@ -183,7 +283,7 @@ class EventListener extends ListenerAdapter {
                     "タイトルが必要じゃない場合はn.voteNtとつけて同じようにしてくださいっ！！";
 
             event.getMessage().getTextChannel().sendMessage(msg).queue();
-
+            return;
 
         }
 
@@ -220,7 +320,7 @@ class EventListener extends ListenerAdapter {
                 string = text.split(" ", -1);
             }
 
-            if ((string.length - 2) >= regional.length){
+            if ((string.length - 2) > regional.length){
                 event.getMessage().reply("えらーですっ！選択肢が多すぎます！！").queue();
                 return;
             }
@@ -247,7 +347,7 @@ class EventListener extends ListenerAdapter {
 
             event.getChannel().sendMessage(sb.toString()).queue(message -> {
 
-                for (int i = 1; i < string.length; i++){
+                for (int i = 1; i < (string.length - 1); i++){
                     message.addReaction(regional[i - 1]).queue();
                 }
 
@@ -264,7 +364,7 @@ class EventListener extends ListenerAdapter {
                 string = text.split(" ", -1);
             }
 
-            if ((string.length - 1) >= regional.length){
+            if ((string.length - 1) > regional.length){
                 event.getMessage().reply("えらーですっ！選択肢が多すぎます！！").queue();
                 return;
             }
@@ -295,13 +395,15 @@ class EventListener extends ListenerAdapter {
 
             });
         }
-
     }
 
     @Override
     public void onReady(ReadyEvent event) {
 
         JDA jda = event.getJDA();
+        List<Guild> guilds = jda.getGuilds();
+        System.out.println("現在 " + guilds.size() + "サーバーで動いてるらしい。");
+
         Earthquake earthquake = new Earthquake();
 
         Timer timer = new Timer();
