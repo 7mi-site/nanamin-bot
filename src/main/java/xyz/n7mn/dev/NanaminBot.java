@@ -4,11 +4,8 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import xyz.n7mn.dev.api.data.eq.intensity.Intensity;
 
 public class NanaminBot {
-
-
 
     public static void main(String[] args) {
 
