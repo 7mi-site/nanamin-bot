@@ -2,19 +2,13 @@ package xyz.n7mn.dev;
 
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
-import net.dv8tion.jda.api.managers.ChannelManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
 import xyz.n7mn.dev.api.data.eq.intensity.Area;
@@ -22,7 +16,6 @@ import xyz.n7mn.dev.api.data.eq.intensity.Pref;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
 
-import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -36,6 +29,40 @@ class EventListener extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         User author = event.getAuthor();
         String text = event.getMessage().getContentRaw();
+
+        if (event.getChannel().getType() == ChannelType.PRIVATE && event.getAuthor().getId().equals("529463370089234466")){
+
+            if (text.equals("n.check")){
+
+                try {
+                    JDA jda = event.getJDA();
+                    List<Guild> guilds = jda.getGuilds();
+
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("---- ななみちゃんbotが入っているサーバーは以下のとおりです。 ----\n");
+                    for (Guild guild : guilds){
+
+                        sb.append(guild.getId());
+                        sb.append(" : ");
+                        sb.append(guild.getName());
+                        sb.append(" (オーナー: ");
+                        try {
+                            sb.append(guild.getOwner().getNickname());
+                        } catch (Exception e){
+                            sb.append("不明");
+                        }
+                        sb.append(" )\n");
+
+                    }
+
+                    event.getChannel().sendMessage(sb.toString()).queue();
+                } catch (Exception e){
+                    // e.printStackTrace();
+                }
+                return;
+            }
+
+        }
 
         if (event.getChannel().getType() == ChannelType.PRIVATE && !event.getAuthor().getId().equals("781323086624456735")){
             event.getMessage().getPrivateChannel().sendMessage("ふぬ？\n\nhttps://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot").queue();
@@ -253,9 +280,75 @@ class EventListener extends ListenerAdapter {
 
             AudioManager audioManager = event.getGuild().getAudioManager();
             audioManager.closeAudioConnection();
+            voiceChannel = null;
 
             event.getMessage().delete().queue();
             event.getMessage().getTextChannel().sendMessage("再生を終了しましたっ！").queue();
+
+        }
+
+        if (text.toLowerCase().equals("n.check")){
+
+            StringBuffer sb = new StringBuffer();
+            sb.append("---- ななみちゃんbot実行テスト結果 ----\n");
+            sb.append("応答 : OK");
+            event.getMessage().reply(sb.toString()).queue();
+
+            TextChannel jisinChannel = null;
+
+            boolean chCheck = false;
+            try {
+                List<TextChannel> textChannels = event.getGuild().getTextChannels();
+
+
+                for (TextChannel channel : textChannels) {
+                    if (channel.getName().equals("nanami_setting")) {
+                        jisinChannel = channel;
+                        chCheck = true;
+                        break;
+                    }
+                }
+
+
+            } catch (Exception e){
+                event.getMessage().reply("(テキストチャンネルの一覧取得に失敗しました。一部機能の実行に影響が出る可能性があります。)").queue();
+            }
+
+            if (chCheck){
+                jisinChannel.getHistoryAfter(1, 100).queue((messageHistory -> {
+                    List<Message> retrievedHistory = messageHistory.getRetrievedHistory();
+                    for (Message message : retrievedHistory){
+
+                        String contentRaw = message.getContentRaw();
+                        if (contentRaw.startsWith("jisin: ")){
+
+                            String st = contentRaw.replaceAll("jisin: ", "");
+                            TextChannel textChannelById = event.getGuild().getTextChannelById(st);
+                            if (textChannelById != null){
+
+                                try {
+                                    textChannelById.sendMessage("test").queue((message1 -> {
+                                        message1.delete().queue();
+                                        event.getMessage().reply("地震情報 : OK").queue();
+                                    }));
+
+                                } catch (Exception e){
+                                    event.getMessage().reply("地震情報 : NG (チャンネルへの送信権限(、削除権限)がないようです？)").queue();
+                                }
+
+                            } else {
+                                event.getMessage().reply("地震情報 : NG (指定チャンネルが存在しません。)").queue();
+                            }
+
+                        }
+
+                    }
+                }));
+            }
+            if (jisinChannel == null) {
+                event.getMessage().reply("地震情報 : NG(チャンネルの存在が確認できません。)\n").queue();
+                return;
+            }
 
         }
 
@@ -403,6 +496,12 @@ class EventListener extends ListenerAdapter {
         JDA jda = event.getJDA();
         List<Guild> guilds = jda.getGuilds();
         System.out.println("現在 " + guilds.size() + "サーバーで動いてるらしい。");
+        int i = 0;
+        for (Guild guild : guilds){
+
+            System.out.println(guild.getId() + " : " + guild.getName());
+
+        }
 
         Earthquake earthquake = new Earthquake();
 
@@ -417,31 +516,47 @@ class EventListener extends ListenerAdapter {
 
                 if (chCount[0] != jda.getTextChannels().size()){
 
-                    EarthChannel.clear();
-                    textChannels[0] = jda.getTextChannels();
-                    chCount[0] =textChannels[0].size();
+                    try {
 
-                    for (TextChannel channel : textChannels[0]){
-                        if (channel.getName().equals("nanami_setting")){
+                        EarthChannel.clear();
+                        textChannels[0] = jda.getTextChannels();
+                        chCount[0] =textChannels[0].size();
 
-                            channel.getHistoryAfter(1, 10).queue((messageHistory -> {
-                                List<Message> retrievedHistory = messageHistory.getRetrievedHistory();
+                        for (TextChannel channel : textChannels[0]){
+                            //System.out.println("Debug : " + channel.getName());
+                            if (channel.getName().equals("nanami_setting")){
 
-                                for (Message message : retrievedHistory){
+                                try {
+                                    channel.getHistoryAfter(1, 10).queue((messageHistory -> {
+                                        List<Message> retrievedHistory = messageHistory.getRetrievedHistory();
 
-                                    String text = message.getContentRaw();
-                                    if (text.startsWith("jisin: ")){
+                                        for (Message message : retrievedHistory){
 
-                                        String s = text.replaceAll("jisin: ", "");
-                                        EarthChannel.add(jda.getTextChannelById(s));
+                                            String text = message.getContentRaw();
+                                            if (text.startsWith("jisin: ")){
 
-                                    }
+                                                String s = text.replaceAll("jisin: ", "");
+                                                try {
+                                                    EarthChannel.add(jda.getTextChannelById(s));
+                                                } catch (Exception e){
+                                                    // e.printStackTrace();
+                                                }
 
+                                            }
+
+                                        }
+
+                                    }));
+                                } catch (Exception e){
+                                    // e.printStackTrace();
                                 }
-
-                            }));
-
+                            }
                         }
+
+                    } catch (Exception e){
+
+                        e.printStackTrace();
+
                     }
                 }
 
@@ -460,6 +575,8 @@ class EventListener extends ListenerAdapter {
                     lastId[0] = data.getHead().getEventID();
 
                     for (TextChannel ch : EarthChannel){
+
+                        //System.out.println("Debug : " + ch.getName());
 
                         StringBuffer sb = new StringBuffer();
                         sb.append("------ 地震情報 ------\n");
