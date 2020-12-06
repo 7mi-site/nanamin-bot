@@ -505,124 +505,97 @@ class EventListener extends ListenerAdapter {
 
         Earthquake earthquake = new Earthquake();
 
+        long[] lastId = new long[]{-1};
+
         Timer timer = new Timer();
-        final List<TextChannel>[] textChannels = new List[]{jda.getTextChannels()};
-
-        final long[] chCount = {-1};
-        final long[] lastId = {-1};
-        List<TextChannel> EarthChannel = new ArrayList<>();
-
         TimerTask task = new TimerTask() {
             public void run() {
 
-                if (chCount[0] != jda.getTextChannels().size()){
+                for (Guild guild : jda.getGuilds()){
 
-                    try {
+                    List<TextChannel> textChannels = guild.getTextChannels();
+                    for (TextChannel ch : textChannels){
 
-                        EarthChannel.clear();
-                        textChannels[0] = jda.getTextChannels();
-                        chCount[0] = textChannels[0].size();
+                        if (ch.getName().equals("nanami_setting")){
 
-                        for (TextChannel channel : textChannels[0]){
-                            //System.out.println("Debug : " + channel.getName());
-                            if (channel.getName().equals("nanami_setting")){
+                            MessageHistory.MessageRetrieveAction after = ch.getHistoryAfter(1, 100);
+                            after.queue((messageHistory -> {
 
-                                try {
-                                    channel.getHistoryAfter(1, 10).queue((messageHistory -> {
-                                        List<Message> retrievedHistory = messageHistory.getRetrievedHistory();
+                                List<Message> retrievedHistory = messageHistory.getRetrievedHistory();
+                                for (Message message : retrievedHistory){
+                                    if (message.getContentRaw().toLowerCase().startsWith("jisin: ")){
 
-                                        for (Message message : retrievedHistory){
+                                        String[] split = message.getContentRaw().split(" ");
 
-                                            String text = message.getContentRaw();
-                                            if (text.startsWith("jisin: ")){
+                                        TextChannel channel = guild.getTextChannelById(split[1]);
+                                        if (channel != null){
 
-                                                String s = text.replaceAll("jisin: ", "");
-                                                try {
-                                                    EarthChannel.add(jda.getTextChannelById(s));
-                                                } catch (Exception e){
-                                                    // e.printStackTrace();
+                                            if (earthquake.getLastEventID() != -1){
+                                                EarthquakeResult data = earthquake.getData();
+
+                                                // channel.sendMessage("テスト送信です。削除お願いします。").queue();
+
+                                                if (new Date().getTime() - data.getHead().getReportDateTime().getTime() > 300000){
+                                                    break;
                                                 }
+                                                if (data.getHead().getEventID() == lastId[0]){
+                                                    break;
+                                                }
+
+                                                lastId[0] = data.getHead().getEventID();
+
+                                                StringBuffer sb = new StringBuffer();
+                                                sb.append("------ 地震情報 ------\n");
+                                                sb.append(data.getHead().getHeadline());
+                                                sb.append("\n");
+                                                sb.append("震源地は");
+                                                sb.append(data.getBody().getEarthquake().getHypocenter().getName());
+                                                sb.append("(");
+                                                sb.append(data.getBody().getEarthquake().getHypocenter().getLongitude());
+                                                sb.append(",");
+                                                sb.append(data.getBody().getEarthquake().getHypocenter().getLatitude());
+                                                sb.append(")\n");
+                                                sb.append("マグニチュードは M ");
+                                                sb.append(data.getBody().getEarthquake().getMagnitude());
+                                                sb.append("と推定されています。\n");
+                                                sb.append(data.getBody().getComments().getObservation());
+                                                sb.append("\n");
+                                                sb.append("最大震度は ");
+                                                sb.append(data.getBody().getIntensity().getObservation().getMaxInt());
+                                                sb.append(" です。\n");
+
+                                                sb.append("---- 各地の震度 --- \n");
+                                                Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
+                                                for (Pref perf : prefList){
+                                                    Area[] areaList = perf.getArea();
+
+                                                    for (Area area : areaList){
+
+                                                        sb.append(area.getName());
+                                                        sb.append(" 震度 ");
+                                                        sb.append(area.getMaxInt());
+                                                        sb.append("\n");
+
+                                                    }
+
+                                                }
+
+                                                channel.sendMessage(sb.toString()).queue();
 
                                             }
 
                                         }
 
-                                    }));
-                                } catch (Exception e){
-                                    // e.printStackTrace();
+                                    }
                                 }
-                            }
-                        }
 
-                    } catch (Exception e){
-
-                        e.printStackTrace();
-
-                    }
-                }
-
-                System.out.println("Debug : " + EarthChannel.size());
-                if (earthquake.getLastEventID() != -1){
-
-                    EarthquakeResult data = earthquake.getData();
-
-                    if (new Date().getTime() - data.getHead().getReportDateTime().getTime() > 300000){
-                        return;
-                    }
-
-                    if (data.getHead().getEventID() == lastId[0]){
-                        return;
-                    }
-
-                    lastId[0] = data.getHead().getEventID();
-
-                    for (TextChannel ch : EarthChannel){
-
-                        //System.out.println("Debug : " + ch.getName());
-
-                        StringBuffer sb = new StringBuffer();
-                        sb.append("------ 地震情報 ------\n");
-                        sb.append(data.getHead().getHeadline());
-                        sb.append("\n");
-                        sb.append("震源地は");
-                        sb.append(data.getBody().getEarthquake().getHypocenter().getName());
-                        sb.append("(");
-                        sb.append(data.getBody().getEarthquake().getHypocenter().getLongitude());
-                        sb.append(",");
-                        sb.append(data.getBody().getEarthquake().getHypocenter().getLatitude());
-                        sb.append(")\n");
-                        sb.append("マグニチュードは M ");
-                        sb.append(data.getBody().getEarthquake().getMagnitude());
-                        sb.append("と推定されています。\n");
-                        sb.append(data.getBody().getComments().getObservation());
-                        sb.append("\n");
-                        sb.append("最大震度は ");
-                        sb.append(data.getBody().getIntensity().getObservation().getMaxInt());
-                        sb.append(" です。\n");
-
-                        sb.append("---- 各地の震度 --- \n");
-                        Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
-                        for (Pref perf : prefList){
-                            Area[] areaList = perf.getArea();
-
-                            for (Area area : areaList){
-
-                                sb.append(area.getName());
-                                sb.append(" 震度 ");
-                                sb.append(area.getMaxInt());
-                                sb.append("\n");
-
-                            }
+                            }));
 
                         }
-
-
-                        ch.sendMessage(sb.toString()).queue();
 
                     }
 
                 }
-
 
             }
         };
@@ -631,3 +604,58 @@ class EventListener extends ListenerAdapter {
 
     }
 }
+
+/*
+if (earthquake.getLastEventID() != -1){
+                                                        EarthquakeResult data = earthquake.getData();
+
+                                                        textChannelById.sendMessage("テスト送信です。削除お願いします。 by 茅野ななみ#2669").queue();
+
+                                                        if (new Date().getTime() - data.getHead().getReportDateTime().getTime() > 300000){
+                                                            break;
+                                                        }
+                                                        if (data.getHead().getEventID() == lastId[0]){
+                                                            break;
+                                                        }
+
+                                                        lastId[0] = data.getHead().getEventID();
+
+                                                        StringBuffer sb = new StringBuffer();
+                                                        sb.append("------ 地震情報 ------\n");
+                                                        sb.append(data.getHead().getHeadline());
+                                                        sb.append("\n");
+                                                        sb.append("震源地は");
+                                                        sb.append(data.getBody().getEarthquake().getHypocenter().getName());
+                                                        sb.append("(");
+                                                        sb.append(data.getBody().getEarthquake().getHypocenter().getLongitude());
+                                                        sb.append(",");
+                                                        sb.append(data.getBody().getEarthquake().getHypocenter().getLatitude());
+                                                        sb.append(")\n");
+                                                        sb.append("マグニチュードは M ");
+                                                        sb.append(data.getBody().getEarthquake().getMagnitude());
+                                                        sb.append("と推定されています。\n");
+                                                        sb.append(data.getBody().getComments().getObservation());
+                                                        sb.append("\n");
+                                                        sb.append("最大震度は ");
+                                                        sb.append(data.getBody().getIntensity().getObservation().getMaxInt());
+                                                        sb.append(" です。\n");
+
+                                                        sb.append("---- 各地の震度 --- \n");
+                                                        Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
+                                                        for (Pref perf : prefList){
+                                                            Area[] areaList = perf.getArea();
+
+                                                            for (Area area : areaList){
+
+                                                                sb.append(area.getName());
+                                                                sb.append(" 震度 ");
+                                                                sb.append(area.getMaxInt());
+                                                                sb.append("\n");
+
+                                                            }
+
+                                                        }
+
+                                                        textChannelById.sendMessage(sb.toString()).queue();
+                                                    }
+ */
