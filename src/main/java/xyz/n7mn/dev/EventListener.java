@@ -507,9 +507,10 @@ class EventListener extends ListenerAdapter {
 
         Timer timer = new Timer();
         final List<TextChannel>[] textChannels = new List[]{jda.getTextChannels()};
-        List<TextChannel> EarthChannel = new ArrayList<>();
+
         final long[] chCount = {-1};
         final long[] lastId = {-1};
+        List<TextChannel> EarthChannel = new ArrayList<>();
 
         TimerTask task = new TimerTask() {
             public void run() {
@@ -520,7 +521,7 @@ class EventListener extends ListenerAdapter {
 
                         EarthChannel.clear();
                         textChannels[0] = jda.getTextChannels();
-                        chCount[0] =textChannels[0].size();
+                        chCount[0] = textChannels[0].size();
 
                         for (TextChannel channel : textChannels[0]){
                             //System.out.println("Debug : " + channel.getName());
@@ -560,6 +561,7 @@ class EventListener extends ListenerAdapter {
                     }
                 }
 
+                System.out.println("Debug : " + EarthChannel.size());
                 if (earthquake.getLastEventID() != -1){
 
                     EarthquakeResult data = earthquake.getData();
