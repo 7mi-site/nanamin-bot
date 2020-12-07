@@ -45,13 +45,6 @@ class EventListener extends ListenerAdapter {
                         sb.append(guild.getId());
                         sb.append(" : ");
                         sb.append(guild.getName());
-                        sb.append(" (オーナー: ");
-                        try {
-                            sb.append(guild.getOwner().getNickname());
-                        } catch (Exception e){
-                            sb.append("不明");
-                        }
-                        sb.append(" )\n");
 
                     }
 
@@ -64,7 +57,7 @@ class EventListener extends ListenerAdapter {
 
         }
 
-        if (event.getChannel().getType() == ChannelType.PRIVATE && !event.getAuthor().getId().equals("781323086624456735")){
+        if (event.getChannel().getType() == ChannelType.PRIVATE && !event.getAuthor().getId().equals("781323086624456735") && !event.getAuthor().getId().equals("785322639295905792")){
             event.getMessage().getPrivateChannel().sendMessage("ふぬ？\n\nhttps://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot").queue();
             return;
         }
@@ -97,7 +90,7 @@ class EventListener extends ListenerAdapter {
 
         }
 
-        if (text.toLowerCase().startsWith("n.help")){
+        if (text.toLowerCase().equals("n.help")){
 
             String helpText = "----- ななみちゃんbot ヘルプ Start -----\n" +
                     "**※このメッセージは送信専用です。返信しても何もできませんのでご注意ください。**\n" +
@@ -120,11 +113,25 @@ class EventListener extends ListenerAdapter {
 
         }
 
-        if (text.toLowerCase().equals("n.dice")){
+        if (text.toLowerCase().startsWith("n.dice")){
 
-            int i = new Random().nextInt(5) + 1;
-            event.getMessage().getTextChannel().sendMessage("さいころの結果は" + i + "です。").queue();
-            return;
+            String[] split = text.split(" ");
+
+            if (split.length == 1){
+
+                int i = (new Random().nextInt(Integer.MAX_VALUE) % 6) + 1;
+                event.getMessage().getTextChannel().sendMessage("さいころの結果は" + i + "です。").queue();
+                return;
+
+            }
+
+            if (split.length == 2){
+
+                int i = (new Random().nextInt(Integer.MAX_VALUE) % Integer.parseInt(split[1])) + 1;
+                event.getMessage().getTextChannel().sendMessage("さいころの結果は" + i + "です。").queue();
+                return;
+
+            }
 
         }
 
@@ -164,7 +171,8 @@ class EventListener extends ListenerAdapter {
         if (text.toLowerCase().startsWith("n.random")){
 
             String[] split = text.split(" ", -1);
-            event.getMessage().getTextChannel().sendMessage("選ばれたのは「" + split[new Random().nextInt(split.length - 1) + 1]+"」だよっ！").queue();
+            int i = (new Random().nextInt(Integer.MAX_VALUE) % split.length);
+            event.getMessage().getTextChannel().sendMessage("選ばれたのは「" + split[i]+"」だよっ！").queue();
 
             return;
         }
@@ -530,6 +538,7 @@ class EventListener extends ListenerAdapter {
                                         TextChannel channel = guild.getTextChannelById(split[1]);
                                         if (channel != null){
 
+                                            // channel.sendMessage("テスト送信です。 削除お願いします。").queue();
                                             if (earthquake.getLastEventID() != -1){
                                                 EarthquakeResult data = earthquake.getData();
 
