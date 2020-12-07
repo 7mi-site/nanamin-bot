@@ -127,7 +127,7 @@ class EventListener extends ListenerAdapter {
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
-
+                EarthquakeResult data1 = earthquake.getData();
                 for (Guild guild : jda.getGuilds()){
 
                     List<TextChannel> textChannels = guild.getTextChannels();
@@ -149,19 +149,20 @@ class EventListener extends ListenerAdapter {
 
                                             // channel.sendMessage("テスト送信です。 削除お願いします。").queue();
                                             if (earthquake.getLastEventID() != -1){
+
+                                                System.out.println("Debug : 地震情報取得");
                                                 EarthquakeResult data = earthquake.getData();
-
-                                                // channel.sendMessage("テスト送信です。削除お願いします。").queue();
-
                                                 if (new Date().getTime() - data.getHead().getReportDateTime().getTime() > 300000){
-                                                    break;
+                                                    System.out.println("Debug : 時間差 " + (new Date().getTime() - data.getHead().getReportDateTime().getTime()));
+                                                    continue;
                                                 }
+
                                                 if (data.getHead().getEventID() == lastId[0]){
-                                                    break;
+                                                    System.out.println("Debug : 前と同じ");
+                                                    continue;
                                                 }
 
-                                                lastId[0] = data.getHead().getEventID();
-
+                                                System.out.println("地震情報を送信しました : " + channel.getName());
                                                 StringBuffer sb = new StringBuffer();
                                                 sb.append("------ 地震情報 ------\n");
                                                 sb.append(data.getHead().getHeadline());
@@ -199,6 +200,7 @@ class EventListener extends ListenerAdapter {
                                                 }
 
                                                 channel.sendMessage(sb.toString()).queue();
+                                                System.out.println("Debug : send");
 
                                             }
 
@@ -208,11 +210,11 @@ class EventListener extends ListenerAdapter {
                                 }
 
                             }));
-
                         }
-
                     }
-
+                }
+                if (data1 != null){
+                    lastId[0] = data1.getHead().getEventID();
                 }
 
             }
