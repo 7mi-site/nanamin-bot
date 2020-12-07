@@ -58,7 +58,12 @@ class EventListener extends ListenerAdapter {
         }
 
         if (event.getChannel().getType() == ChannelType.PRIVATE && !event.getAuthor().getId().equals("781323086624456735") && !event.getAuthor().getId().equals("785322639295905792")){
-            event.getMessage().getPrivateChannel().sendMessage("ふぬ？\n\nhttps://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot").queue();
+            event.getMessage().getPrivateChannel().sendMessage("ふぬ？なにもおきないですよ？\n" +
+                    "\n" +
+                    "このbotを入れるには：https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot\n" +
+                    "botについてバグ報告、テスト、要望が出したい！： https://discord.gg/QP2hRSQaVV").queue((message -> {
+                        message.suppressEmbeds(true).queue();
+            }));
             return;
         }
 
