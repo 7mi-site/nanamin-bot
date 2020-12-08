@@ -37,6 +37,29 @@ public class ChatMessage {
     public void run(){
         // コマンドの最初の受ける地点。新コマンドはメソッドを増やしてここに追記する
 
+        if (!text.toLowerCase().startsWith("n.")){
+            return;
+        }
+
+        System.out.println("---- Debug ----\n" + author.getAsTag() + "\n" + text + "\n----- Debug -----");
+        try {
+            RestAction<User> nanami = jda.retrieveUserById("529463370089234466");
+            PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
+
+            String debug = "----- Debug ----- \n" +
+                    "サーバ名: " + guild.getName() +"\n" +
+                    "発言チャンネル名: " + message.getTextChannel().getName() + "\n" +
+                    "発言者: " + author.getAsTag() + "\n" +
+                    "発言内容：`"+text+"`";
+            dm.sendMessage(debug).queue();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if (author.isBot()){
+            return;
+        }
+
         if (text.equals("n.help")){
             help();
         }

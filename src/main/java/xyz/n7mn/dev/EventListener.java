@@ -6,101 +6,27 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.RestAction;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
 import xyz.n7mn.dev.api.data.eq.intensity.Area;
 import xyz.n7mn.dev.api.data.eq.intensity.Pref;
-import xyz.n7mn.dev.music.GuildMusicManager;
-import xyz.n7mn.dev.music.PlayerManager;
 
-import java.text.SimpleDateFormat;
-import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.List;
 
 class EventListener extends ListenerAdapter {
 
-    private VoiceChannel voiceChannel;
-
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        User author = event.getAuthor();
-        String text = event.getMessage().getContentRaw();
 
-        if (event.getChannel().getType() == ChannelType.PRIVATE && event.getAuthor().getId().equals("529463370089234466")){
-
-            if (text.equals("n.check")){
-
-                try {
-                    JDA jda = event.getJDA();
-                    List<Guild> guilds = jda.getGuilds();
-
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("---- ななみちゃんbotが入っているサーバーは以下のとおりです。 ----\n");
-                    for (Guild guild : guilds){
-
-                        sb.append(guild.getId());
-                        sb.append(" : ");
-                        sb.append(guild.getName());
-
-                    }
-
-                    event.getChannel().sendMessage(sb.toString()).queue();
-                } catch (Exception e){
-                    // e.printStackTrace();
-                }
-                return;
-            }
-
-        }
-
-        if (event.getChannel().getType() == ChannelType.PRIVATE && !event.getAuthor().getId().equals("781323086624456735") && !event.getAuthor().getId().equals("785322639295905792")){
-            event.getMessage().getPrivateChannel().sendMessage("ふぬ？なにもおきないですよ？\n" +
-                    "\n" +
-                    "このbotを入れるには：https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot\n" +
-                    "botについてバグ報告、テスト、要望が出したい！： https://discord.gg/QP2hRSQaVV").queue((message -> {
-                        message.suppressEmbeds(true).queue();
-            }));
-
-            RestAction<User> nanami = event.getJDA().retrieveUserById("529463370089234466");
-            PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
-            String debug = "----- Debug ----- \n" +
-                    "発言者: " + author.getAsTag() + "\n" +
-                    "発言内容：`"+text+"`";
-            dm.sendMessage(debug).queue();
+        if (event.getChannel().getType() == ChannelType.PRIVATE){
+            new DMMessage(event.getMessage(), event.getAuthor()).run();
             return;
-
-        }
-
-        if (author.isBot()){
-            return;
-        }
-
-        if (text.toLowerCase().startsWith("n.")){
-            System.out.println("---- Debug ----\n" + author.getAsTag() + "\n" + text + "\n----- Debug -----");
-            try {
-
-                RestAction<User> nanami = event.getJDA().retrieveUserById("529463370089234466");
-                PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
-
-                String debug = "----- Debug ----- \n" +
-                        "サーバ名: " + event.getGuild().getName() +"\n" +
-                        "発言チャンネル名: " + event.getMessage().getTextChannel().getName() + "\n" +
-                        "発言者: " + author.getAsTag() + "\n" +
-                        "発言内容：`"+text+"`";
-                dm.sendMessage(debug).queue();
-
-
-            } catch (Exception e){
-
-                e.printStackTrace();
-
-            }
-
-
         }
 
         new ChatMessage(event.getAuthor(), event.getMessage()).run();
@@ -125,9 +51,30 @@ class EventListener extends ListenerAdapter {
         long[] lastId = new long[]{-1};
 
         Timer timer = new Timer();
+
+        final String[] sokuhoText = {"",""};
+
         TimerTask task = new TimerTask() {
             public void run() {
                 EarthquakeResult data1 = earthquake.getData();
+
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("http://192.168.0.132:8899/kisyotyo_html.php")
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (sokuhoText[0].length() == 0){
+                        sokuhoText[0] = response.body().string();
+                        sokuhoText[1] = response.body().string();
+                    }else{
+                        sokuhoText[0] = response.body().string();
+                    }
+
+                } catch (Exception e){
+                    // e.printStackTrace();
+                }
+
                 for (Guild guild : jda.getGuilds()){
 
                     List<TextChannel> textChannels = guild.getTextChannels();
@@ -145,9 +92,17 @@ class EventListener extends ListenerAdapter {
                                         String[] split = message.getContentRaw().split(" ");
 
                                         TextChannel channel = guild.getTextChannelById(split[1]);
-                                        if (channel != null){
 
+
+                                        if (channel != null){
                                             // channel.sendMessage("テスト送信です。 削除お願いします。").queue();
+                                            if (!sokuhoText[1].equals(sokuhoText[0])){
+                                                channel.sendMessage("----- 気象庁速報 (ここから) -----\n" + sokuhoText[0] + "\n----- 気象庁速報 (ここまで) -----").queue();
+                                                System.out.println("----- 気象庁速報 (ここから) -----\n" + sokuhoText[0] + "\n----- 気象庁速報 (ここまで) -----");
+                                                //System.out.println("debug 0\n" + sokuhoText[0]);
+                                                //System.out.println("debug 1 \n" + sokuhoText[1]);
+                                            }
+
                                             if (earthquake.getLastEventID() != -1){
 
                                                 System.out.println("Debug : 地震情報取得");
@@ -164,7 +119,7 @@ class EventListener extends ListenerAdapter {
 
                                                 System.out.println("地震情報を送信しました : " + channel.getName());
                                                 StringBuffer sb = new StringBuffer();
-                                                sb.append("------ 地震情報 ------\n");
+                                                sb.append("------ 地震情報 (ここから) ------\n");
                                                 sb.append(data.getHead().getHeadline());
                                                 sb.append("\n");
                                                 sb.append("震源地は");
@@ -199,6 +154,8 @@ class EventListener extends ListenerAdapter {
 
                                                 }
 
+                                                sb.append("------ 地震情報 (ここまで) ------");
+
                                                 channel.sendMessage(sb.toString()).queue();
                                                 System.out.println("Debug : send");
 
@@ -215,6 +172,10 @@ class EventListener extends ListenerAdapter {
                 }
                 if (data1 != null){
                     lastId[0] = data1.getHead().getEventID();
+                }
+
+                if (!sokuhoText[1].equals(sokuhoText[0])){
+                    sokuhoText[1] = sokuhoText[0];
                 }
 
             }
