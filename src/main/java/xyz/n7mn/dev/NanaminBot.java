@@ -1,19 +1,60 @@
 package xyz.n7mn.dev;
 
+import com.google.gson.Gson;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class NanaminBot {
 
     public static void main(String[] args) {
 
         try {
-            // dev : Nzg1MzIyNjM5Mjk1OTA1Nzky.X82Ksw.OrX1WYbiby9WCNifZH9HaC37Oik
-            // 本番 : NzgxMzIzMDg2NjI0NDU2NzM1.X7791A.swaLPRnfZzoL50ntQ7QmC-DqjxQ
 
-            JDABuilder.createLight("NzgxMzIzMDg2NjI0NDU2NzM1.X7791A.swaLPRnfZzoL50ntQ7QmC-DqjxQ", GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGE_REACTIONS)
+            File file = new File("./token.json");
+            if (!file.isFile()){
+                System.out.println("存在しないファイル");
+                return;
+            }
+
+            BufferedReader buffer = null;
+            String json;
+            try {
+                FileInputStream input = new FileInputStream(file);
+                InputStreamReader stream = new InputStreamReader(input, StandardCharsets.UTF_8);
+                buffer = new BufferedReader(stream);
+                StringBuffer sb = new StringBuffer();
+
+                int ch = buffer.read();
+                while (ch != -1){
+                    sb.append((char) ch);
+                    ch = buffer.read();
+                }
+
+                json = sb.toString();
+
+            } catch (FileNotFoundException e) {
+                json = "[]";
+            } catch (IOException e) {
+                e.printStackTrace();
+                json = "[]";
+            } finally {
+                try {
+                    if (buffer != null){
+                        buffer.close();
+                    }
+                } catch (IOException e) {
+                    json = "[]";
+                }
+            }
+
+            String token = new Gson().fromJson(json, String.class);
+
+            JDABuilder.createLight(token, GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGE_REACTIONS)
                     .addEventListeners(new EventListener())
                     .enableCache(CacheFlag.VOICE_STATE)
                     .setActivity(Activity.watching("Discord"))
