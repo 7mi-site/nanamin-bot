@@ -100,6 +100,17 @@ public class ChatMessage {
             msgSend();
         }
 
+        if (text.equals("n.burn")){
+            burn();
+        }
+
+        if (text.equals("n.gold")){
+            gold();
+        }
+
+        if (text.equals("n.れにょこ") || text.equals("n.renyoko")){
+            renyoko();
+        }
     }
 
     private void help(){
@@ -502,5 +513,21 @@ public class ChatMessage {
 
     }
 
-    
+    private void gold(){
+
+        message.getChannel().sendMessage("https://goldarmor-is.best/").queue();
+
+    }
+
+    private void burn(){
+
+        message.getChannel().sendMessage("\uD83D\uDD25").queue();
+
+    }
+
+    private void renyoko(){
+
+        message.getChannel().sendMessage("れにょこの虫特攻はいい！").queue();
+
+    }
 }
