@@ -138,7 +138,7 @@ class EventListener extends ListenerAdapter {
                                                 sb.append(data.getBody().getIntensity().getObservation().getMaxInt());
                                                 sb.append(" です。\n");
 
-                                                sb.append("---- 各地の震度 --- \n");
+                                                sb.append("---- 各地の震度 ---- \n");
                                                 Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
                                                 for (Pref perf : prefList){
                                                     Area[] areaList = perf.getArea();

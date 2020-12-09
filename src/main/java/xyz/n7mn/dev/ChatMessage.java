@@ -96,6 +96,10 @@ public class ChatMessage {
             systemCheck();
         }
 
+        if (text.startsWith("n.send")){
+            msgSend();
+        }
+
     }
 
     private void help(){
@@ -497,4 +501,6 @@ public class ChatMessage {
         }
 
     }
+
+    
 }
