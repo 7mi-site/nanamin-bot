@@ -35,10 +35,6 @@ public class ChatMessage {
     public void run(){
         // コマンドの最初の受ける地点。新コマンドはメソッドを増やしてここに追記する
 
-        if (!text.toLowerCase().startsWith("n.")){
-            return;
-        }
-
         System.out.println("---- Debug ----\n" + author.getAsTag() + "\n" + text + "\n----- Debug -----");
         try {
             RestAction<User> nanami = jda.retrieveUserById("529463370089234466");
@@ -120,6 +116,10 @@ public class ChatMessage {
 
         if (text.equals("n.hentai")){
             hentai();
+        }
+
+        if (text.endsWith(".gold") && !text.equals(".gold") && !text.equals("z.gold") && guild.getId().equals("517669763556704258")){
+            gold();
         }
     }
 

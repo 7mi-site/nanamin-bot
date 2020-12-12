@@ -66,7 +66,9 @@ class EventListener extends ListenerAdapter {
                     Response response = client.newCall(request).execute();
                     if (sokuhoText[0].length() == 0){
                         sokuhoText[0] = response.body().string();
-                        sokuhoText[1] = response.body().string();
+                        if (sokuhoText[1].length() == 0){
+                            sokuhoText[1] = response.body().string();
+                        }
                     }else{
                         sokuhoText[0] = response.body().string();
                     }
