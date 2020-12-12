@@ -4,7 +4,7 @@ public class Area {
 
     private String Name;
     private int Code;
-    private int MaxInt;
+    private String MaxInt;
     private City[] City;
 
     public String getName() {
@@ -15,7 +15,7 @@ public class Area {
         return Code;
     }
 
-    public int getMaxInt() {
+    public String getMaxInt() {
         return MaxInt;
     }
 

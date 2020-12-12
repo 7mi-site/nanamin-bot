@@ -4,7 +4,7 @@ public class City {
 
     private String Name;
     private int Code;
-    private int MaxInt;
+    private String MaxInt;
     private IntensityStation[] IntensityStation;
 
     public String getName() {
@@ -15,7 +15,7 @@ public class City {
         return Code;
     }
 
-    public int getMaxInt() {
+    public String getMaxInt() {
         return MaxInt;
     }
 

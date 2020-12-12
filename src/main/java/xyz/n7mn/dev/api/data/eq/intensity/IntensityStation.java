@@ -4,7 +4,7 @@ public class IntensityStation {
 
     private String Name;
     private int Code;
-    private int Int;
+    private String Int;
 
     public String getName() {
         return Name;
@@ -14,7 +14,7 @@ public class IntensityStation {
         return Code;
     }
 
-    public int getInt() {
+    public String getInt() {
         return Int;
     }
 }

@@ -2,10 +2,10 @@ package xyz.n7mn.dev.api.data.eq.intensity;
 
 public class Observation {
 
-    private int MaxInt;
+    private String MaxInt;
     private Pref[] Pref;
 
-    public int getMaxInt() {
+    public String getMaxInt() {
         return MaxInt;
     }
 

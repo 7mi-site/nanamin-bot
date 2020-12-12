@@ -4,7 +4,7 @@ public class Pref {
 
     private String Name;
     private int Code;
-    private int MaxInt;
+    private String MaxInt;
     private Area[] Area;
 
     public String getName() {
@@ -15,7 +15,7 @@ public class Pref {
         return Code;
     }
 
-    public int getMaxInt() {
+    public String getMaxInt() {
         return MaxInt;
     }
 
