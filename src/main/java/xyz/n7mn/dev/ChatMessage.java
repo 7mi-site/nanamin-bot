@@ -7,12 +7,10 @@ import net.dv8tion.jda.api.requests.RestAction;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
 
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 
 public class ChatMessage {
 
@@ -108,8 +106,20 @@ public class ChatMessage {
             gold();
         }
 
-        if (text.equals("n.れにょこ") || text.equals("n.renyoko")){
+        if (text.equals("n.れにょこ") || text.equals("n.renyoko") || text.equals("n.ﾚﾆｮｺ") || text.equals("n.レニョコ")){
             renyoko();
+        }
+
+        if (text.equals("n.sand")){
+            sand();
+        }
+
+        if (text.equals("n.sc")){
+            superChat();
+        }
+
+        if (text.equals("n.hentai")){
+            hentai();
         }
     }
 
@@ -140,10 +150,12 @@ public class ChatMessage {
     private void dice(){
 
         String[] split = text.split(" ");
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(new SecureRandom().nextInt(Integer.MAX_VALUE));
 
         if (split.length == 1){
 
-            int i = (new Random().nextInt(Integer.MAX_VALUE) % 6) + 1;
+            int i = (secureRandom.nextInt(Integer.MAX_VALUE) % 6) + 1;
             message.getTextChannel().sendMessage("さいころの結果は" + i + "です。").queue();
             return;
 
@@ -151,17 +163,25 @@ public class ChatMessage {
 
         if (split.length == 2){
 
-            int i = (new Random().nextInt(Integer.MAX_VALUE) % Integer.parseInt(split[1])) + 1;
+            int i = (secureRandom.nextInt(Integer.MAX_VALUE) % Integer.parseInt(split[1])) + 1;
             message.getTextChannel().sendMessage("さいころの結果は" + i + "です。").queue();
 
         }
     }
 
     private void random(){
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(new SecureRandom().nextInt(Integer.MAX_VALUE));
 
         String[] split = text.split(" ", -1);
-        int i = (new Random().nextInt(Integer.MAX_VALUE) % split.length);
-        message.getTextChannel().sendMessage("選ばれたのは「" + split[i]+"」だよっ！").queue();
+        List<String> wordList = new ArrayList<>();
+        wordList.addAll(Arrays.asList(split).subList(1, split.length));
+
+        Collections.shuffle(wordList);
+
+
+        int i = (secureRandom.nextInt(wordList.size()));
+        message.getTextChannel().sendMessage("選ばれたのは「" + wordList.get(i)+"」だよっ！").queue();
 
     }
 
@@ -528,6 +548,48 @@ public class ChatMessage {
     private void renyoko(){
 
         message.getChannel().sendMessage("れにょこの虫特攻はいい！").queue();
+
+    }
+
+    private void sand(){
+
+
+    }
+
+    private void superChat(){
+
+        int f = (new SecureRandom().nextInt(15) & 5) + 1;
+        int count = (new SecureRandom().nextInt(16) & 4) + 1;
+
+
+        StringBuffer stringBuffer = new StringBuffer();
+
+        stringBuffer.append(f);
+
+        for (int i = 0; i < count; i++){
+            stringBuffer.append("0");
+        }
+
+        message.getChannel().sendMessage("ゆるりさんに "+stringBuffer.toString() + "円スパチャしました！").queue();
+
+    }
+
+    private void hentai(){
+
+        // String[] list = new String[]{"しおぽぽ","ふーぷれす","ゆるり","みやゆ",author.getName()};
+        List<String> a = new ArrayList<>();
+        a.add("しおぽぽ");
+        a.add("ふーぷれす");
+        a.add("ゆるり");
+        a.add("みやゆ");
+        a.add(author.getName());
+        Collections.shuffle(a);
+
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(new SecureRandom().nextInt(Integer.MAX_VALUE));
+        int c = secureRandom.nextInt(a.size() - 1);
+
+        message.getChannel().sendMessage("変態は「"+a.get(c)+"さん」です！").queue();
 
     }
 }
