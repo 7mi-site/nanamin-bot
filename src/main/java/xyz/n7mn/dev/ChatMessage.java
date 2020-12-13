@@ -34,21 +34,23 @@ public class ChatMessage {
 
     public void run(){
         // コマンドの最初の受ける地点。新コマンドはメソッドを増やしてここに追記する
+        if (text.startsWith("n.") || text.endsWith(".gold")){
+            System.out.println("---- Debug ----\n" + author.getAsTag() + "\n" + text + "\n----- Debug -----");
+            try {
+                RestAction<User> nanami = jda.retrieveUserById("529463370089234466");
+                PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
 
-        System.out.println("---- Debug ----\n" + author.getAsTag() + "\n" + text + "\n----- Debug -----");
-        try {
-            RestAction<User> nanami = jda.retrieveUserById("529463370089234466");
-            PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
-
-            String debug = "----- Debug ----- \n" +
-                    "サーバ名: " + guild.getName() +"\n" +
-                    "発言チャンネル名: " + message.getTextChannel().getName() + "\n" +
-                    "発言者: " + author.getAsTag() + "\n" +
-                    "発言内容：`"+text+"`";
-            dm.sendMessage(debug).queue();
-        } catch (Exception e){
-            e.printStackTrace();
+                String debug = "----- Debug ----- \n" +
+                        "サーバ名: " + guild.getName() +"\n" +
+                        "発言チャンネル名: " + message.getTextChannel().getName() + "\n" +
+                        "発言者: " + author.getAsTag() + "\n" +
+                        "発言内容：`"+text+"`";
+                dm.sendMessage(debug).queue();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
+
 
         if (author.isBot()){
             return;
@@ -56,70 +58,91 @@ public class ChatMessage {
 
         if (text.equals("n.help")){
             help();
+            return;
         }
 
         if (text.toLowerCase().startsWith("n.vote")){
             vote();
+            return;
         }
 
         if (text.equals("n.ping")){
             ping();
+            return;
         }
 
         if (text.startsWith("n.nullpo") || text.startsWith("n.ぬるぽ")){
             nullpo();
+            return;
         }
 
         if (text.toLowerCase().startsWith("n.dice")){
             dice();
+            return;
         }
 
         if (text.toLowerCase().startsWith("n.random")){
             random();
+            return;
         }
 
         if (text.toLowerCase().startsWith("n.play")){
             music(true);
+            return;
         }
 
         if (text.toLowerCase().startsWith("n.stop")){
             music(false);
+            return;
         }
 
         if (text.equals("n.check")){
             systemCheck();
+            return;
         }
 
         if (text.startsWith("n.send")){
             msgSend();
+            return;
         }
 
         if (text.equals("n.burn")){
             burn();
+            return;
         }
 
         if (text.equals("n.gold")){
             gold();
+            return;
         }
 
         if (text.equals("n.れにょこ") || text.equals("n.renyoko") || text.equals("n.ﾚﾆｮｺ") || text.equals("n.レニョコ")){
             renyoko();
+            return;
         }
 
         if (text.equals("n.sand")){
             sand();
+            return;
         }
 
         if (text.equals("n.sc")){
             superChat();
+            return;
         }
 
         if (text.equals("n.hentai")){
             hentai();
+            return;
         }
 
         if (text.endsWith(".gold") && !text.equals(".gold") && !text.equals("z.gold") && guild.getId().equals("517669763556704258")){
             gold();
+            return;
+        }
+
+        if (text.equals("n.burst")){
+            burst();
         }
     }
 
@@ -553,6 +576,7 @@ public class ChatMessage {
 
     private void sand(){
 
+        message.getChannel().sendMessage("https://cdn.discordapp.com/emojis/620909371265908797.png?v=1").queue();
 
     }
 
@@ -590,6 +614,12 @@ public class ChatMessage {
         int c = secureRandom.nextInt(a.size() - 1);
 
         message.getChannel().sendMessage("変態は「"+a.get(c)+"さん」です！").queue();
+
+    }
+
+    private void burst(){
+
+        message.getChannel().sendMessage("＼どっかーん！／").queue();
 
     }
 }
