@@ -60,7 +60,7 @@ class EventListener extends ListenerAdapter {
 
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url("http://192.168.0.132:8899/kisyotyo_html.php")
+                        .url("http://127.0.0.1:8899/kisyotyo_html.php")
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
