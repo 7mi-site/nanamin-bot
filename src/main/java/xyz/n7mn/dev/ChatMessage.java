@@ -215,7 +215,7 @@ public class ChatMessage {
         Date date = Date.from(idLong.toInstant());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-        message.getTextChannel().sendMessage("応答したよっ\n(送信元メッセージの日時：" + sdf.format(date) + " (JST))").queue(message1 -> {
+        message.getTextChannel().sendMessage("応答したよっ\n(送信元メッセージの日時：" + sdf.format(date) + " (JST))\n(応答時間計測中...)").queue(message1 -> {
             OffsetDateTime time = message1.getTimeCreated();
             Date to = Date.from(time.toInstant());
             message1.editMessage("応答したよっ\n(送信元メッセージの日時：" + sdf.format(date) + " (JST))\n" +
