@@ -143,6 +143,11 @@ public class ChatMessage {
 
         if (text.equals("n.burst")){
             burst();
+            return;
+        }
+
+        if (text.equals("n.pan")){
+            pan();
         }
     }
 
@@ -627,4 +632,24 @@ public class ChatMessage {
         message.getChannel().sendMessage("＼どっかーん！／").queue();
 
     }
+
+    private void pan(){
+
+        //
+        String[] split = new String[]{
+                "https://yululi.n7mn.xyz/nana/PANmaster.png",
+                "https://yululi.n7mn.xyz/nana/PanMasterNETA01COMP.png",
+                "https://yululi.n7mn.xyz/nana/puyCRzt9_400x400.jpg"
+        };
+
+        List<String> list = Arrays.asList(split);
+        Collections.shuffle(list);
+
+        SecureRandom secureRandom = new SecureRandom();
+        int c = secureRandom.nextInt(list.size() - 1);
+
+        message.getChannel().sendMessage(list.get(c)).queue();
+
+    }
+
 }

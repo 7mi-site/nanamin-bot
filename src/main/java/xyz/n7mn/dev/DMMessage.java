@@ -42,6 +42,18 @@ public class DMMessage {
             return;
         }
 
+        RestAction<User> nanami = jda.retrieveUserById("529463370089234466");
+        PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
+        String debug = "----- Debug ----- \n" +
+                "発言者: " + author.getAsTag() + "\n" +
+                "発言内容：`"+text+"`";
+        dm.sendMessage(debug).queue();
+
+        if (message.getContentRaw().startsWith("ぱんつ何色") || message.getContentRaw().startsWith("パンツ何色")){
+            message.getPrivateChannel().sendMessage("へんたいっ！").queue();
+            return;
+        }
+
         message.getPrivateChannel().sendMessage(
                 "ふぬ？なにもおきないですよ？\n" +
                 "\n" +
@@ -50,12 +62,6 @@ public class DMMessage {
             message.suppressEmbeds(true).queue();
         }));
 
-        RestAction<User> nanami = jda.retrieveUserById("529463370089234466");
-        PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
-        String debug = "----- Debug ----- \n" +
-                "発言者: " + author.getAsTag() + "\n" +
-                "発言内容：`"+text+"`";
-        dm.sendMessage(debug).queue();
 
     }
 
