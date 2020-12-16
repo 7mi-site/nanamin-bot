@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 public class DMMessage {
 
@@ -95,6 +96,69 @@ public class DMMessage {
                     return;
                 }
 
+                try {
+
+                    sb.append("サーバー名 : ");
+                    sb.append(guildById.getName());
+                    sb.append("\n");
+
+                    sb.append("サーバーオーナー : ");
+                    User ow = jda.getUserById(guildById.getOwnerId());
+                    if (guildById.getOwner().getNickname() != null){
+
+                        sb.append(guildById.getOwner().getNickname());
+                        if (ow != null){
+                            sb.append(" (");
+                            sb.append(ow.getAsTag());
+                            sb.append(")");
+                        }
+
+                        if (sb.length() >= 1900){
+                            message.getPrivateChannel().sendMessage(sb.toString()).queue();
+                            sb.delete(0, sb.length());
+                        }
+                    } else {
+                        if (ow != null){
+                            sb.append(ow.getAsTag());
+                        }
+
+                    }
+
+                    sb.append("\n");
+
+                    List<Member> members = guildById.getMembers();
+                    sb.append(members.size());
+                    sb.append("人このサーバーには入っています。\n");
+
+                    sb.append("----- 入っているメンバー(取得できる分) -----\n");
+                    for (Member member : members){
+
+                        User user = jda.getUserById(member.getId());
+                        if (member.getNickname() != null){
+                            sb.append(member.getNickname());
+                            sb.append(" (");
+                            sb.append(user.getAsTag());
+                            sb.append(")");
+                            sb.append("\n");
+                        } else {
+                            if (user != null){
+                                sb.append(user.getAsTag());
+                                sb.append("\n");
+                            }
+                        }
+
+                        if (sb.length() >= 1900){
+                            message.getPrivateChannel().sendMessage(sb.toString()).queue();
+                            sb.delete(0, sb.length());
+                        }
+                    }
+
+                } catch (Exception e){
+
+                    e.printStackTrace();
+
+                }
+
                 sb.append("----- "); sb.append(guildById.getName()); sb.append("のチャンネル一覧 -----\n");
                 for (TextChannel channel : guildById.getTextChannels()){
 
@@ -113,8 +177,6 @@ public class DMMessage {
                     }
 
                 }
-
-
             }
         }
 

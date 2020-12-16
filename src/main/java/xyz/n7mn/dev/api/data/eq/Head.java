@@ -9,7 +9,7 @@ public class Head {
     private Date TargetDateTime;
     private long EventID;
     private String InfoType;
-    private int Serial;
+    private String Serial;
     private String InfoKind;
     private String InfoKindVersion;
     private String Headline;
@@ -34,7 +34,7 @@ public class Head {
         return InfoType;
     }
 
-    public int getSerial() {
+    public String getSerial() {
         return Serial;
     }
 

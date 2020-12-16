@@ -53,7 +53,7 @@ public class Earthquake {
 
                         // System.out.println("debug : " + LastEventID);
                     } catch (IOException e) {
-                        // e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }).start();
 

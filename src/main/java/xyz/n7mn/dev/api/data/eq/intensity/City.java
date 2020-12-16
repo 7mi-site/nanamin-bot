@@ -3,7 +3,7 @@ package xyz.n7mn.dev.api.data.eq.intensity;
 public class City {
 
     private String Name;
-    private int Code;
+    private String Code;
     private String MaxInt;
     private IntensityStation[] IntensityStation;
 
@@ -11,7 +11,7 @@ public class City {
         return Name;
     }
 
-    public int getCode() {
+    public String getCode() {
         return Code;
     }
 

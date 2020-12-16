@@ -3,7 +3,7 @@ package xyz.n7mn.dev.api.data.eq.intensity;
 public class Pref {
 
     private String Name;
-    private int Code;
+    private String Code;
     private String MaxInt;
     private Area[] Area;
 
@@ -11,7 +11,7 @@ public class Pref {
         return Name;
     }
 
-    public int getCode() {
+    public String getCode() {
         return Code;
     }
 
