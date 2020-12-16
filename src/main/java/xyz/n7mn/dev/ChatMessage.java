@@ -177,7 +177,7 @@ public class ChatMessage {
                 "**※このメッセージは送信専用です。返信しても何もできませんのでご注意ください。**\n" +
                 "**※バグの報告、要望などは https://discord.gg/QP2hRSQaVV までお願いします。**\n" +
                 "`n.vote`、`n.voteNt` -- アンケートを表示する(詳細はn.voteと打って詳細ヘルプを出してください)\n" +
-                "`n.voteStop <メッセージリンクのURL>` -- アンケートを終了する" +
+                "`n.voteStop <メッセージリンクのURL>` -- アンケートを終了する\n" +
                 "`n.ping` -- 応答を返す\n"+
                 "`n.nullpo` または `n.ぬるぽ` -- ガッ\n"+
                 "`n.dice` -- さいころを振る\n"+
