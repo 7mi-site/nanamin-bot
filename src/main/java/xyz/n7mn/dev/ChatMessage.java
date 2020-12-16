@@ -200,7 +200,7 @@ public class ChatMessage {
                     "`n.れにょこ` or `n.renyoko` or `n.ﾚﾆｮｺ` or `n.レニョコ` -- 虫特攻はいい！\n" +
                     "`n.sand` -- Crousandさん\n" +
                     "`n.sc` -- 架空のスパチャを送る\n" +
-                    "`n.pan` -- パンマスター" +
+                    "`n.pan` -- パンマスター\n" +
                     "`n.hentai` -- へんたいっ！\n\n" +
                     "----- ななみちゃんbot ヘルプ End ----");
         }
