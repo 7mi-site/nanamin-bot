@@ -27,7 +27,6 @@ public class DMMessage {
 
         if (author.getId().equals("529463370089234466")){
             admin();
-            return;
         }
 
         reply();
@@ -70,7 +69,7 @@ public class DMMessage {
 
         StringBuffer sb = new StringBuffer();
 
-        if (text.equals("n.checkServer")){
+        if (text.equals("n.checkServer") && author.getId().equals("529463370089234466")){
 
             List<Guild> guilds = jda.getGuilds();
 
@@ -82,10 +81,10 @@ public class DMMessage {
                 sb.append(guild.getName());
                 sb.append("\n");
             }
-
+            return;
         }
 
-        if (text.startsWith("n.checkServer")){
+        if (text.startsWith("n.checkServer") && author.getId().equals("529463370089234466")){
 
             String[] split = text.split(" ");
             if (split.length == 2){
