@@ -27,8 +27,11 @@ public class DMMessage {
 
         if (author.getId().equals("529463370089234466")){
             admin();
-        }
 
+            if (text.startsWith("n.")){
+                return;
+            }
+        }
         reply();
     }
 
