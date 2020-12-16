@@ -1,9 +1,12 @@
 package xyz.n7mn.dev;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.RestAction;
+import xyz.n7mn.dev.data.Vote;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
 
@@ -66,7 +69,7 @@ public class ChatMessage {
             return;
         }
 
-        if (text.toLowerCase().startsWith("n.vote")){
+        if (text.toLowerCase().startsWith("n.vote") && !text.startsWith("n.voteStop")){
             vote();
             return;
         }
@@ -154,7 +157,18 @@ public class ChatMessage {
 
         if (text.startsWith("n.msg")){
             msg();
+            return;
         }
+
+        if (text.startsWith("n.kouta")){
+            kouta();
+            return;
+        }
+
+        if (text.startsWith("n.voteStop")){
+            stopVote();
+        }
+
     }
 
     private void help(){
@@ -449,12 +463,13 @@ public class ChatMessage {
 
             message.delete().queue();
 
-            String msg = message.getAuthor().getAsTag()+"さんっ！\n" +
+            String msg = message.getAuthor().getName()+"さんっ！\n" +
                     "n.voteのヘルプですっ！\n" +
                     "コマンドの書き方は\n" +
                     "`n.vote <タイトル> <選択肢1> <選択肢2> <選択肢3> <...> <選択肢19>` または\n" +
                     "`n.vote\n<タイトル>\n<選択肢1>\n<選択肢2>\n<選択肢3>\n<...>\n<選択肢19>`\nですっ！\n" +
-                    "タイトルが必要じゃない場合はn.voteNtとつけて同じようにしてくださいっ！！";
+                    "タイトルが必要じゃない場合はn.voteNtとつけて同じようにしてくださいっ！！\n" +
+                    "(投票を終了するには「n.voteStop <メッセージリンクのURL>」と入力してください)";
 
             textChannel.sendMessage(msg).queue();
             return;
@@ -572,27 +587,125 @@ public class ChatMessage {
 
     }
 
+    private void stopVote(){
+
+        String[] split = text.split(" ", -1);
+        if (split.length != 2){
+            message.reply("えらーです！").queue();
+            return;
+        }
+
+        String[] url = split[1].split("/", -1);
+
+        Guild guild = jda.getGuildById(url[4]);
+        if (guild == null){
+            message.reply("見つからないよぉ").queue();
+            return;
+        }
+
+        TextChannel textChannelById = guild.getTextChannelById(url[5]);
+        if (textChannelById == null){
+            message.reply("見つからないよぉ").queue();
+            return;
+        }
+
+
+        textChannelById.retrieveMessageById(url[6]).queue(message1 -> {
+            textChannelById.clearReactionsById(url[6]).queue();
+
+            String raw = message1.getContentRaw();
+            List<Member> members = guild.getMembers();
+
+            boolean b = false;
+            for (Member member : members){
+                User user = jda.getUserById(member.getId());
+                if (user != null){
+
+                    if (raw.contains(user.getName())){
+                        if (author.getName().equals(user.getName())){
+                            b = true;
+                            break;
+                        }
+                    }
+
+                }
+
+            }
+
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(message1.getContentRaw());
+
+            List<MessageReaction> reactions = message1.getReactions();
+
+            if (!message1.getAuthor().getId().equals("781323086624456735")){
+                message.reply("それはななみちゃんのメッセージじゃないよぉ").queue();
+                return;
+            }
+
+            if (!b){
+                message.reply("❗投票開始した人以外は投票終了できません！").queue();
+                return;
+            }
+
+            if (reactions.size() <= 1){
+                if (reactions.size() == 1 && reactions.get(0).getReactionEmote().getEmoji().equals("✅")){
+                    message.reply("それは結果発表済みみたい...").queue();
+                    return;
+                }
+                message.reply("？").queue();
+                return;
+            }
+
+            message1.clearReactions().queue();
+            sb.append("\n\n---- 投票結果 ----\n");
+
+            for (MessageReaction reaction : reactions){
+                sb.append(reaction.getReactionEmote().getEmoji());
+                sb.append(" : ");
+                sb.append(reaction.getCount() - 1);
+                sb.append("票\n");
+            }
+
+            message1.editMessage(sb.toString()).queue(message2 -> {
+                message2.addReaction("✅").queue();
+                message.delete().queue();
+                message.getChannel().sendMessage("投票を終了しました！\n" + split[1]).queue();
+            });
+        });
+
+
+    }
+
     private void gold(){
 
-        message.getChannel().sendMessage("https://goldarmor-is.best/").queue();
+        message.getChannel().sendMessage("https://goldarmor-is.best/").queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
     private void burn(){
 
-        message.getChannel().sendMessage("\uD83D\uDD25").queue();
+        message.getChannel().sendMessage("\uD83D\uDD25").queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
     private void renyoko(){
 
-        message.getChannel().sendMessage("れにょこの虫特攻はいい！").queue();
+        message.getChannel().sendMessage("れにょこの虫特攻はいい！").queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
     private void sand(){
 
-        message.getChannel().sendMessage("https://cdn.discordapp.com/emojis/620909371265908797.png?v=1").queue();
+        message.getChannel().sendMessage("https://cdn.discordapp.com/emojis/620909371265908797.png?v=1").queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
@@ -610,7 +723,9 @@ public class ChatMessage {
             stringBuffer.append("0");
         }
 
-        message.getChannel().sendMessage("ゆるりさんに "+stringBuffer.toString() + "円スパチャしました！").queue();
+        message.getChannel().sendMessage("ゆるりさんに "+stringBuffer.toString() + "円スパチャしました！").queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
@@ -629,13 +744,17 @@ public class ChatMessage {
         secureRandom.setSeed(new SecureRandom().nextInt(Integer.MAX_VALUE));
         int c = secureRandom.nextInt(a.size() - 1);
 
-        message.getChannel().sendMessage("変態は「"+a.get(c)+"さん」です！").queue();
+        message.getChannel().sendMessage("変態は「"+a.get(c)+"さん」です！").queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
     private void burst(){
 
-        message.getChannel().sendMessage("＼どっかーん！／").queue();
+        message.getChannel().sendMessage("＼どっかーん！／").queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
@@ -654,7 +773,9 @@ public class ChatMessage {
         SecureRandom secureRandom = new SecureRandom();
         int c = secureRandom.nextInt(list.size() - 1);
 
-        message.getChannel().sendMessage(list.get(c)).queue();
+        message.getChannel().sendMessage(list.get(c)).queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
@@ -695,4 +816,12 @@ public class ChatMessage {
 
     }
 
+    private void kouta(){
+
+        String text = "金装備の Kouta1212 ちゃん　は　神\n金装備の Kouta1212 ちゃん　は　かわいい";
+        message.getChannel().sendMessage(text).queue(message1 -> {
+            message1.addReaction("\uD83D\uDCAF").queue();
+        });
+
+    }
 }
