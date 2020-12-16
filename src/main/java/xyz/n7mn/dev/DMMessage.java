@@ -25,12 +25,9 @@ public class DMMessage {
     public void run(){
         // 最初にコマンドを受ける地点
 
-        if (author.getId().equals("529463370089234466")){
+        if (author.getId().equals("529463370089234466") && text.startsWith("n.")){
             admin();
-
-            if (text.startsWith("n.")){
-                return;
-            }
+            return;
         }
         reply();
     }
