@@ -483,8 +483,13 @@ public class ChatMessage {
             String msg = message.getAuthor().getName()+"さんっ！\n" +
                     "n.voteのヘルプですっ！\n" +
                     "コマンドの書き方は\n" +
-                    "`n.vote <タイトル> <選択肢1> <選択肢2> <選択肢3> <...> <選択肢19>` または\n" +
-                    "`n.vote\n<タイトル>\n<選択肢1>\n<選択肢2>\n<選択肢3>\n<...>\n<選択肢19>`\nですっ！\n" +
+                    "`n.vote <時間> <タイトル> <選択肢1> <選択肢2> <選択肢3> <...> <選択肢19>` または\n" +
+                    "`n.vote\n<時間>\n<タイトル>\n<選択肢1>\n<選択肢2>\n<選択肢3>\n<...>\n<選択肢19>`\nですっ！\n" +
+                    "時間の指定は以下の通りでできます！ (`t:`は`time:`に置き換えてもできます！)\n" +
+                    "`t:(時間)s または t:(時間) --- 秒\n" +
+                    "t:(時間)m --- 分\n" +
+                    "t:(時間)h --- 時\n" +
+                    "t:(時間)d --- 日`\n" +
                     "タイトルが必要じゃない場合はn.voteNtとつけて同じようにしてくださいっ！！\n" +
                     "(投票を終了するには「n.voteStop <メッセージリンクのURL>」と入力してください)";
 
@@ -534,16 +539,45 @@ public class ChatMessage {
             }
 
             List<String> vote;
-            String title;
+            final String title;
+            final String time;
             if (string[1].toLowerCase().startsWith("t:") || string[1].toLowerCase().startsWith("time:")){
                 vote = new ArrayList<>(Arrays.asList(string).subList(3, string.length));
                 title = string[2];
+                time = string[1];
             } else if (string[string.length - 1].toLowerCase().startsWith("t:") || string[string.length - 1].toLowerCase().startsWith("time:")){
                 vote = new ArrayList<>(Arrays.asList(string).subList(2, string.length - 1));
                 title = string[1];
+                time = string[string.length - 1];
             } else {
-                vote = new ArrayList<>(Arrays.asList(string).subList(2, string.length));
-                title = string[1];
+                int i = 0;
+                vote = new ArrayList<>();
+                String time2 = null;
+                String title2 = "";
+
+                for (String t : string){
+                    if (i == 0) {
+                        i++;
+                        continue;
+                    }
+
+                    if (i == 1){
+                        title2 = t;
+                        i++;
+                        continue;
+                    }
+
+                    if (time2 == null && t.toLowerCase().startsWith("t:") || t.toLowerCase().startsWith("time:")){
+                        time2 = t;
+                    } else {
+                        vote.add(t);
+                    }
+
+                    i++;
+                }
+
+                time = time2;
+                title = title2;
             }
 
             if (vote.size() == 0){
@@ -579,12 +613,65 @@ public class ChatMessage {
             }
             sb.append("\n(");
             sb.append(author.getName());
-            sb.append(" さんが投票を開始しました)");
+            sb.append(" さんが投票を開始しました");
+
+            if (time != null && getMs(time) != -1){
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                Date date = new Date();
+                long time1 = date.getTime() + getMs(time);;
+
+                sb.append(" ");
+                sb.append(simpleDateFormat.format(time1));
+                sb.append("まで投票受付中です。");
+
+            }
+            sb.append(")");
 
             textChannel.sendMessage(sb.toString()).queue(message -> {
 
                 for (int i = 0; i < vote.size(); i++){
                     message.addReaction(regional[i]).queue();
+                }
+
+                if (time != null){
+
+                    long ms = getMs(time);
+
+                    if (ms != -1){
+
+                        TimerTask task = new TimerTask() {
+                            public void run() {
+                                StringBuffer sb = new StringBuffer(message.getContentRaw());
+                                sb.append("\n\n---- 投票結果 ----\n");
+
+                                message.getChannel().retrieveMessageById(message.getId()).queue(message1 -> {
+
+                                    List<MessageReaction> reactions = message1.getReactions();
+                                    message1.clearReactions().queue();
+                                    for (MessageReaction reaction : reactions){
+
+                                        sb.append(reaction.getReactionEmote().getEmoji());
+                                        sb.append(" : ");
+                                        sb.append(reaction.getCount() - 1);
+                                        sb.append("票\n");
+
+                                    }
+
+
+                                    message1.editMessage(sb.toString().replaceAll("まで投票受付中です。","まで投票受付しました。")).queue(message2 -> {
+                                        message2.addReaction("✅").queue();
+                                    });
+
+                                });
+
+
+                            }
+                        };
+
+                        Timer timer = new Timer();
+                        timer.schedule(task, ms);
+                    }
                 }
 
             });
@@ -602,12 +689,35 @@ public class ChatMessage {
             }
 
             List<String> vote;
+            final String time;
             if (string[1].toLowerCase().startsWith("t:") || string[1].toLowerCase().startsWith("time:")){
                 vote = new ArrayList<>(Arrays.asList(string).subList(2, string.length));
+                time = null;
             } else if (string[string.length - 1].toLowerCase().startsWith("t:") || string[string.length - 1].toLowerCase().startsWith("time:")){
                 vote = new ArrayList<>(Arrays.asList(string).subList(1, string.length - 1));
+                time = null;
             } else {
-                vote = new ArrayList<>(Arrays.asList(string).subList(1, string.length));
+                int i = 0;
+                vote = new ArrayList<>();
+                String time2 = null;
+
+                for (String t : string){
+
+                    if (i == 0) {
+                        i++;
+                        continue;
+                    }
+
+                    if (time2 == null && t.toLowerCase().startsWith("t:") || t.toLowerCase().startsWith("time:")){
+                        time2 = t;
+                    } else {
+                        vote.add(t);
+                    }
+
+                    i++;
+                }
+
+                time = time2;
             }
 
             if (vote.size() == 0){
@@ -641,7 +751,19 @@ public class ChatMessage {
             }
             sb.append("\n(");
             sb.append(author.getName());
-            sb.append(" さんが投票を開始しました)");
+            sb.append(" さんが投票を開始しました");
+            if (time != null && getMs(time) != -1){
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                Date date = new Date();
+                long time1 = date.getTime() + getMs(time);;
+
+                sb.append(" ");
+                sb.append(simpleDateFormat.format(time1));
+                sb.append("まで投票受付中です。");
+
+            }
+            sb.append(")");
 
             textChannel.sendMessage(sb.toString()).queue(message -> {
 
@@ -649,6 +771,45 @@ public class ChatMessage {
                     message.addReaction(regional[i]).queue();
                 }
 
+                if (time != null){
+
+                    long ms = getMs(time);
+
+                    if (ms != -1){
+
+                        TimerTask task = new TimerTask() {
+                            public void run() {
+                                StringBuffer sb = new StringBuffer(message.getContentRaw());
+                                sb.append("\n\n---- 投票結果 ----\n");
+
+                                message.getChannel().retrieveMessageById(message.getId()).queue(message1 -> {
+
+                                    List<MessageReaction> reactions = message1.getReactions();
+                                    message1.clearReactions().queue();
+                                    for (MessageReaction reaction : reactions){
+
+                                        sb.append(reaction.getReactionEmote().getEmoji());
+                                        sb.append(" : ");
+                                        sb.append(reaction.getCount() - 1);
+                                        sb.append("票\n");
+
+                                    }
+
+
+                                    message1.editMessage(sb.toString().replaceAll("まで投票受付中です。","まで投票受付しました。")).queue(message2 -> {
+                                        message2.addReaction("✅").queue();
+                                    });
+
+                                });
+
+
+                            }
+                        };
+
+                        Timer timer = new Timer();
+                        timer.schedule(task, ms);
+                    }
+                }
             });
         }
 
@@ -889,6 +1050,40 @@ public class ChatMessage {
         message.getChannel().sendMessage(text).queue(message1 -> {
             message1.addReaction("\uD83D\uDCAF").queue();
         });
+
+    }
+
+
+
+    private long getMs(String time){
+
+        long ms = -1;
+
+        try {
+            // 秒
+            if (time.toLowerCase().endsWith("s")){
+                ms = Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("s","")) * 1000;
+            }
+            // 分
+            if (time.toLowerCase().endsWith("m")){
+                ms = (Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("m","")) * 60) * 1000;
+            }
+            // 時
+            if (time.toLowerCase().endsWith("h")){
+                ms = ((Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("h","")) * 60) * 60) * 1000;
+            }
+            // 日
+            if (time.toLowerCase().endsWith("d")){
+                ms = (((Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("h","")) * 60) * 60) * 24) * 1000;
+            } else {
+                ms = Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("s","")) * 1000;
+            }
+
+        } catch (Exception e){
+            ms = -1;
+        }
+
+        return ms;
 
     }
 }
