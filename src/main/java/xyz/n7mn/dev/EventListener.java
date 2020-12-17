@@ -85,14 +85,14 @@ class EventListener extends ListenerAdapter {
                                                         continue;
                                                     }
 
-                                                    if (data.getHead().getEventID() == lastId[0] && (sokuhoText[0].length() == 0 || data.getHead().getInfoKind().equals(sokuhoText[0]))){
+                                                    if (data.getHead().getEventID() == lastId[0] && (sokuhoText[0].length() != 0 && data.getHead().getInfoKind().equals(sokuhoText[0]))){
                                                         System.out.println("Debug : 前と同じ");
                                                         continue;
                                                     }
 
                                                     System.out.println("地震情報を送信しました : " + channel.getName());
                                                     StringBuffer sb = new StringBuffer();
-                                                    if (earthquake.getData().getControl().getTitle().equals("地震情報")){
+                                                    if (earthquake.getData().getHead().getInfoKind().equals("地震情報")){
                                                         sb.append("------ 地震情報 (ここから) ------\n");
                                                         sb.append(data.getHead().getHeadline());
                                                         sb.append("\n");
@@ -129,7 +129,9 @@ class EventListener extends ListenerAdapter {
                                                         }
 
                                                         sb.append("------ 地震情報 (ここまで) ------");
-                                                    } else if (earthquake.getData().getControl().getTitle().equals("地震速報")) {
+                                                        channel.sendMessage(sb.toString()).queue();
+                                                        System.out.println("Debug : send");
+                                                    } else if (earthquake.getData().getHead().getInfoKind().equals("地震速報")) {
                                                         sb.append("**------ 地震速報 (ここから) ------**\n");
                                                         sb.append(data.getHead().getHeadline());
                                                         sb.append("\n");
@@ -151,10 +153,11 @@ class EventListener extends ListenerAdapter {
                                                         sb.append(data.getBody().getComments().getObservation());
                                                         sb.append("\n");
                                                         sb.append("**------ 地震速報 (ここまで) ------**\n");
+                                                        channel.sendMessage(sb.toString()).queue();
+                                                        System.out.println("Debug : send");
                                                     }
 
-                                                    channel.sendMessage(sb.toString()).queue();
-                                                    System.out.println("Debug : send");
+
 
                                                 }
 
