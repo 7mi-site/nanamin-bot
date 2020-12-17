@@ -92,7 +92,7 @@ class EventListener extends ListenerAdapter {
 
                                                     System.out.println("地震情報を送信しました : " + channel.getName());
                                                     StringBuffer sb = new StringBuffer();
-                                                    if (!earthquake.getData().getControl().getTitle().equals("地震速報")){
+                                                    if (earthquake.getData().getControl().getTitle().equals("地震情報")){
                                                         sb.append("------ 地震情報 (ここから) ------\n");
                                                         sb.append(data.getHead().getHeadline());
                                                         sb.append("\n");
@@ -129,7 +129,7 @@ class EventListener extends ListenerAdapter {
                                                         }
 
                                                         sb.append("------ 地震情報 (ここまで) ------");
-                                                    } else {
+                                                    } else if (earthquake.getData().getControl().getTitle().equals("地震速報")) {
                                                         sb.append("**------ 地震速報 (ここから) ------**\n");
                                                         sb.append(data.getHead().getHeadline());
                                                         sb.append("\n");
