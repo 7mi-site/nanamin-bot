@@ -69,7 +69,7 @@ public class ChatMessage {
             return;
         }
 
-        if (text.toLowerCase().startsWith("n.vote") && !text.startsWith("n.voteStop")){
+        if (text.toLowerCase().startsWith("n.vote") && !text.toLowerCase().startsWith("n.votestop")){
             vote();
             return;
         }
@@ -165,7 +165,7 @@ public class ChatMessage {
             return;
         }
 
-        if (text.startsWith("n.voteStop")){
+        if (text.toLowerCase().startsWith("n.votestop")){
             stopVote();
         }
 
@@ -520,13 +520,43 @@ public class ChatMessage {
         if (text.toLowerCase().startsWith("n.vote") && !text.startsWith("n.voteNt")){
 
             String[] string;
+
             if (text.split("\n",-1).length >= 3){
                 string = text.split("\n", -1);
             } else {
-                string = text.split(" ", -1);
+                String text1 = text.replaceAll("　"," ");
+                string = text1.split(" ", -1);
             }
 
-            if ((string.length - 2) > regional.length){
+            if (string.length <= 3 && (string[1].toLowerCase().startsWith("t:") || string[1].toLowerCase().startsWith("time:"))){
+                message.reply("えらーですっ！選択肢が見つかりませんっ！").queue();
+                return;
+            }
+
+            List<String> vote;
+            String title;
+            if (string[1].toLowerCase().startsWith("t:") || string[1].toLowerCase().startsWith("time:")){
+                vote = new ArrayList<>(Arrays.asList(string).subList(3, string.length));
+                title = string[2];
+            } else if (string[string.length - 1].toLowerCase().startsWith("t:") || string[string.length - 1].toLowerCase().startsWith("time:")){
+                vote = new ArrayList<>(Arrays.asList(string).subList(2, string.length - 1));
+                title = string[1];
+            } else {
+                vote = new ArrayList<>(Arrays.asList(string).subList(2, string.length));
+                title = string[1];
+            }
+
+            if (vote.size() == 0){
+                message.reply("えらーですっ！選択肢が見つかりませんっ！").queue();
+                return;
+            }
+
+            if (vote.size() == 1){
+                message.reply("選択肢がひとつしか見つからない...").queue();
+                return;
+            }
+
+            if (vote.size() > regional.length){
                 message.reply("えらーですっ！選択肢が多すぎます！！").queue();
                 return;
             }
@@ -535,15 +565,15 @@ public class ChatMessage {
 
             StringBuffer sb = new StringBuffer();
             sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---\n投票タイトル：");
-            sb.append(string[1]);
+            sb.append(title);
             sb.append("\n\n");
 
 
-            for (int i = 0; i < (string.length - 2); i++){
+            for (int i = 0; i < vote.size(); i++){
 
                 sb.append(regional[i]);
                 sb.append(" : ");
-                sb.append(string[i + 2]);
+                sb.append(vote.get(i));
                 sb.append("\n");
 
             }
@@ -553,8 +583,8 @@ public class ChatMessage {
 
             textChannel.sendMessage(sb.toString()).queue(message -> {
 
-                for (int i = 1; i < (string.length - 1); i++){
-                    message.addReaction(regional[i - 1]).queue();
+                for (int i = 0; i < vote.size(); i++){
+                    message.addReaction(regional[i]).queue();
                 }
 
             });
@@ -567,10 +597,30 @@ public class ChatMessage {
             if (text.split("\n",-1).length >= 2){
                 string = text.split("\n", -1);
             } else {
-                string = text.split(" ", -1);
+                String text1 = text.replaceAll("　"," ");
+                string = text1.split(" ", -1);
             }
 
-            if ((string.length - 1) > regional.length){
+            List<String> vote;
+            if (string[1].toLowerCase().startsWith("t:") || string[1].toLowerCase().startsWith("time:")){
+                vote = new ArrayList<>(Arrays.asList(string).subList(2, string.length));
+            } else if (string[string.length - 1].toLowerCase().startsWith("t:") || string[string.length - 1].toLowerCase().startsWith("time:")){
+                vote = new ArrayList<>(Arrays.asList(string).subList(1, string.length - 1));
+            } else {
+                vote = new ArrayList<>(Arrays.asList(string).subList(1, string.length));
+            }
+
+            if (vote.size() == 0){
+                message.reply("えらーですっ！選択肢が見つかりませんっ！").queue();
+                return;
+            }
+
+            if (vote.size() == 1){
+                message.reply("選択肢がひとつしか見つからない...").queue();
+                return;
+            }
+
+            if (vote.size() > regional.length){
                 message.reply("えらーですっ！選択肢が多すぎます！！").queue();
                 return;
             }
@@ -581,11 +631,11 @@ public class ChatMessage {
             sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---");
             sb.append("\n\n");
 
-            for (int i = 0; i < (string.length - 1); i++){
+            for (int i = 0; i < vote.size(); i++){
 
                 sb.append(regional[i]);
                 sb.append(" : ");
-                sb.append(string[i + 1]);
+                sb.append(vote.get(i));
                 sb.append("\n");
 
             }
@@ -595,7 +645,7 @@ public class ChatMessage {
 
             textChannel.sendMessage(sb.toString()).queue(message -> {
 
-                for (int i = 0; i < (string.length - 1); i++){
+                for (int i = 0; i < vote.size(); i++){
                     message.addReaction(regional[i]).queue();
                 }
 
