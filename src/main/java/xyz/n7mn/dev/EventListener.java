@@ -52,32 +52,12 @@ class EventListener extends ListenerAdapter {
 
         Timer timer = new Timer();
 
-        final String[] sokuhoText = {"",""};
+        final String[] sokuhoText = {""};
 
         TimerTask task = new TimerTask() {
             public void run() {
                 try {
                     EarthquakeResult data1 = earthquake.getData();
-
-                    OkHttpClient client = new OkHttpClient();
-                    Request request = new Request.Builder()
-                            .url("http://127.0.0.1:8899/kisyotyo_html.php")
-                            .build();
-                    try {
-                        Response response = client.newCall(request).execute();
-                        if (sokuhoText[0].length() == 0){
-                            sokuhoText[0] = response.body().string();
-                            if (sokuhoText[1].length() == 0){
-                                sokuhoText[1] = response.body().string();
-                            }
-                        }else{
-                            sokuhoText[0] = response.body().string();
-                        }
-
-                    } catch (Exception e){
-                        // e.printStackTrace();
-                    }
-
                     for (Guild guild : jda.getGuilds()){
 
                         List<TextChannel> textChannels = guild.getTextChannels();
@@ -95,17 +75,7 @@ class EventListener extends ListenerAdapter {
                                             String[] split = message.getContentRaw().split(" ");
 
                                             TextChannel channel = guild.getTextChannelById(split[1]);
-
-
                                             if (channel != null){
-                                                // channel.sendMessage("テスト送信です。 削除お願いします。").queue();
-                                                if (!sokuhoText[1].equals(sokuhoText[0])){
-                                                    channel.sendMessage("----- 気象庁速報 (ここから) -----\n" + sokuhoText[0] + "\n----- 気象庁速報 (ここまで) -----").queue();
-                                                    System.out.println("----- 気象庁速報 (ここから) -----\n" + sokuhoText[0] + "\n----- 気象庁速報 (ここまで) -----");
-                                                    //System.out.println("debug 0\n" + sokuhoText[0]);
-                                                    //System.out.println("debug 1 \n" + sokuhoText[1]);
-                                                }
-
                                                 if (earthquake.getLastEventID() != -1){
 
                                                     System.out.println("Debug : 地震情報取得");
@@ -115,49 +85,73 @@ class EventListener extends ListenerAdapter {
                                                         continue;
                                                     }
 
-                                                    if (data.getHead().getEventID() == lastId[0]){
+                                                    if (data.getHead().getEventID() == lastId[0] && (sokuhoText[0].length() == 0 || data.getHead().getInfoKind().equals(sokuhoText[0]))){
                                                         System.out.println("Debug : 前と同じ");
                                                         continue;
                                                     }
 
                                                     System.out.println("地震情報を送信しました : " + channel.getName());
                                                     StringBuffer sb = new StringBuffer();
-                                                    sb.append("------ 地震情報 (ここから) ------\n");
-                                                    sb.append(data.getHead().getHeadline());
-                                                    sb.append("\n");
-                                                    sb.append("震源地は");
-                                                    sb.append(data.getBody().getEarthquake().getHypocenter().getName());
-                                                    sb.append("(");
-                                                    sb.append(data.getBody().getEarthquake().getHypocenter().getLongitude());
-                                                    sb.append(",");
-                                                    sb.append(data.getBody().getEarthquake().getHypocenter().getLatitude());
-                                                    sb.append(")\n");
-                                                    sb.append("マグニチュードは M ");
-                                                    sb.append(data.getBody().getEarthquake().getMagnitude());
-                                                    sb.append("と推定されています。\n");
-                                                    sb.append(data.getBody().getComments().getObservation());
-                                                    sb.append("\n");
-                                                    sb.append("最大震度は ");
-                                                    sb.append(data.getBody().getIntensity().getObservation().getMaxInt());
-                                                    sb.append(" です。\n");
+                                                    if (!earthquake.getData().getControl().getTitle().equals("地震速報")){
+                                                        sb.append("------ 地震情報 (ここから) ------\n");
+                                                        sb.append(data.getHead().getHeadline());
+                                                        sb.append("\n");
+                                                        sb.append("震源地は");
+                                                        sb.append(data.getBody().getEarthquake().getHypocenter().getName());
+                                                        sb.append("(");
+                                                        sb.append(data.getBody().getEarthquake().getHypocenter().getLongitude());
+                                                        sb.append(",");
+                                                        sb.append(data.getBody().getEarthquake().getHypocenter().getLatitude());
+                                                        sb.append(")\n");
+                                                        sb.append("マグニチュードは M ");
+                                                        sb.append(data.getBody().getEarthquake().getMagnitude());
+                                                        sb.append("と推定されています。\n");
+                                                        sb.append(data.getBody().getComments().getObservation());
+                                                        sb.append("\n");
+                                                        sb.append("最大震度は ");
+                                                        sb.append(data.getBody().getIntensity().getObservation().getMaxInt());
+                                                        sb.append(" です。\n");
 
-                                                    sb.append("---- 各地の震度 ---- \n");
-                                                    Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
-                                                    for (Pref perf : prefList){
-                                                        Area[] areaList = perf.getArea();
+                                                        sb.append("---- 各地の震度 ---- \n");
+                                                        Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
+                                                        for (Pref perf : prefList){
+                                                            Area[] areaList = perf.getArea();
 
-                                                        for (Area area : areaList){
+                                                            for (Area area : areaList){
 
-                                                            sb.append(area.getName());
-                                                            sb.append(" 震度 ");
-                                                            sb.append(area.getMaxInt());
-                                                            sb.append("\n");
+                                                                sb.append(area.getName());
+                                                                sb.append(" 震度 ");
+                                                                sb.append(area.getMaxInt());
+                                                                sb.append("\n");
+
+                                                            }
 
                                                         }
 
-                                                    }
+                                                        sb.append("------ 地震情報 (ここまで) ------");
+                                                    } else {
+                                                        sb.append("**------ 地震速報 (ここから) ------**\n");
+                                                        sb.append(data.getHead().getHeadline());
+                                                        sb.append("\n");
+                                                        Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
+                                                        for (Pref perf : prefList){
+                                                            Area[] areaList = perf.getArea();
 
-                                                    sb.append("------ 地震情報 (ここまで) ------");
+                                                            for (Area area : areaList){
+
+                                                                sb.append(area.getName());
+                                                                sb.append(" 震度 ");
+                                                                sb.append(area.getMaxInt());
+                                                                sb.append("\n");
+
+                                                            }
+
+                                                        }
+
+                                                        sb.append(data.getBody().getComments().getObservation());
+                                                        sb.append("\n");
+                                                        sb.append("**------ 地震速報 (ここまで) ------**\n");
+                                                    }
 
                                                     channel.sendMessage(sb.toString()).queue();
                                                     System.out.println("Debug : send");
@@ -175,10 +169,7 @@ class EventListener extends ListenerAdapter {
                     }
                     if (data1 != null){
                         lastId[0] = data1.getHead().getEventID();
-                    }
-
-                    if (!sokuhoText[1].equals(sokuhoText[0])){
-                        sokuhoText[1] = sokuhoText[0];
+                        sokuhoText[0] = data1.getHead().getInfoKind();
                     }
                 } catch (Exception e){
 

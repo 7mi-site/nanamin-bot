@@ -183,7 +183,7 @@ public class ChatMessage {
                 "`n.dice` -- さいころを振る\n"+
                 "`n.random <文字列1> <文字列2> <...> <文字列n>` -- 指定された文字列の中から一つを表示する\n" +
                 "`n.play <URL>` -- 音楽を再生する(停止する場合は`n.stop`)\n" +
-                "`n.fire` -- :fire:\n" +
+                "`n.burn` -- :fire:\n" +
                 "`n.burst` -- どっかーん\n" +
                 "`n.check` -- 動作確認\n";
         StringBuffer sb = new StringBuffer(helpText);
