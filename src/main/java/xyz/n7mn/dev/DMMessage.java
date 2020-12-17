@@ -81,6 +81,8 @@ public class DMMessage {
                 sb.append(guild.getName());
                 sb.append("\n");
             }
+
+            message.getPrivateChannel().sendMessage(sb.toString()).queue();
             return;
         }
 
