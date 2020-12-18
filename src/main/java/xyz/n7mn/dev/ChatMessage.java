@@ -652,8 +652,6 @@ public class ChatMessage {
                         TimerTask task = new TimerTask() {
                             public void run() {
                                 StringBuffer sb = new StringBuffer(message.getContentRaw());
-                                sb.append("\n\n---- 投票結果 ----\n");
-
                                 message.getChannel().retrieveMessageById(message.getId()).queue(message1 -> {
 
                                     List<MessageReaction> reactions = message1.getReactions();
@@ -796,8 +794,6 @@ public class ChatMessage {
                         TimerTask task = new TimerTask() {
                             public void run() {
                                 StringBuffer sb = new StringBuffer(message.getContentRaw());
-                                sb.append("\n\n---- 投票結果 ----\n");
-
                                 message.getChannel().retrieveMessageById(message.getId()).queue(message1 -> {
 
                                     List<MessageReaction> reactions = message1.getReactions();
