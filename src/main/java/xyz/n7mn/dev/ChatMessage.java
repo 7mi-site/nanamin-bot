@@ -1108,13 +1108,12 @@ public class ChatMessage {
             sb.append("入室日時 : `");
             sb.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(joinTime));
             sb.append("\n`");
-            sb.append("ロール：\n`");
+            sb.append("ロール：\n");
             for (Role role : roles){
-                sb.append(" ");
+                sb.append("`");
                 sb.append(role.getName());
-                sb.append("\n");
+                sb.append("`\n");
             }
-            sb.append("`");
 
             message.reply(sb.toString()).queue(message1 -> {
                 message1.addReaction("✅").queue();
