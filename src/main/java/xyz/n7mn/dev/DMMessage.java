@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import java.util.List;
-import java.util.function.BooleanSupplier;
 
 public class DMMessage {
 
@@ -51,6 +50,18 @@ public class DMMessage {
 
         if (message.getContentRaw().startsWith("ぱんつ何色") || message.getContentRaw().startsWith("パンツ何色")){
             message.getPrivateChannel().sendMessage("へんたいっ！").queue();
+            return;
+        }
+
+        if (message.getContentRaw().startsWith("にゃーん")){
+            message.getPrivateChannel().sendMessage("にゃーん").queue(message1 -> {
+                message1.addReaction("\uD83D\uDC31").queue();
+            });
+            return;
+        }
+
+        if (message.getContentRaw().startsWith("パンツ食べますか") || message.getContentRaw().startsWith("ぱんつ食べますか")){
+            message.getPrivateChannel().sendMessage(":thinking:").queue();
             return;
         }
 
