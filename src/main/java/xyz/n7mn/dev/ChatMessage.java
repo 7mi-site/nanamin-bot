@@ -167,6 +167,11 @@ public class ChatMessage {
 
         if (text.toLowerCase().startsWith("n.votestop")){
             stopVote();
+            return;
+        }
+
+        if (text.toLowerCase().startsWith("n.role")){
+            role();
         }
 
     }
@@ -476,7 +481,7 @@ public class ChatMessage {
 
         }
 
-        if (text.toLowerCase().equals("n.vote") || text.equals("n.voteNt")){
+        if (text.toLowerCase().equals("n.vote") || text.toLowerCase().equals("n.votent")){
 
             message.delete().queue();
 
@@ -1053,6 +1058,70 @@ public class ChatMessage {
 
     }
 
+    private void role(){
+
+        String[] split = text.split(" ", -1);
+        if (split.length == 2){
+
+            Member member = guild.getMemberById(split[1]);
+            if (member == null){
+                for (Member m : guild.getMembers()){
+                    if (m.getNickname() != null){
+                        if (m.getNickname().contains(split[1])){
+                            member = m;
+                            break;
+                        }
+                    } else {
+                        if (m.getUser().getAsTag().startsWith(split[1])){
+                            member = m;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (member == null){
+                message.reply("そのIDはこのDiscord鯖には存在しないユーザーらしいですよ？").queue();
+                return;
+            }
+
+            StringBuffer sb = new StringBuffer();
+
+            sb.append("----- ");
+            if (member.getNickname() != null){
+                sb.append(member.getNickname());
+                sb.append(" (");
+                sb.append(member.getUser().getAsTag());
+                sb.append(")さんの情報 -----\n");
+            } else {
+                sb.append(member.getUser().getAsTag());
+                sb.append("さんの情報 -----\n");
+            }
+
+            Date joinTime = Date.from(member.getTimeJoined().toInstant());
+            boolean isBot = member.getUser().isBot();
+            List<Role> roles = member.getRoles();
+
+            sb.append("botかどうか : `");
+            sb.append(isBot);
+            sb.append("`\n");
+            sb.append("入室日時 : `");
+            sb.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(joinTime));
+            sb.append("\n`");
+            sb.append("ロール：\n`");
+            for (Role role : roles){
+                sb.append(" ");
+                sb.append(role.getName());
+                sb.append("\n");
+            }
+            sb.append("`");
+
+            message.reply(sb.toString()).queue(message1 -> {
+                message1.addReaction("✅").queue();
+            });
+        }
+
+    }
 
 
     private long getMs(String time){
@@ -1086,4 +1155,5 @@ public class ChatMessage {
         return ms;
 
     }
+
 }
