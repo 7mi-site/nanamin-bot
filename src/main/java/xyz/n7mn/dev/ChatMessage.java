@@ -1,7 +1,5 @@
 package xyz.n7mn.dev;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
