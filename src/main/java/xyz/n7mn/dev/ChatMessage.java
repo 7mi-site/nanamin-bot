@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import xyz.n7mn.dev.data.Vote;
+import xyz.n7mn.dev.data.VoteComparator;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
 
@@ -14,6 +15,8 @@ import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.*;
+
+import static java.util.Collections.*;
 
 public class ChatMessage {
 
@@ -247,7 +250,7 @@ public class ChatMessage {
         List<String> wordList = new ArrayList<>();
         wordList.addAll(Arrays.asList(split).subList(1, split.length));
 
-        Collections.shuffle(wordList);
+        shuffle(wordList);
 
 
         int i = (secureRandom.nextInt(wordList.size()));
@@ -654,13 +657,20 @@ public class ChatMessage {
 
                                     List<MessageReaction> reactions = message1.getReactions();
                                     message1.clearReactions().queue();
+
+                                    List<Vote> voteResultList = new ArrayList<>();
                                     for (MessageReaction reaction : reactions){
+                                        voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), reaction.getCount() - 1));
+                                    }
 
-                                        sb.append(reaction.getReactionEmote().getEmoji());
+                                    voteResultList.sort(new VoteComparator());
+
+                                    sb.append("\n\n---- 投票結果 ----\n");
+                                    for (Vote vote : voteResultList){
+                                        sb.append(vote.getEmoji());
                                         sb.append(" : ");
-                                        sb.append(reaction.getCount() - 1);
+                                        sb.append(vote.getCount());
                                         sb.append("票\n");
-
                                     }
 
 
@@ -791,13 +801,20 @@ public class ChatMessage {
 
                                     List<MessageReaction> reactions = message1.getReactions();
                                     message1.clearReactions().queue();
+
+                                    List<Vote> voteResultList = new ArrayList<>();
                                     for (MessageReaction reaction : reactions){
+                                        voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), reaction.getCount() - 1));
+                                    }
 
-                                        sb.append(reaction.getReactionEmote().getEmoji());
+                                    voteResultList.sort(new VoteComparator());
+
+                                    sb.append("\n\n---- 投票結果 ----\n");
+                                    for (Vote vote : voteResultList){
+                                        sb.append(vote.getEmoji());
                                         sb.append(" : ");
-                                        sb.append(reaction.getCount() - 1);
+                                        sb.append(vote.getCount());
                                         sb.append("票\n");
-
                                     }
 
 
@@ -891,12 +908,20 @@ public class ChatMessage {
             }
 
             message1.clearReactions().queue();
-            sb.append("\n\n---- 投票結果 ----\n");
 
+            List<Vote> voteResultList = new ArrayList<>();
             for (MessageReaction reaction : reactions){
-                sb.append(reaction.getReactionEmote().getEmoji());
+
+                voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), reaction.getCount() - 1));
+            }
+
+            voteResultList.sort(new VoteComparator());
+
+            sb.append("\n\n---- 投票結果 ----\n");
+            for (Vote vote : voteResultList){
+                sb.append(vote.getEmoji());
                 sb.append(" : ");
-                sb.append(reaction.getCount() - 1);
+                sb.append(vote.getCount());
                 sb.append("票\n");
             }
 
@@ -971,7 +996,7 @@ public class ChatMessage {
         a.add("ゆるり");
         a.add("みやゆ");
         a.add(author.getName());
-        Collections.shuffle(a);
+        shuffle(a);
 
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.setSeed(new SecureRandom().nextInt(Integer.MAX_VALUE));
@@ -1001,7 +1026,7 @@ public class ChatMessage {
         };
 
         List<String> list = Arrays.asList(split);
-        Collections.shuffle(list);
+        shuffle(list);
 
         SecureRandom secureRandom = new SecureRandom();
         int c = secureRandom.nextInt(list.size() - 1);

@@ -131,7 +131,7 @@ class EventListener extends ListenerAdapter {
                                                         sb.append("------ 地震情報 (ここまで) ------");
                                                         channel.sendMessage(sb.toString()).queue();
                                                         System.out.println("Debug : send");
-                                                    } else if (earthquake.getData().getHead().getInfoKind().equals("地震速報")) {
+                                                    } else if (earthquake.getData().getHead().getInfoKind().equals("震度速報")) {
                                                         sb.append("**------ 地震速報 (ここから) ------**\n");
                                                         sb.append(data.getHead().getHeadline());
                                                         sb.append("\n");
@@ -154,7 +154,7 @@ class EventListener extends ListenerAdapter {
                                                         sb.append("\n");
                                                         sb.append("**------ 地震速報 (ここまで) ------**\n");
                                                         channel.sendMessage(sb.toString()).queue();
-                                                        System.out.println("Debug : send");
+                                                        System.out.println("Debug : send2");
                                                     }
 
 
