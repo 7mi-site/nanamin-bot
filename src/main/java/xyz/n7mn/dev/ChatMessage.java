@@ -1,6 +1,7 @@
 package xyz.n7mn.dev;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -191,7 +192,9 @@ public class ChatMessage {
                 "`n.play <URL>` -- 音楽を再生する(停止する場合は`n.stop`)\n" +
                 "`n.burn` -- :fire:\n" +
                 "`n.burst` -- どっかーん\n" +
-                "`n.check` -- 動作確認\n";
+                "`n.check` -- 動作確認\n" +
+                "`n.role <ユーザーID or 名前>` -- 指定ユーザーの情報を確認する\n" +
+                "`n.role <ユーザーID or 名前> <ロールID or ロールの名前>` -- 指定ユーザーのロールを追加または削除をする\n";
         StringBuffer sb = new StringBuffer(helpText);
 
         if (!message.getGuild().getId().equals("517669763556704258")){
@@ -1084,11 +1087,28 @@ public class ChatMessage {
     private void role(){
 
         String[] split = text.split(" ", -1);
-        if (split.length == 2){
-            // 確認
-            Member member = null;
+
+        Member member = null;
+        if (split.length == 2 || split.length == 3){
             try {
                 member = guild.getMemberById(split[1]);
+
+                if (member == null){
+                    for (Member m : guild.getMembers()){
+                        if (m.getNickname() != null){
+                            if (m.getNickname().contains(split[1])){
+                                member = m;
+                                break;
+                            }
+                        } else {
+                            if (m.getUser().getAsTag().startsWith(split[1])){
+                                member = m;
+                                break;
+                            }
+                        }
+                    }
+                }
+
             } catch (Exception e){
                 for (Member m : guild.getMembers()){
                     if (m.getNickname() != null){
@@ -1109,6 +1129,10 @@ public class ChatMessage {
                 message.reply("このDiscord鯖には存在しないユーザーらしいですよ？").queue();
                 return;
             }
+        }
+
+        if (split.length == 2){
+            // 確認
 
             StringBuffer sb = new StringBuffer();
 
@@ -1147,7 +1171,61 @@ public class ChatMessage {
 
         if (split.length == 3){
             // 追加
-            System.out.println("まだ");
+            Member na = guild.getMemberById("781323086624456735");
+            if (na != null && !na.hasPermission(Permission.MANAGE_ROLES)){
+                message.reply("この鯖ではロール追加機能は使わせてもらえないです；；").queue();
+                return;
+            }
+
+            Member id = guild.getMemberById(author.getId());
+            if (id != null && !id.hasPermission(Permission.MANAGE_ROLES)){
+                message.reply("あなたはロール追加ができないみたいです。").queue();
+                return;
+            }
+
+            Role setRole;
+            try {
+                setRole = guild.getRoleById(split[2]);
+            } catch (Exception e){
+                setRole = null;
+            }
+
+            if (setRole == null){
+                List<Role> roles = guild.getRoles();
+
+                for (Role role : roles){
+
+                    if (role.getName().equals(split[2])){
+                        setRole = role;
+                        break;
+                    }
+
+                }
+            }
+
+            if (setRole != null){
+
+                boolean isRole = false;
+
+                List<Role> roles = member.getRoles();
+                for (Role role : roles){
+                    if (setRole.getId().equals(role.getId())){
+                        isRole = true;
+                        break;
+                    }
+                }
+
+                if (!isRole){
+                    guild.addRoleToMember(member, setRole).queue();
+                    message.reply(member.getUser().getName() + "さんをロール「"+setRole.getName()+"」に追加をしました！").queue();
+                    return;
+                }
+
+                guild.removeRoleFromMember(member, setRole).queue();
+                message.reply(member.getUser().getName() + "さんからロール「"+setRole.getName()+"」を削除しました！").queue();
+
+            }
+
         }
     }
 
