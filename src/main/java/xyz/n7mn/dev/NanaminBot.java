@@ -59,7 +59,7 @@ public class NanaminBot {
                     .addEventListeners(new EventListener())
                     .enableCache(CacheFlag.VOICE_STATE)
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
-                    .setActivity(Activity.playing("ななみちゃんbot v1.1"))
+                    .setActivity(Activity.playing("ななみちゃんbot v1.1.1"))
                     .build();
 
 

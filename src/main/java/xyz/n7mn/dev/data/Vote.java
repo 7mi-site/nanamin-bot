@@ -1,34 +1,28 @@
 package xyz.n7mn.dev.data;
 
-import java.util.Date;
-
 public class Vote {
 
-    private String Title;
-    private String[] Vote;
-    private Date Closing;
+    private String Emoji;
+    private int Count;
 
-    public String getTitle() {
-        return Title;
+    public Vote(String emoji, int count){
+        this.Emoji = emoji;
+        this.Count = count;
     }
 
-    public void setTitle(String title) {
-        Title = title;
+    public String getEmoji() {
+        return Emoji;
     }
 
-    public String[] getVote() {
-        return Vote;
+    public void setEmoji(String emoji) {
+        Emoji = emoji;
     }
 
-    public void setVote(String[] vote) {
-        Vote = vote;
+    public int getCount() {
+        return Count;
     }
 
-    public Date getClosing() {
-        return Closing;
-    }
-
-    public void setClosing(Date closing) {
-        Closing = closing;
+    public void setCount(int count) {
+        Count = count;
     }
 }
