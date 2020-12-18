@@ -1062,9 +1062,11 @@ public class ChatMessage {
 
         String[] split = text.split(" ", -1);
         if (split.length == 2){
-
-            Member member = guild.getMemberById(split[1]);
-            if (member == null){
+            // 確認
+            Member member = null;
+            try {
+                member = guild.getMemberById(split[1]);
+            } catch (Exception e){
                 for (Member m : guild.getMembers()){
                     if (m.getNickname() != null){
                         if (m.getNickname().contains(split[1])){
@@ -1081,7 +1083,7 @@ public class ChatMessage {
             }
 
             if (member == null){
-                message.reply("そのIDはこのDiscord鯖には存在しないユーザーらしいですよ？").queue();
+                message.reply("このDiscord鯖には存在しないユーザーらしいですよ？").queue();
                 return;
             }
 
@@ -1120,6 +1122,10 @@ public class ChatMessage {
             });
         }
 
+        if (split.length == 3){
+            // 追加
+            System.out.println("まだ");
+        }
     }
 
 
