@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'xyz.n7mn.dev'
-version '1.2'
+version '1.2.1'
 
 repositories {
     mavenCentral()
