@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
@@ -12,11 +13,21 @@ import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
 import xyz.n7mn.dev.api.data.eq.intensity.Area;
 import xyz.n7mn.dev.api.data.eq.intensity.Pref;
+import xyz.n7mn.dev.data.VoteReaction;
+import xyz.n7mn.dev.data.VoteReactionList;
 
 import java.util.*;
 import java.util.List;
 
 class EventListener extends ListenerAdapter {
+
+    private final VoteReactionList voteReactionList;
+
+    EventListener(){
+
+        voteReactionList = new VoteReactionList();
+
+    }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -26,7 +37,24 @@ class EventListener extends ListenerAdapter {
             return;
         }
 
-        new ChatMessage(event.getAuthor(), event.getMessage()).run();
+        new ChatMessage(event.getAuthor(), event.getMessage(), voteReactionList).run();
+
+    }
+
+    @Override
+    public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+        // super.onGuildMessageReactionAdd(event);
+        if (event.getUser().isBot()){
+            return;
+        }
+        Guild guild = event.getGuild();
+        TextChannel channel = event.getChannel();
+        Member member = event.getMember();
+        String messageId = event.getMessageId();
+        MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+
+        VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
+        voteReactionList.addList(voteReaction);
 
     }
 
