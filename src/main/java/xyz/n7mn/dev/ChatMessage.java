@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.managers.EmoteManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import xyz.n7mn.dev.data.Vote;
 import xyz.n7mn.dev.data.VoteComparator;
@@ -174,6 +175,11 @@ public class ChatMessage {
 
         if (text.toLowerCase().startsWith("n.role")){
             role();
+            return;
+        }
+
+        if (text.toLowerCase().startsWith("n.n3m_") || text.toLowerCase().startsWith("n.7mi_chan")){
+            n3m();
         }
 
     }
@@ -662,6 +668,7 @@ public class ChatMessage {
                                         voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), reaction.getCount() - 1));
                                     }
 
+
                                     voteResultList.sort(new VoteComparator());
 
                                     sb.append("\n\n---- 投票結果 ----\n");
@@ -674,7 +681,7 @@ public class ChatMessage {
 
 
                                     message1.editMessage(sb.toString().replaceAll("まで投票受付中です。","まで投票受付しました。")).queue(message2 -> {
-                                        message2.addReaction("✅").queue();
+                                        message2.addReaction("\u2705").queue();
                                     });
 
                                 });
@@ -816,7 +823,7 @@ public class ChatMessage {
 
 
                                     message1.editMessage(sb.toString().replaceAll("まで投票受付中です。","まで投票受付しました。")).queue(message2 -> {
-                                        message2.addReaction("✅").queue();
+                                        message2.addReaction("\u2705").queue();
                                     });
 
                                 });
@@ -936,6 +943,7 @@ public class ChatMessage {
 
         message.getChannel().sendMessage("https://goldarmor-is.best/").queue(message1 -> {
             message1.addReaction("\uD83D\uDCAF").queue();
+            message1.suppressEmbeds(true).queue();
         });
 
     }
@@ -1077,6 +1085,25 @@ public class ChatMessage {
         message.getChannel().sendMessage(text).queue(message1 -> {
             message1.addReaction("\uD83D\uDCAF").queue();
         });
+
+    }
+
+    private void n3m(){
+
+        List<Emote> emotes = guild.getEmotes();
+        for (Emote emote : emotes){
+            //System.out.println(emote.getName());
+            if (!emote.getName().startsWith("n3m_")){
+                continue;
+            }
+
+            message.getChannel().sendMessage(emote.getAsMention()+"\n:fire:").queue(message1 -> {
+                message1.addReaction("\uD83D\uDCAF").queue();
+            });
+            break;
+        }
+
+
 
     }
 
