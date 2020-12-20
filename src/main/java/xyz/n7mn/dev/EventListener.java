@@ -3,7 +3,9 @@ package xyz.n7mn.dev;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.DisconnectEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
@@ -16,6 +18,7 @@ import xyz.n7mn.dev.api.data.eq.intensity.Area;
 import xyz.n7mn.dev.api.data.eq.intensity.Pref;
 import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
+import xyz.n7mn.dev.game.MoneyList;
 
 import java.util.*;
 import java.util.List;
@@ -23,10 +26,12 @@ import java.util.List;
 class EventListener extends ListenerAdapter {
 
     private final VoteReactionList voteReactionList;
+    private final MoneyList moneyList;
 
     EventListener(){
 
         voteReactionList = new VoteReactionList();
+        moneyList = new MoneyList();
 
     }
 
@@ -38,7 +43,7 @@ class EventListener extends ListenerAdapter {
             return;
         }
 
-        new ChatMessage(event.getAuthor(), event.getMessage(), voteReactionList).run();
+        new ChatMessage(event.getAuthor(), event.getMessage(), voteReactionList, moneyList).run();
 
     }
 
@@ -53,6 +58,11 @@ class EventListener extends ListenerAdapter {
         Member member = event.getMember();
         String messageId = event.getMessageId();
         MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+
+        Message message = channel.retrieveMessageById(messageId).complete();
+        if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
+            message.removeReaction(reactionEmote.getEmote(), event.getUser()).queue();
+        }
 
         VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
         voteReactionList.addList(voteReaction);
@@ -227,5 +237,10 @@ class EventListener extends ListenerAdapter {
         };
 
         timer.scheduleAtFixedRate(task, 0, (1000 * 60));
+    }
+
+    @Override
+    public void onShutdown(@NotNull ShutdownEvent event) {
+        moneyList.Stop();
     }
 }

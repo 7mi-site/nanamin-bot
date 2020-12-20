@@ -80,6 +80,10 @@ public class DMMessage {
 
         StringBuffer sb = new StringBuffer();
 
+        if (text.equals("n.stop") && author.getId().equals("529463370089234466")){
+            jda.shutdown();
+        }
+
         if (text.equals("n.checkServer") && author.getId().equals("529463370089234466")){
 
             List<Guild> guilds = jda.getGuilds();
