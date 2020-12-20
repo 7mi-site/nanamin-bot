@@ -193,6 +193,11 @@ public class ChatMessage {
             return;
         }
 
+        if (text.toLowerCase().equals("n.game")){
+            game();
+            return;
+        }
+
         if (text.toLowerCase().startsWith("n.money")){
             money();
         }
@@ -214,7 +219,8 @@ public class ChatMessage {
                 "`n.burst` -- どっかーん\n" +
                 "`n.check` -- 動作確認\n" +
                 "`n.role <ユーザーID or 名前>` -- 指定ユーザーの情報を確認する\n" +
-                "`n.role <ユーザーID or 名前> <ロールID or ロールの名前>` -- 指定ユーザーのロールを追加または削除をする\n";
+                "`n.role <ユーザーID or 名前> <ロールID or ロールの名前>` -- 指定ユーザーのロールを追加または削除をする\n" +
+                "`n.game` -- ゲームメニュー";
         StringBuffer sb = new StringBuffer(helpText);
 
         if (!message.getGuild().getId().equals("517669763556704258")){
@@ -659,9 +665,11 @@ public class ChatMessage {
         StringBuffer sb = new StringBuffer();
         if (text.toLowerCase().startsWith("n.votent")){
             sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---");
+            sb.append("\n**※一回だけ押してください！**");
         } else {
             sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---\n投票タイトル：");
             sb.append(title);
+            sb.append("\n**※一回だけ押してください！**");
         }
 
         sb.append("\n\n");
@@ -1218,6 +1226,17 @@ public class ChatMessage {
         }
     }
 
+    private void game(){
+        String text = "" +
+                "----- ななみちゃんbot ゲームメニュー -----\n" +
+                "`n.money` --- 現在の所持金をチェックする\n" +
+                "`n.slot` --- 1回 100"+moneyList.getCurrency()+"でスロットが遊べる (当たりで最大10倍戻り)\n" +
+                "`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)" +
+                "(今後さらに実装予定です！)";
+        message.reply(text).queue();
+
+    }
+
     private void money(){
 
         String t = text.replaceAll("　"," ");
@@ -1225,10 +1244,50 @@ public class ChatMessage {
 
         if (split.length == 1){
             Money money = moneyList.getMoney(author.getId());
-            message.reply("あなたが今持っている所持金は " + money.getMoney() + " " + moneyList.getCurrency() + "ですっ！").queue();
+            message.reply("あなたが今持っている所持金は " + money.getMoney() + " " + moneyList.getCurrency() + "ですっ！\n他の人に渡したいときは`n.money pay <相手の名前 or 相手のID> <金額>`でできますっ！").queue();
+        } else if (split.length == 4){
+            if (split[1].equals("pay")){
+                String memberStr = split[2];
+                Member targetMember = null;
+                try {
+                    targetMember = guild.getMemberById(memberStr);
+                } catch (Exception e){
+                    List<Member> members = guild.getMembers();
+
+                    for (Member member1 : members){
+                        if (member1.getNickname() != null && member1.getNickname().startsWith(memberStr)){
+                            targetMember = member1;
+                            break;
+                        }
+                        if (member1.getUser().getName().startsWith(memberStr)){
+                            targetMember = member1;
+                            break;
+                        }
+                    }
+                }
+
+                if (moneyList.getMoney(author.getId()).getMoney() - Integer.parseInt(split[3]) >= 0){
+                    message.reply("所持金が足りませんよ！！").queue();
+                }
+
+                if (targetMember != null){
+                    Money fromMoney = moneyList.getMoney(author.getId());
+                    Money targetMoney = moneyList.getMoney(targetMember.getId());
+
+                    moneyList.setMoney(fromMoney.getDiscordUserID(), targetMoney.getMoney() - Integer.parseInt(split[3]));
+                    moneyList.setMoney(targetMoney.getDiscordUserID(), targetMoney.getMoney() + Integer.parseInt(split[3]));
+
+                    message.reply(targetMember.getNickname() + "さんに "+split[3] + " "+moneyList.getCurrency()+"を送金しましたっ").queue();
+                } else {
+                    message.reply("その人 実は存在しないらしい。").queue();
+                }
+
+            }
+
         }
 
     }
+
 
 
     private long getMs(String time){

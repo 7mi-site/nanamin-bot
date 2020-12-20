@@ -82,6 +82,7 @@ public class MoneyList {
 
         for (Money money : moneyCList){
             if (money.getDiscordUserID().equals(discordUserID)){
+                moneyCList.clear();
                 return money;
             }
         }
@@ -97,7 +98,29 @@ public class MoneyList {
         } catch (SQLException e){
             e.printStackTrace();
         }
+
+        moneyCList.clear();
         return money;
+    }
+
+    public void setMoney(String discordUserID, int money){
+        List<Money> moneyCList = new ArrayList<>();
+
+        synchronized (moneyList){
+            moneyCList.addAll(moneyList);
+        }
+
+        for (Money Money : moneyCList){
+            if (Money.getDiscordUserID().equals(discordUserID)){
+                synchronized (moneyList){
+                    moneyList.remove(Money);
+                    Money.setMoney(money);
+                    moneyList.add(Money);
+                }
+                return;
+            }
+
+        }
     }
 
     public String getCurrency(){
