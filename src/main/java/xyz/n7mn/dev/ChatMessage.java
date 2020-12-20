@@ -12,6 +12,7 @@ import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
 import xyz.n7mn.dev.game.Money;
 import xyz.n7mn.dev.game.MoneyList;
+import xyz.n7mn.dev.game.Slot;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
 
@@ -200,6 +201,11 @@ public class ChatMessage {
 
         if (text.toLowerCase().startsWith("n.money")){
             money();
+            return;
+        }
+
+        if (text.toLowerCase().equals("n.slot")){
+            slot();
         }
     }
 
@@ -1231,7 +1237,7 @@ public class ChatMessage {
                 "----- ななみちゃんbot ゲームメニュー -----\n" +
                 "`n.money` --- 現在の所持金をチェックする\n" +
                 "`n.slot` --- 1回 100"+moneyList.getCurrency()+"でスロットが遊べる (当たりで最大10倍戻り)\n" +
-                "`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)" +
+                "~~`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)~~ 開発中！" +
                 "(今後さらに実装予定です！)";
         message.reply(text).queue();
 
@@ -1288,7 +1294,14 @@ public class ChatMessage {
 
     }
 
+    private void slot(){
 
+        Slot slot = new Slot();
+        String run = slot.run(moneyList, moneyList.getMoney(author.getId()));
+
+        message.reply(run).queue();
+
+    }
 
     private long getMs(String time){
 

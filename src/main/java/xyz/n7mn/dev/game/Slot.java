@@ -56,7 +56,7 @@ public class Slot {
             flag = true;
         }
 
-        money.setMoney(money.getMoney() + plus);
+        moneyList.setMoney(money.getDiscordUserID(), money.getMoney() + plus);
 
         if (flag){
             return "あたり！ "+ (plus / this.money) + "倍！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`";
