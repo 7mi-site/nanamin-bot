@@ -43,7 +43,7 @@ public class MoneyList {
 
     }
 
-    public void Stop(){
+    public void Update(){
 
         if (con != null){
 
@@ -55,16 +55,13 @@ public class MoneyList {
             try {
 
                 for (Money money : cList){
-                    PreparedStatement statement = con.prepareStatement("UPDATE `Money` SET `UserID`= ?,`DiscordUserID`= ?,`Money`= ? WHERE UserID = ?");
-                    statement.setString(1, money.getUserID().toString());
-                    statement.setString(2, money.getDiscordUserID());
-                    statement.setInt(3, money.getMoney());
-                    statement.setString(4, money.getUserID().toString());
+                    PreparedStatement statement = con.prepareStatement("UPDATE `Money` SET `Money`= ? WHERE UserID = ?");
+                    statement.setInt(1, money.getMoney());
+                    statement.setString(2, money.getUserID().toString());
                     statement.execute();
                     statement.close();
                 }
 
-                con.close();
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -95,32 +92,37 @@ public class MoneyList {
             statement.setInt(3, money.getMoney());
             statement.execute();
             statement.close();
+            synchronized (moneyList){
+                moneyList.add(money);
+            }
         } catch (SQLException e){
             e.printStackTrace();
         }
 
         moneyCList.clear();
+
         return money;
     }
 
-    public void setMoney(String discordUserID, int money){
+    public void setMoney(String discordUserID, int moneyInt){
         List<Money> moneyCList = new ArrayList<>();
 
         synchronized (moneyList){
             moneyCList.addAll(moneyList);
         }
 
-        for (Money Money : moneyCList){
-            if (Money.getDiscordUserID().equals(discordUserID)){
+        for (Money money : moneyCList){
+            if (money.getDiscordUserID().equals(discordUserID)){
+                Money money1 = new Money(money.getUserID(), money.getDiscordUserID(), moneyInt);
                 synchronized (moneyList){
-                    moneyList.remove(Money);
-                    Money.setMoney(money);
-                    moneyList.add(Money);
+                    moneyList.remove(money);
+                    moneyList.add(money1);
                 }
-                return;
-            }
 
+            }
         }
+
+        Update();
     }
 
     public String getCurrency(){

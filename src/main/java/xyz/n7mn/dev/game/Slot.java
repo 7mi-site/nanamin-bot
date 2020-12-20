@@ -41,22 +41,20 @@ public class Slot {
 
         int plus = -100;
         boolean flag = false;
-        if (slot1 == slot2 && slot2 == slot3){
+        if (a.get(slot1).equals(b.get(slot2)) && b.get(slot2).equals(c.get(slot3))){
             plus = this.money * 5;
-            if (a.get(slot1) == 7 && b.get(slot2) == 7 && c.get(slot3) == 7){
+            if (a.get(slot1).equals(7) && b.get(slot2).equals(7) && c.get(slot3).equals(7)){
                 plus = this.money = 10;
             }
             flag = true;
         }
 
-
-
-        if (a.get(slot1) == 7 && b.get(slot2) == 7 && c.get(slot3) == 3){
+        if (a.get(slot1).equals(7) && b.get(slot2).equals(7) && c.get(slot3).equals(3)){
             plus = this.money * 8;
             flag = true;
         }
 
-        moneyList.setMoney(money.getDiscordUserID(), money.getMoney() + plus);
+        moneyList.setMoney(money.getDiscordUserID(), (money.getMoney() + plus));
 
         if (flag){
             return "あたり！ "+ (plus / this.money) + "倍！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`";

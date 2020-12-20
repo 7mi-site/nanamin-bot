@@ -53,50 +53,35 @@ class EventListener extends ListenerAdapter {
         if (event.getUser().isBot()){
             return;
         }
+
         Guild guild = event.getGuild();
         TextChannel channel = event.getChannel();
         Member member = event.getMember();
         String messageId = event.getMessageId();
         MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+        Message message = channel.retrieveMessageById(messageId).complete();
+        message.removeReaction(reactionEmote.getEmoji(), event.getUser()).queue();
 
         VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
 
         boolean f = false;
         for (VoteReaction voteRe  : voteReactionList.getList()){
-            if (voteRe.getMember().getId().equals(member.getId()) && voteReaction.getReactionEmote().equals(reactionEmote)){
+            if (voteRe.getMessageId().equals(messageId) && voteRe.getMember().getId().equals(member.getId()) && voteRe.getReactionEmote().equals(reactionEmote)){
                 f = true;
                 break;
             }
         }
-
-        Message message = channel.retrieveMessageById(messageId).complete();
-        if (!f){
-            voteReactionList.addList(voteReaction);
-        }
         if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-            message.removeReaction(reactionEmote.getEmoji(), event.getUser()).queue();
+
+            PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
+
+            if (!f){
+                voteReactionList.addList(voteReaction);
+                privateChannel.sendMessage(reactionEmote.getAsReactionCode() + "に投票しました！").queue();
+            } else {
+                privateChannel.sendMessage("投票済みの選択肢です！！").queue();
+            }
         }
-    }
-
-    @Override
-    public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
-        if (event.getUser().isBot()){
-            return;
-        }
-
-        Guild guild = event.getGuild();
-        TextChannel channel = event.getChannel();
-        Member member = event.getMember();
-        String messageId = event.getMessageId();
-        MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
-
-        Message message = channel.retrieveMessageById(messageId).complete();
-        if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-            return;
-        }
-
-        VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
-        voteReactionList.deleteList(voteReaction);
     }
 
     @Override
@@ -254,8 +239,4 @@ class EventListener extends ListenerAdapter {
         timer.scheduleAtFixedRate(task, 0, (1000 * 60));
     }
 
-    @Override
-    public void onShutdown(@NotNull ShutdownEvent event) {
-        moneyList.Stop();
-    }
 }

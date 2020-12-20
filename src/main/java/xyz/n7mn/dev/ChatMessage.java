@@ -671,11 +671,9 @@ public class ChatMessage {
         StringBuffer sb = new StringBuffer();
         if (text.toLowerCase().startsWith("n.votent")){
             sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---");
-            sb.append("\n**※一回だけ押してください！**");
         } else {
             sb.append("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---\n投票タイトル：");
             sb.append(title);
-            sb.append("\n**※一回だけ押してください！**");
         }
 
         sb.append("\n\n");
@@ -705,6 +703,7 @@ public class ChatMessage {
 
         }
         sb.append(")");
+        sb.append("\n**リアクション数が1ではない場合はしばらく待ってから投票してください！**");
 
         textChannel.sendMessage(sb.toString()).queue(message -> {
 
