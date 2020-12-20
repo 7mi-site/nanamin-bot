@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +57,21 @@ class EventListener extends ListenerAdapter {
         VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
         voteReactionList.addList(voteReaction);
 
+    }
+
+    @Override
+    public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
+        if (event.getUser().isBot()){
+            return;
+        }
+        Guild guild = event.getGuild();
+        TextChannel channel = event.getChannel();
+        Member member = event.getMember();
+        String messageId = event.getMessageId();
+        MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+
+        VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
+        voteReactionList.deleteList(voteReaction);
     }
 
     @Override

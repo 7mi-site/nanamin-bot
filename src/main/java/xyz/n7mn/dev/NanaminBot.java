@@ -60,7 +60,7 @@ public class NanaminBot {
                     .enableCache(CacheFlag.VOICE_STATE)
                     .enableCache(CacheFlag.EMOTE)
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
-                    .setActivity(Activity.playing("ななみちゃんbot v1.2.1"))
+                    .setActivity(Activity.playing("ななみちゃんbot v1.2.2"))
                     .build();
 
 

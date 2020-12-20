@@ -705,6 +705,14 @@ public class ChatMessage {
 
                                 List<Vote> voteResultList = new ArrayList<>();
                                 List<VoteReaction> list = voteReactionList.getList();
+
+                                String[] raw = message.getContentRaw().split("\n");
+
+                                int i = 3;
+                                if (title.length() == 0){
+                                    i = 2;
+                                }
+
                                 for (MessageReaction reaction : reactions){
                                     List<String> nlist = new ArrayList<>();
                                     for (VoteReaction voteReaction : list){
@@ -716,16 +724,17 @@ public class ChatMessage {
                                             }
                                         }
                                     }
-                                    voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), reaction.getCount() - 1, nlist));
+                                    voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw[i], reaction.getCount() - 1, nlist));
+                                    i++;
                                 }
-                                voteResultList.sort(new VoteComparator());
 
+                                voteResultList.sort(new VoteComparator());
 
 
                                 sb.append("\n\n---- 投票結果 ----\n");
                                 for (Vote vote : voteResultList){
-                                    sb.append(vote.getEmoji());
-                                    sb.append(" : ");
+                                    sb.append(vote.getTitle());
+                                    sb.append(" ");
                                     sb.append(vote.getCount());
                                     sb.append("票");
                                     if (vote.getCount() != 0){
@@ -1219,5 +1228,8 @@ public class ChatMessage {
         return ms;
 
     }
+
+
+    
 
 }

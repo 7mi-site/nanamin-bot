@@ -7,12 +7,20 @@ import java.util.List;
 public class Vote {
 
     private String Emoji;
+    private String Title;
     private int Count;
     private List<String> NameList;
 
-
+    @Deprecated
     public Vote(String emoji, int count, List<String> nameList){
         this.Emoji = emoji;
+        this.Count = count;
+        this.NameList = nameList;
+    }
+
+    public Vote(String emoji, String title, int count, List<String> nameList){
+        this.Emoji = emoji;
+        this.Title = title;
         this.Count = count;
         this.NameList = nameList;
     }
@@ -23,6 +31,14 @@ public class Vote {
 
     public void setEmoji(String emoji) {
         Emoji = emoji;
+    }
+
+    public String getTitle() {
+        return Title;
+    }
+
+    public void setTitle(String title) {
+        Title = title;
     }
 
     public int getCount() {

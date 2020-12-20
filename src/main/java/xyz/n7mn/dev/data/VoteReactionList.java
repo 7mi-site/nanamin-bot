@@ -20,7 +20,12 @@ public class VoteReactionList {
     public void deleteList(VoteReaction voteReaction){
 
         synchronized (reactionList){
-            reactionList.remove(voteReaction);
+            for (VoteReaction voteReaction1 : reactionList){
+                if (voteReaction1.getReactionEmote().getEmoji().equals(voteReaction.getReactionEmote().getEmoji()) && voteReaction1.getMessageId().equals(voteReaction.getMessageId())){
+                    reactionList.remove(voteReaction1);
+                    return;
+                }
+            }
         }
 
     }
