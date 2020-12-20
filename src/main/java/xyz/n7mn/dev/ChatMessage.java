@@ -9,10 +9,7 @@ import xyz.n7mn.dev.data.Vote;
 import xyz.n7mn.dev.data.VoteComparator;
 import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
-import xyz.n7mn.dev.game.Money;
-import xyz.n7mn.dev.game.MoneyList;
-import xyz.n7mn.dev.game.Omikuji;
-import xyz.n7mn.dev.game.Slot;
+import xyz.n7mn.dev.game.*;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
 
@@ -216,6 +213,11 @@ public class ChatMessage {
 
         if (text.toLowerCase().equals("n.omikuji")){
             omikuji();
+            return;
+        }
+
+        if (text.toLowerCase().startsWith("n.fx")){
+            fx();
         }
     }
 
@@ -1247,7 +1249,7 @@ public class ChatMessage {
                 "`n.money` --- 現在の所持金をチェックする\n" +
                 "`n.slot` --- 1回 100"+moneyList.getCurrency()+"でスロットが遊べる (当たりで最大10倍戻り)\n" +
                 "~~`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)~~ 開発中！\n" +
-                "~~`n.fx` --- ~~ 開発中！\n" +
+                "`n.fx` --- あがったりさがったり\n" +
                 "`n.omikuji` --- おみくじ (結果によって"+moneyList.getCurrency()+"がもらえます)\n" +
                 "(今後さらに実装予定です！)";
         message.reply(text).queue();
@@ -1336,6 +1338,18 @@ public class ChatMessage {
         Omikuji omikuji = new Omikuji();
         String run = omikuji.run(moneyList, moneyList.getMoney(author.getId()));
         message.reply(run).queue();
+    }
+
+    private void fx(){
+
+        String[] split = text.split(" ", -1);
+        Fx fx = new Fx();
+        System.out.println("debug "+split.length);
+        if (split.length == 2){
+            String run = fx.run(moneyList, moneyList.getMoney(author.getId()), Integer.parseInt(split[1]));
+            message.reply(run).queue();
+        }
+
     }
 
     private long getMs(String time){
