@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.managers.AudioManager;
-import net.dv8tion.jda.api.managers.EmoteManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import xyz.n7mn.dev.data.Vote;
 import xyz.n7mn.dev.data.VoteComparator;
@@ -206,6 +205,11 @@ public class ChatMessage {
 
         if (text.toLowerCase().equals("n.slot")){
             slot();
+            return;
+        }
+
+        if (text.toLowerCase().equals("n.baka")){
+            baka();
         }
     }
 
@@ -242,7 +246,8 @@ public class ChatMessage {
                     "`n.sand` -- Crousandさん\n" +
                     "`n.sc` -- 架空のスパチャを送る\n" +
                     "`n.pan` -- パンマスター\n" +
-                    "`n.hentai` -- へんたいっ！\n\n" +
+                    "`n.hentai` -- へんたいっ！\n" +
+                    "`n.baka` -- ばか？\n\n" +
                     "----- ななみちゃんbot ヘルプ End ----");
         }
 
@@ -1305,6 +1310,23 @@ public class ChatMessage {
         String run = slot.run(moneyList, moneyList.getMoney(author.getId()));
 
         message.reply(run).queue();
+
+    }
+
+    private void baka(){
+
+        List<Member> members = guild.getMembers();
+        Collections.shuffle(members);
+
+        SecureRandom secureRandom = new SecureRandom();
+        Member me = members.get(secureRandom.nextInt(members.size() - 1));
+
+        if (me.getNickname() != null){
+            message.getTextChannel().sendMessage(me.getNickname()+"さんが馬鹿に選ばれましたっ！").queue();
+        } else {
+            message.getTextChannel().sendMessage(me.getUser().getName()+"さんが馬鹿に選ばれましたっ！").queue();
+        }
+
 
     }
 
