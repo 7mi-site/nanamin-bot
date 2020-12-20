@@ -61,8 +61,18 @@ class EventListener extends ListenerAdapter {
 
         VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
 
+        boolean f = false;
+        for (VoteReaction voteRe  : voteReactionList.getList()){
+            if (voteRe.getMember().getId().equals(member.getId()) && voteReaction.getReactionEmote().equals(reactionEmote)){
+                f = true;
+                break;
+            }
+        }
+
         Message message = channel.retrieveMessageById(messageId).complete();
-        voteReactionList.addList(voteReaction);
+        if (!f){
+            voteReactionList.addList(voteReaction);
+        }
         if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
             message.removeReaction(reactionEmote.getEmoji(), event.getUser()).queue();
         }
