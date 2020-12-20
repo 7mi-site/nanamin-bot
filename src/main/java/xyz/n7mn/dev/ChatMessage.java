@@ -819,7 +819,7 @@ public class ChatMessage {
 
             List<MessageReaction> reactions = message1.getReactions();
 
-            if (!message1.getAuthor().getId().equals("781323086624456735")){
+            if (!message1.getAuthor().getId().equals("781323086624456735") && !message1.getAuthor().getId().equals("785322639295905792")){
                 message.reply("それはななみちゃんのメッセージじゃないよぉ").queue();
                 return;
             }
@@ -841,12 +841,17 @@ public class ChatMessage {
             message1.clearReactions().queue();
 
             List<Vote> voteResultList = new ArrayList<>();
+            String[] raw1 = message1.getContentRaw().split("\n");
+            int i = 3;
+            if (!raw1[1].startsWith("投票タイトル")){
+                i = 2;
+            }
             for (MessageReaction reaction : reactions){
                 List<VoteReaction> list = voteReactionList.getList();
 
                 List<String> nlist = new ArrayList<>();
                 for (VoteReaction voteReaction : list){
-                    if (voteReaction.getGuild().getId().equals(guild.getId()) && voteReaction.getChannel().getId().equals(message1.getId())){
+                    if (voteReaction.getMessageId().equals(message1.getId())){
                         if (voteReaction.getMember().getNickname() != null){
                             nlist.add(voteReaction.getMember().getNickname());
                         } else {
@@ -854,23 +859,29 @@ public class ChatMessage {
                         }
                     }
                 }
-                voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), reaction.getCount() - 1, nlist));
+                voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw1[i], reaction.getCount() - 1, nlist));
+                i++;
             }
 
             voteResultList.sort(new VoteComparator());
 
             sb.append("\n\n---- 投票結果 ----\n");
             for (Vote vote : voteResultList){
-                sb.append(vote.getEmoji());
+                sb.append(vote.getTitle());
                 sb.append(" : ");
                 sb.append(vote.getCount());
                 sb.append("票");
-                sb.append(" (");
-                for (String name : vote.getNameList()){
-                    sb.append(name);
-                    sb.append("さん,");
+                if (vote.getCount() != 0){
+                    sb.append(" (");
+                    for (String name : vote.getNameList()){
+                        sb.append(name);
+                        sb.append("さん,");
+                    }
+                    sb.append(")\n");
+                } else {
+                    sb.append("\n");
                 }
-                sb.append(")\n");
+
             }
 
             message1.editMessage(sb.toString().replaceAll(",\\)",")")).queue(message2 -> {
