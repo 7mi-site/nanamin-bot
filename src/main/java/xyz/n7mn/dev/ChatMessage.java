@@ -734,7 +734,7 @@ public class ChatMessage {
                                             // System.out.println("a");
                                         }
                                     }
-                                    System.out.println(nlist.size());
+                                    // System.out.println(nlist.size());
                                     voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw[i], nlist.size(), nlist));
                                     i++;
                                 }
