@@ -11,6 +11,7 @@ import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
 import xyz.n7mn.dev.game.Money;
 import xyz.n7mn.dev.game.MoneyList;
+import xyz.n7mn.dev.game.Omikuji;
 import xyz.n7mn.dev.game.Slot;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
@@ -210,6 +211,11 @@ public class ChatMessage {
 
         if (text.toLowerCase().equals("n.baka")){
             baka();
+            return;
+        }
+
+        if (text.toLowerCase().equals("n.omikuji")){
+            omikuji();
         }
     }
 
@@ -247,7 +253,6 @@ public class ChatMessage {
                     "`n.sc` -- 架空のスパチャを送る\n" +
                     "`n.pan` -- パンマスター\n" +
                     "`n.hentai` -- へんたいっ！\n" +
-                    "`n.baka` -- ばか？\n\n" +
                     "----- ななみちゃんbot ヘルプ End ----");
         }
 
@@ -1241,7 +1246,9 @@ public class ChatMessage {
                 "----- ななみちゃんbot ゲームメニュー -----\n" +
                 "`n.money` --- 現在の所持金をチェックする\n" +
                 "`n.slot` --- 1回 100"+moneyList.getCurrency()+"でスロットが遊べる (当たりで最大10倍戻り)\n" +
-                "~~`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)~~ 開発中！" +
+                "~~`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)~~ 開発中！\n" +
+                "~~`n.fx` --- ~~ 開発中！\n" +
+                "`n.omikuji` --- おみくじ (結果によって"+moneyList.getCurrency()+"がもらえます)\n" +
                 "(今後さらに実装予定です！)";
         message.reply(text).queue();
 
@@ -1276,7 +1283,7 @@ public class ChatMessage {
                     }
                 }
 
-                if (moneyList.getMoney(author.getId()).getMoney() - Integer.parseInt(split[3]) >= 0){
+                if (moneyList.getMoney(author.getId()).getMoney() - Integer.parseInt(split[3]) <= 0){
                     message.reply("所持金が足りませんよ！！").queue();
                     return;
                 }
@@ -1323,6 +1330,12 @@ public class ChatMessage {
         } else {
             message.getTextChannel().sendMessage(me.getUser().getName()+"さんが馬鹿に選ばれましたっ！").queue();
         }
+    }
+
+    private void omikuji(){
+        Omikuji omikuji = new Omikuji();
+        String run = omikuji.run(moneyList, moneyList.getMoney(author.getId()));
+        message.reply(run).queue();
     }
 
     private long getMs(String time){

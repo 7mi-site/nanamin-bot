@@ -15,6 +15,7 @@ import xyz.n7mn.dev.api.data.eq.intensity.Area;
 import xyz.n7mn.dev.api.data.eq.intensity.Pref;
 import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
+import xyz.n7mn.dev.game.Money;
 import xyz.n7mn.dev.game.MoneyList;
 
 import java.util.*;
@@ -34,6 +35,10 @@ class EventListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+
+        Money money = moneyList.getMoney(event.getAuthor().getId());
+        int money1 = money.getMoney() + 1;
+        moneyList.setMoney(event.getAuthor().getId(), money1);
 
         if (event.getChannel().getType() == ChannelType.PRIVATE){
             new DMMessage(event.getMessage(), event.getAuthor()).run();
@@ -57,7 +62,12 @@ class EventListener extends ListenerAdapter {
         String messageId = event.getMessageId();
         MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
         Message message = channel.retrieveMessageById(messageId).complete();
-        message.removeReaction(reactionEmote.getEmoji(), event.getUser()).queue();
+
+        if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
+            message.removeReaction(reactionEmote.getEmoji(), event.getUser()).queue();
+
+        }
+
 
         VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
 
@@ -69,12 +79,16 @@ class EventListener extends ListenerAdapter {
             }
         }
 
-        if (!f){
-            voteReactionList.addList(voteReaction);
-        }
+
 
 
         if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
+
+            if (!f){
+                voteReactionList.addList(voteReaction);
+            }
+
+
             PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
             if (!f){
                 privateChannel.sendMessage(reactionEmote.getAsReactionCode() + "に投票しました！").queue();
