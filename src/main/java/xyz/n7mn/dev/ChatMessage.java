@@ -10,6 +10,7 @@ import xyz.n7mn.dev.data.Vote;
 import xyz.n7mn.dev.data.VoteComparator;
 import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
+import xyz.n7mn.dev.game.MoneyList;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
 
@@ -30,7 +31,7 @@ public class ChatMessage {
     private final String text;
     private final VoteReactionList voteReactionList;
 
-    public ChatMessage(User author, Message message, VoteReactionList voteReactionList){
+    public ChatMessage(User author, Message message, VoteReactionList voteReactionList, MoneyList moneyList){
 
         this.author = author;
         this.message = message;
@@ -737,7 +738,7 @@ public class ChatMessage {
                                     sb.append(" ");
                                     sb.append(vote.getCount());
                                     sb.append("票");
-                                    if (vote.getCount() != 0){
+                                    if (vote.getCount() != 0 && vote.getNameList().size() != 0){
                                         sb.append(" (");
                                         for (String name : vote.getNameList()){
                                             sb.append(name);
@@ -871,7 +872,7 @@ public class ChatMessage {
                 sb.append(" : ");
                 sb.append(vote.getCount());
                 sb.append("票");
-                if (vote.getCount() != 0){
+                if (vote.getCount() != 0 && vote.getNameList().size() != 0){
                     sb.append(" (");
                     for (String name : vote.getNameList()){
                         sb.append(name);
