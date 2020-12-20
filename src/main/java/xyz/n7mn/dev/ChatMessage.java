@@ -1274,6 +1274,12 @@ public class ChatMessage {
 
                 if (moneyList.getMoney(author.getId()).getMoney() - Integer.parseInt(split[3]) >= 0){
                     message.reply("所持金が足りませんよ！！").queue();
+                    return;
+                }
+
+                if (Integer.parseInt(split[3]) <= 0){
+                    message.reply("よくない。").queue();
+                    return;
                 }
 
                 if (targetMember != null){
