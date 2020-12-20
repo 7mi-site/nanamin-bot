@@ -1305,18 +1305,15 @@ public class ChatMessage {
     }
 
     private void slot(){
-
         Slot slot = new Slot();
         String run = slot.run(moneyList, moneyList.getMoney(author.getId()));
-
         message.reply(run).queue();
-
     }
 
     private void baka(){
 
         List<Member> members = guild.getMembers();
-        Collections.shuffle(members);
+        // Collections.shuffle(members);
 
         SecureRandom secureRandom = new SecureRandom();
         Member me = members.get(secureRandom.nextInt(members.size() - 1));
@@ -1326,8 +1323,6 @@ public class ChatMessage {
         } else {
             message.getTextChannel().sendMessage(me.getUser().getName()+"さんが馬鹿に選ばれましたっ！").queue();
         }
-
-
     }
 
     private long getMs(String time){

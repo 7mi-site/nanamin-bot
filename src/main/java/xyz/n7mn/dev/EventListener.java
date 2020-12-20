@@ -3,12 +3,9 @@ package xyz.n7mn.dev;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.DisconnectEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
@@ -71,12 +68,15 @@ class EventListener extends ListenerAdapter {
                 break;
             }
         }
+
+        if (!f){
+            voteReactionList.addList(voteReaction);
+        }
+
+
         if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-
             PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
-
             if (!f){
-                voteReactionList.addList(voteReaction);
                 privateChannel.sendMessage(reactionEmote.getAsReactionCode() + "に投票しました！").queue();
             } else {
                 privateChannel.sendMessage("投票済みの選択肢です！！").queue();
