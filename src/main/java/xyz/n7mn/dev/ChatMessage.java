@@ -10,6 +10,7 @@ import xyz.n7mn.dev.data.Vote;
 import xyz.n7mn.dev.data.VoteComparator;
 import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
+import xyz.n7mn.dev.game.Money;
 import xyz.n7mn.dev.game.MoneyList;
 import xyz.n7mn.dev.music.GuildMusicManager;
 import xyz.n7mn.dev.music.PlayerManager;
@@ -29,7 +30,9 @@ public class ChatMessage {
     private final User author;
     private final Message message;
     private final String text;
+
     private final VoteReactionList voteReactionList;
+    private final MoneyList moneyList;
 
     public ChatMessage(User author, Message message, VoteReactionList voteReactionList, MoneyList moneyList){
 
@@ -41,6 +44,7 @@ public class ChatMessage {
         this.guild = message.getGuild();
 
         this.voteReactionList = voteReactionList;
+        this.moneyList = moneyList;
 
     }
 
@@ -186,8 +190,12 @@ public class ChatMessage {
 
         if (text.toLowerCase().startsWith("n.n3m_") || text.toLowerCase().startsWith("n.7mi_chan")){
             n3m();
+            return;
         }
 
+        if (text.toLowerCase().startsWith("n.money")){
+            money();
+        }
     }
 
     private void help(){
@@ -723,9 +731,11 @@ public class ChatMessage {
                                             } else {
                                                 nlist.add(voteReaction.getMember().getUser().getName());
                                             }
+                                            // System.out.println("a");
                                         }
                                     }
-                                    voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw[i], reaction.getCount() - 1, nlist));
+                                    System.out.println(nlist.size());
+                                    voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw[i], nlist.size(), nlist));
                                     i++;
                                 }
 
@@ -736,9 +746,9 @@ public class ChatMessage {
                                 for (Vote vote : voteResultList){
                                     sb.append(vote.getTitle());
                                     sb.append(" ");
-                                    sb.append(vote.getCount());
+                                    sb.append(vote.getNameList().size());
                                     sb.append("票");
-                                    if (vote.getCount() != 0 && vote.getNameList().size() != 0){
+                                    if (vote.getNameList().size() != 0){
                                         sb.append(" (");
                                         for (String name : vote.getNameList()){
                                             sb.append(name);
@@ -860,7 +870,7 @@ public class ChatMessage {
                         }
                     }
                 }
-                voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw1[i], reaction.getCount() - 1, nlist));
+                voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw1[i],  nlist.size(), nlist));
                 i++;
             }
 
@@ -1206,6 +1216,18 @@ public class ChatMessage {
             }
 
         }
+    }
+
+    private void money(){
+
+        String t = text.replaceAll("　"," ");
+        String[] split = t.split(" ", -1);
+
+        if (split.length == 1){
+            Money money = moneyList.getMoney(author.getId());
+            message.reply("あなたが今持っている所持金は " + money.getMoney() + " " + moneyList.getCurrency() + "ですっ！").queue();
+        }
+
     }
 
 

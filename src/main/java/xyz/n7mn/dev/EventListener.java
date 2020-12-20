@@ -59,14 +59,13 @@ class EventListener extends ListenerAdapter {
         String messageId = event.getMessageId();
         MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
 
-        Message message = channel.retrieveMessageById(messageId).complete();
-        if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-            message.removeReaction(reactionEmote.getEmote(), event.getUser()).queue();
-        }
-
         VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
-        voteReactionList.addList(voteReaction);
 
+        Message message = channel.retrieveMessageById(messageId).complete();
+        voteReactionList.addList(voteReaction);
+        if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
+            message.removeReaction(reactionEmote.getEmoji(), event.getUser()).queue();
+        }
     }
 
     @Override
@@ -74,11 +73,17 @@ class EventListener extends ListenerAdapter {
         if (event.getUser().isBot()){
             return;
         }
+
         Guild guild = event.getGuild();
         TextChannel channel = event.getChannel();
         Member member = event.getMember();
         String messageId = event.getMessageId();
         MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+
+        Message message = channel.retrieveMessageById(messageId).complete();
+        if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
+            return;
+        }
 
         VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
         voteReactionList.deleteList(voteReaction);
