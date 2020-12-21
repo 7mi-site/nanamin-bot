@@ -736,68 +736,7 @@ public class ChatMessage {
 
                     TimerTask task = new TimerTask() {
                         public void run() {
-                            StringBuffer sb = new StringBuffer(message.getContentRaw());
-                            message.getChannel().retrieveMessageById(message.getId()).queue(message1 -> {
-
-                                List<MessageReaction> reactions = message1.getReactions();
-                                message1.clearReactions().queue();
-
-                                List<Vote> voteResultList = new ArrayList<>();
-                                List<VoteReaction> list = voteReactionList.getList();
-
-                                String[] raw = message.getContentRaw().split("\n");
-
-                                int i = 3;
-                                if (title.length() == 0){
-                                    i = 2;
-                                }
-
-                                for (MessageReaction reaction : reactions){
-                                    List<String> nlist = new ArrayList<>();
-                                    for (VoteReaction voteReaction : list){
-                                        if (voteReaction.getMessageId().equals(message.getId()) && voteReaction.getEmoji().equals(reaction.getReactionEmote().getEmoji())){
-                                            if (voteReaction.getMember().getNickname() != null){
-                                                nlist.add(voteReaction.getMember().getNickname());
-                                            } else {
-                                                nlist.add(voteReaction.getMember().getUser().getName());
-                                            }
-                                            // System.out.println("a");
-                                        }
-                                    }
-                                    // System.out.println(nlist.size());
-                                    voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw[i], nlist.size(), nlist));
-                                    i++;
-                                }
-
-                                voteResultList.sort(new VoteComparator());
-
-
-                                sb.append("\n\n---- 投票結果 ----\n");
-                                for (Vote vote : voteResultList){
-                                    sb.append(vote.getTitle());
-                                    sb.append(" ");
-                                    sb.append(vote.getNameList().size());
-                                    sb.append("票");
-                                    if (vote.getNameList().size() != 0){
-                                        sb.append(" (");
-                                        for (String name : vote.getNameList()){
-                                            sb.append(name);
-                                            sb.append("さん,");
-                                        }
-                                        sb.append(")\n");
-                                    } else {
-                                        sb.append("\n");
-                                    }
-                                }
-
-
-                                message1.editMessage(sb.toString().replaceAll(",\\)",")").replaceAll("まで投票受付中です。","まで投票受付しました。")).queue(message2 -> {
-                                    message2.addReaction("\u2705").queue();
-                                });
-
-                            });
-
-
+                            StopVote(message, title);
                         }
                     };
 
@@ -812,125 +751,81 @@ public class ChatMessage {
     private void stopVote(){
 
         String[] split = text.split(" ", -1);
-        if (split.length != 2){
-            message.reply("えらーです！").queue();
-            return;
+
+        if (split.length == 1){
+
+            message.reply("準備中...").queue();
+
         }
 
-        String[] url = split[1].split("/", -1);
+        if (split.length == 2){
 
-        Guild guild = jda.getGuildById(url[4]);
-        if (guild == null){
-            message.reply("見つからないよぉ").queue();
-            return;
-        }
+            String[] url = split[1].split("/", -1);
 
-        TextChannel textChannelById = guild.getTextChannelById(url[5]);
-        if (textChannelById == null){
-            message.reply("見つからないよぉ").queue();
-            return;
-        }
+            Guild guild = jda.getGuildById(url[4]);
+            if (guild == null){
+                message.reply("見つからないよぉ").queue();
+                return;
+            }
+
+            TextChannel textChannelById = guild.getTextChannelById(url[5]);
+            if (textChannelById == null){
+                message.reply("見つからないよぉ").queue();
+                return;
+            }
 
 
-        textChannelById.retrieveMessageById(url[6]).queue(message1 -> {
-            textChannelById.clearReactionsById(url[6]).queue();
+            textChannelById.retrieveMessageById(url[6]).queue(message1 -> {
+                String raw = message1.getContentRaw();
+                List<Member> members = guild.getMembers();
 
-            String raw = message1.getContentRaw();
-            List<Member> members = guild.getMembers();
+                boolean b = false;
+                for (Member member : members){
+                    User user = jda.getUserById(member.getId());
+                    if (user != null){
 
-            boolean b = false;
-            for (Member member : members){
-                User user = jda.getUserById(member.getId());
-                if (user != null){
-
-                    if (raw.contains(user.getName())){
-                        if (author.getName().equals(user.getName())){
-                            b = true;
-                            break;
+                        if (raw.contains(user.getName())){
+                            if (author.getName().equals(user.getName())){
+                                b = true;
+                                break;
+                            }
                         }
+
                     }
 
                 }
 
-            }
-
-
-            StringBuffer sb = new StringBuffer();
-            sb.append(message1.getContentRaw());
-
-            List<MessageReaction> reactions = message1.getReactions();
-
-            if (!message1.getAuthor().getId().equals("781323086624456735") && !message1.getAuthor().getId().equals("785322639295905792")){
-                message.reply("それはななみちゃんのメッセージじゃないよぉ").queue();
-                return;
-            }
-
-            if (!b){
-                message.reply("❗投票開始した人以外は投票終了できません！").queue();
-                return;
-            }
-
-            if (reactions.size() <= 1){
-                if (reactions.size() == 1 && reactions.get(0).getReactionEmote().getEmoji().equals("✅")){
-                    message.reply("それは結果発表済みみたい...").queue();
+                if (!message1.getAuthor().getId().equals("781323086624456735") && !message1.getAuthor().getId().equals("785322639295905792")){
+                    message.reply("それはななみちゃんのメッセージじゃないよぉ").queue();
                     return;
                 }
-                message.reply("？").queue();
-                return;
-            }
 
-            message1.clearReactions().queue();
-
-            List<Vote> voteResultList = new ArrayList<>();
-            String[] raw1 = message1.getContentRaw().split("\n");
-            int i = 3;
-            if (!raw1[1].startsWith("投票タイトル")){
-                i = 2;
-            }
-            for (MessageReaction reaction : reactions){
-                List<VoteReaction> list = voteReactionList.getList();
-
-                List<String> nlist = new ArrayList<>();
-                for (VoteReaction voteReaction : list){
-                    if (voteReaction.getMessageId().equals(message1.getId()) && voteReaction.getEmoji().equals(reaction.getReactionEmote().getEmoji())){
-                        if (voteReaction.getMember().getNickname() != null){
-                            nlist.add(voteReaction.getMember().getNickname());
-                        } else {
-                            nlist.add(voteReaction.getMember().getUser().getName());
-                        }
-                    }
-                }
-                voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw1[i],  nlist.size(), nlist));
-                i++;
-            }
-
-            voteResultList.sort(new VoteComparator());
-
-            sb.append("\n\n---- 投票結果 ----\n");
-            for (Vote vote : voteResultList){
-                sb.append(vote.getTitle());
-                sb.append(" : ");
-                sb.append(vote.getCount());
-                sb.append("票");
-                if (vote.getCount() != 0 && vote.getNameList().size() != 0){
-                    sb.append(" (");
-                    for (String name : vote.getNameList()){
-                        sb.append(name);
-                        sb.append("さん,");
-                    }
-                    sb.append(")\n");
-                } else {
-                    sb.append("\n");
+                if (!b){
+                    message.reply("❗投票開始した人以外は投票終了できません！").queue();
+                    return;
                 }
 
-            }
+                List<MessageReaction> reactions = message1.getReactions();
+                if (reactions.size() <= 1){
+                    if (reactions.size() == 1 && reactions.get(0).getReactionEmote().getEmoji().equals("✅")){
+                        message.reply("それは結果発表済みみたい...").queue();
+                        return;
+                    }
+                    message.reply("？").queue();
+                    return;
+                }
 
-            message1.editMessage(sb.toString().replaceAll(",\\)",")")).queue(message2 -> {
-                message2.addReaction("✅").queue();
-                message.delete().queue();
-                message.getChannel().sendMessage("投票を終了しました！\n" + split[1]).queue();
+                String title = "";
+                String[] string = message1.getContentRaw().split("\n", -1);
+                if (string[1].startsWith("投票タイトル")){
+                    title = string[1].replaceAll("投票タイトル：","");
+                }
+
+                StopVote(message1, title);
             });
-        });
+        }
+
+
 
 
     }
@@ -1440,7 +1335,68 @@ public class ChatMessage {
 
     }
 
+    private void StopVote(Message message, String title){
 
-    
+        StringBuffer sb = new StringBuffer(message.getContentRaw());
+        message.getChannel().retrieveMessageById(message.getId()).queue(message1 -> {
 
+            List<MessageReaction> reactions = message1.getReactions();
+            message1.clearReactions().queue();
+
+            List<Vote> voteResultList = new ArrayList<>();
+            List<VoteReaction> list = voteReactionList.getList();
+
+            String[] raw = message.getContentRaw().split("\n");
+
+            int i = 3;
+            if (title.length() == 0){
+                i = 2;
+            }
+
+            for (MessageReaction reaction : reactions){
+                List<String> nlist = new ArrayList<>();
+                for (VoteReaction voteReaction : list){
+                    if (voteReaction.getMessageId().equals(message.getId()) && voteReaction.getEmoji().equals(reaction.getReactionEmote().getEmoji())){
+                        if (voteReaction.getMember().getNickname() != null){
+                            nlist.add(voteReaction.getMember().getNickname());
+                        } else {
+                            nlist.add(voteReaction.getMember().getUser().getName());
+                        }
+                        // System.out.println("a");
+                    }
+                }
+                // System.out.println(nlist.size());
+                voteResultList.add(new Vote(reaction.getReactionEmote().getEmoji(), raw[i], nlist.size(), nlist));
+                i++;
+            }
+
+            voteResultList.sort(new VoteComparator());
+
+
+            sb.append("\n\n---- 投票結果 ----\n");
+            for (Vote vote : voteResultList){
+                sb.append(vote.getTitle());
+                sb.append(" ");
+                sb.append(vote.getNameList().size());
+                sb.append("票");
+                if (vote.getNameList().size() != 0){
+                    sb.append(" (");
+                    for (String name : vote.getNameList()){
+                        sb.append(name);
+                        sb.append("さん,");
+                    }
+                    sb.append(")\n");
+                } else {
+                    sb.append("\n");
+                }
+            }
+
+
+            message1.editMessage(sb.toString().replaceAll(",\\)",")").replaceAll("まで投票受付中です。","まで投票受付しました。")).queue(message2 -> {
+                message2.addReaction("\u2705").queue();
+            });
+
+        });
+
+    }
 }

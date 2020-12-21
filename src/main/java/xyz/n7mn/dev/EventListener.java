@@ -73,26 +73,59 @@ class EventListener extends ListenerAdapter {
         }
 
         VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote.getEmoji());
-
-        boolean f = false;
-        for (VoteReaction voteRe  : voteReactionList.getList()){
-            if (voteRe.getMessageId().equals(messageId) && voteRe.getMember().getId().equals(member.getId()) && voteRe.getEmoji().equals(reactionEmote.getEmoji())){
-                f = true;
-                break;
-            }
-        }
-
         if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-            if (!f){
-                voteReactionList.addList(voteReaction);
+
+            boolean add_flag = false;
+
+            String[] regionalList = new String[]{
+                    "\uD83C\uDDE6",
+                    "\uD83C\uDDE7",
+                    "\uD83C\uDDE8",
+                    "\uD83C\uDDE9",
+                    "\uD83C\uDDEA",
+                    "\uD83C\uDDEB",
+                    "\uD83C\uDDEC",
+                    "\uD83C\uDDED",
+                    "\uD83C\uDDEE",
+                    "\uD83C\uDDEF",
+                    "\uD83C\uDDF0",
+                    "\uD83C\uDDF1",
+                    "\uD83C\uDDF2",
+                    "\uD83C\uDDF3",
+                    "\uD83C\uDDF4",
+                    "\uD83C\uDDF5",
+                    "\uD83C\uDDF6",
+                    "\uD83C\uDDF7",
+                    "\uD83C\uDDF8",
+                    "\uD83C\uDDF9"
+            };
+
+            for (String regional : regionalList){
+                if (regional.equals(voteReaction.getEmoji())){
+                    add_flag = true;
+                    break;
+                }
             }
 
+            boolean f = false;
+            for (VoteReaction voteRe  : voteReactionList.getList()){
+                if (voteRe.getMessageId().equals(messageId) && voteRe.getMember().getId().equals(member.getId()) && voteRe.getEmoji().equals(reactionEmote.getEmoji())){
+                    f = true;
+                    break;
+                }
+            }
 
-            PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
-            if (!f){
-                privateChannel.sendMessage(reactionEmote.getAsReactionCode() + "に投票しました！").queue();
-            } else {
-                privateChannel.sendMessage("投票済みの選択肢です！！").queue();
+            if (add_flag){
+                if (!f){
+                    voteReactionList.addList(voteReaction);
+                }
+
+                PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
+                if (!f){
+                    privateChannel.sendMessage(reactionEmote.getAsReactionCode() + "に投票しました！").queue();
+                } else {
+                    privateChannel.sendMessage("投票済みの選択肢です！！").queue();
+                }
             }
         }
     }
