@@ -189,6 +189,13 @@ class EventListener extends ListenerAdapter {
                                                                 sb.append(area.getMaxInt());
                                                                 sb.append("\n");
 
+                                                                if (sb.length() >= 1900){
+
+                                                                    channel.sendMessage(sb.toString()).queue();
+                                                                    sb.delete(0, sb.length());
+
+                                                                }
+
                                                             }
 
                                                         }

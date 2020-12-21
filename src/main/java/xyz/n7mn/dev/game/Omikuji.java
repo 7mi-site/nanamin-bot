@@ -19,6 +19,8 @@ public class Omikuji {
         a.add(25);
         a.add(30);
         a.add(35);
+        a.add(-10);
+        a.add(50);
 
         Collections.shuffle(a);
 
@@ -52,7 +54,14 @@ public class Omikuji {
         if (a.get(slot1).equals(30)){
             return "はてな\nあなたの運勢は 金装備 でした！\n(獲得コインは30です。)";
         }
-        return "はてな？\nあなたの運勢は 虫特攻 でした！\n(獲得コインは35です。)";
+        if (a.get(slot1).equals(35)){
+            return "はてな？\nあなたの運勢は 虫特攻 でした！\n(獲得コインは35です。)";
+        }
+        if (a.get(slot1).equals(-10)){
+            return "変態は死刑ですっ\nあなたの運勢は 変態 でした！\n(獲得コインは-10です。)";
+        }
+
+        return "遅刻はダメですよ...\nあなたの運勢は 遅刻 でした！\n(獲得コインは50です。)";
     }
 
 

@@ -1299,7 +1299,7 @@ public class ChatMessage {
                     Money fromMoney = moneyList.getMoney(author.getId());
                     Money targetMoney = moneyList.getMoney(targetMember.getId());
 
-                    moneyList.setMoney(fromMoney.getDiscordUserID(), targetMoney.getMoney() - Integer.parseInt(split[3]));
+                    moneyList.setMoney(fromMoney.getDiscordUserID(), fromMoney.getMoney() - Integer.parseInt(split[3]));
                     moneyList.setMoney(targetMoney.getDiscordUserID(), targetMoney.getMoney() + Integer.parseInt(split[3]));
 
                     message.reply(targetMember.getNickname() + "さんに "+split[3] + " "+moneyList.getCurrency()+"を送金しましたっ").queue();

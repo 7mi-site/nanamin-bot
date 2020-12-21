@@ -14,7 +14,7 @@ public class Fx {
             return "それはおかしいですよ...";
         }
 
-        int nowMoney = money.getMoney() - useMoney;
+        int nowMoney = money.getMoney();
 
         StringBuffer sb = new StringBuffer();
         int b = 1;
@@ -46,7 +46,8 @@ public class Fx {
             sb.append((i + 1));
             sb.append("回目：");
 
-            int n = new SecureRandom().nextInt(b);
+            int rr = mo2 * 2;
+            int n = new SecureRandom().nextInt(rr);
             if (new SecureRandom().nextBoolean()){
                 mo = mo + n;
                 sb.append(n);
