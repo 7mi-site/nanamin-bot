@@ -41,20 +41,22 @@ public class MoneyList {
 
         TimerTask task = new TimerTask() {
             public void run() {
-                try {
-                    PreparedStatement statement = con.prepareStatement("SELECT * FROM Money");
-                    statement.execute();
-                    statement.close();
-                } catch (SQLException e){
-
+                new Thread(()->{
                     try {
-                        con = DriverManager.getConnection("jdbc:mysql://" + json[0] + ":"+json[1]+"/" + json[2] + json[3], json[4], json[5]);
-                        con.setAutoCommit(true);
-                    } catch (SQLException e1){
-                        // e1.printStackTrace();
-                    }
+                        PreparedStatement statement = con.prepareStatement("SELECT * FROM Money");
+                        statement.execute();
+                        statement.close();
+                    } catch (SQLException e){
 
-                }
+                        try {
+                            con = DriverManager.getConnection("jdbc:mysql://" + json[0] + ":"+json[1]+"/" + json[2] + json[3], json[4], json[5]);
+                            con.setAutoCommit(true);
+                        } catch (SQLException e1){
+                            // e1.printStackTrace();
+                        }
+
+                    }
+                }).start();
             }
         };
 
@@ -64,36 +66,38 @@ public class MoneyList {
 
     public void Update(){
 
-        if (con != null){
+        new Thread(()->{
+            if (con != null){
 
-            List<Money> cList = new ArrayList<>();
-            synchronized (moneyList){
-                cList.addAll(moneyList);
-            }
-
-            try {
-
-                for (Money money : cList){
-                    PreparedStatement statement = con.prepareStatement("UPDATE `Money` SET `Money`= ? WHERE UserID = ?");
-                    statement.setInt(1, money.getMoney());
-                    statement.setString(2, money.getUserID().toString());
-                    statement.execute();
-                    statement.close();
+                List<Money> cList;
+                synchronized (moneyList){
+                    cList = new ArrayList<>(moneyList);
                 }
 
-            } catch (Exception e){
-                e.printStackTrace();
+                try {
+
+                    for (Money money : cList){
+                        PreparedStatement statement = con.prepareStatement("UPDATE `Money` SET `Money`= ? WHERE UserID = ?");
+                        statement.setInt(1, money.getMoney());
+                        statement.setString(2, money.getUserID().toString());
+                        statement.execute();
+                        statement.close();
+                    }
+
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
-
-        }
-
+        }).start();
     }
 
+
     public List<Money> getMoneyList(){
-        List<Money> moneyCList = new ArrayList<>();
+        List<Money> moneyCList;
 
         synchronized (moneyList){
-            moneyCList.addAll(moneyList);
+            moneyCList = new ArrayList<>(moneyList);
         }
 
         moneyCList.sort(new MoneyComparator());
@@ -101,10 +105,10 @@ public class MoneyList {
     }
 
     public Money getMoney(String discordUserID){
-        List<Money> moneyCList = new ArrayList<>();
+        List<Money> moneyCList;
 
         synchronized (moneyList){
-            moneyCList.addAll(moneyList);
+            moneyCList = new ArrayList<>(moneyList);
         }
 
         for (Money money : moneyCList){
@@ -115,19 +119,21 @@ public class MoneyList {
         }
 
         Money money = new Money(discordUserID, defaultCoin);
-        try {
-            PreparedStatement statement = con.prepareStatement("INSERT INTO `Money` (`UserID`, `DiscordUserID`, `Money`) VALUES (?, ?, ?) ");
-            statement.setString(1, money.getUserID().toString());
-            statement.setString(2, money.getDiscordUserID());
-            statement.setInt(3, money.getMoney());
-            statement.execute();
-            statement.close();
-            synchronized (moneyList){
-                moneyList.add(money);
+        new Thread(()->{
+            try {
+                PreparedStatement statement = con.prepareStatement("INSERT INTO `Money` (`UserID`, `DiscordUserID`, `Money`) VALUES (?, ?, ?) ");
+                statement.setString(1, money.getUserID().toString());
+                statement.setString(2, money.getDiscordUserID());
+                statement.setInt(3, money.getMoney());
+                statement.execute();
+                statement.close();
+                synchronized (moneyList){
+                    moneyList.add(money);
+                }
+            } catch (SQLException e){
+                e.printStackTrace();
             }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
+        }).start();
 
         moneyCList.clear();
 

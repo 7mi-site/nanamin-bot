@@ -1,9 +1,6 @@
 package xyz.n7mn.dev.data;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 
 import java.util.UUID;
 
@@ -15,7 +12,9 @@ public class VoteReaction {
     private String messageId;
     private Member member;
     private MessageReaction.ReactionEmote reactionEmote;
+    private Emote emote;
 
+    @Deprecated
     public VoteReaction(UUID uuid, Guild guild, TextChannel channel, Member member, String messageId, MessageReaction.ReactionEmote reactionEmote){
 
         this.uuid = uuid;
@@ -27,6 +26,7 @@ public class VoteReaction {
 
     }
 
+    @Deprecated
     public VoteReaction(Guild guild, TextChannel channel, Member member, String messageId, MessageReaction.ReactionEmote reactionEmote) {
 
         this.uuid = UUID.randomUUID();
@@ -35,6 +35,28 @@ public class VoteReaction {
         this.member = member;
         this.messageId = messageId;
         this.reactionEmote = reactionEmote;
+
+    }
+
+    public VoteReaction(UUID uuid, Guild guild, TextChannel channel, Member member, String messageId, Emote emote){
+
+        this.uuid = uuid;
+        this.guild = guild;
+        this.channel = channel;
+        this.member = member;
+        this.messageId = messageId;
+        this.emote = emote;
+
+    }
+
+    public VoteReaction(Guild guild, TextChannel channel, Member member, String messageId, Emote emote){
+
+        this.uuid = UUID.randomUUID();
+        this.guild = guild;
+        this.channel = channel;
+        this.member = member;
+        this.messageId = messageId;
+        this.emote = emote;
 
     }
 
@@ -78,11 +100,21 @@ public class VoteReaction {
         this.messageId = messageId;
     }
 
+    @Deprecated
     public MessageReaction.ReactionEmote getReactionEmote() {
         return reactionEmote;
     }
 
+    @Deprecated
     public void setReactionEmote(MessageReaction.ReactionEmote reactionEmote) {
         this.reactionEmote = reactionEmote;
+    }
+
+    public Emote getEmote() {
+        return emote;
+    }
+
+    public void setEmote(Emote emote) {
+        this.emote = emote;
     }
 }

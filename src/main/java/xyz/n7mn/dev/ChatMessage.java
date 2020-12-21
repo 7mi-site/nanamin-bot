@@ -755,7 +755,7 @@ public class ChatMessage {
                                 for (MessageReaction reaction : reactions){
                                     List<String> nlist = new ArrayList<>();
                                     for (VoteReaction voteReaction : list){
-                                        if (voteReaction.getMessageId().equals(message.getId()) && voteReaction.getReactionEmote().getEmoji().equals(reaction.getReactionEmote().getEmoji())){
+                                        if (voteReaction.getMessageId().equals(message.getId()) && voteReaction.getEmote().getId().equals(reaction.getReactionEmote().getEmote().getId())){
                                             if (voteReaction.getMember().getNickname() != null){
                                                 nlist.add(voteReaction.getMember().getNickname());
                                             } else {
@@ -892,7 +892,7 @@ public class ChatMessage {
 
                 List<String> nlist = new ArrayList<>();
                 for (VoteReaction voteReaction : list){
-                    if (voteReaction.getMessageId().equals(message1.getId())){
+                    if (voteReaction.getMessageId().equals(message1.getId()) && voteReaction.getEmote().getId().equals(reaction.getReactionEmote().getEmote().getId())){
                         if (voteReaction.getMember().getNickname() != null){
                             nlist.add(voteReaction.getMember().getNickname());
                         } else {

@@ -23,12 +23,11 @@ import java.util.List;
 
 class EventListener extends ListenerAdapter {
 
-    private final VoteReactionList voteReactionList;
+    private VoteReactionList voteReactionList = null;
     private final MoneyList moneyList;
 
     EventListener(){
 
-        voteReactionList = new VoteReactionList();
         moneyList = new MoneyList();
 
     }
@@ -68,22 +67,17 @@ class EventListener extends ListenerAdapter {
 
         }
 
-
-        VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote);
+        VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote.getEmote());
 
         boolean f = false;
         for (VoteReaction voteRe  : voteReactionList.getList()){
-            if (voteRe.getMessageId().equals(messageId) && voteRe.getMember().getId().equals(member.getId()) && voteRe.getReactionEmote().equals(reactionEmote)){
+            if (voteRe.getMessageId().equals(messageId) && voteRe.getMember().getId().equals(member.getId()) && voteRe.getEmote().getId().equals(reactionEmote.getEmote().getId())){
                 f = true;
                 break;
             }
         }
 
-
-
-
         if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-
             if (!f){
                 voteReactionList.addList(voteReaction);
             }
@@ -111,6 +105,7 @@ class EventListener extends ListenerAdapter {
 
         }
 
+        voteReactionList = new VoteReactionList(jda);
         Earthquake earthquake = new Earthquake();
 
         long[] lastId = new long[]{-1};
