@@ -1,14 +1,12 @@
 package xyz.n7mn.dev.game;
 
 import com.google.gson.Gson;
+import xyz.n7mn.dev.data.MoneyComparator;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class MoneyList {
 
@@ -41,6 +39,27 @@ public class MoneyList {
             e.printStackTrace();
         }
 
+        TimerTask task = new TimerTask() {
+            public void run() {
+                try {
+                    PreparedStatement statement = con.prepareStatement("SELECT * FROM Money");
+                    statement.execute();
+                    statement.close();
+                } catch (SQLException e){
+
+                    try {
+                        con = DriverManager.getConnection("jdbc:mysql://" + json[0] + ":"+json[1]+"/" + json[2] + json[3], json[4], json[5]);
+                        con.setAutoCommit(true);
+                    } catch (SQLException e1){
+                        // e1.printStackTrace();
+                    }
+
+                }
+            }
+        };
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(task, 0, (1000 * 60));
     }
 
     public void Update(){
@@ -68,6 +87,17 @@ public class MoneyList {
 
         }
 
+    }
+
+    public List<Money> getMoneyList(){
+        List<Money> moneyCList = new ArrayList<>();
+
+        synchronized (moneyList){
+            moneyCList.addAll(moneyList);
+        }
+
+        moneyCList.sort(new MoneyComparator());
+        return moneyCList;
     }
 
     public Money getMoney(String discordUserID){

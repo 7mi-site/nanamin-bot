@@ -218,6 +218,11 @@ public class ChatMessage {
 
         if (text.toLowerCase().startsWith("n.fx")){
             fx();
+            return;
+        }
+
+        if (text.toLowerCase().startsWith("n.rank")){
+            moneyRank();
         }
     }
 
@@ -1251,6 +1256,7 @@ public class ChatMessage {
                 "~~`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)~~ 開発中！\n" +
                 "`n.fx` --- あがったりさがったり\n" +
                 "`n.omikuji` --- おみくじ (結果によって"+moneyList.getCurrency()+"がもらえます)\n" +
+                "`n.rank` --- "+moneyList.getCurrency()+"所持数ランキング\n" +
                 "(今後さらに実装予定です！)";
         message.reply(text).queue();
 
@@ -1349,6 +1355,56 @@ public class ChatMessage {
             String run = fx.run(moneyList, moneyList.getMoney(author.getId()), Integer.parseInt(split[1]));
             message.reply(run).queue();
         }
+
+    }
+
+    private void moneyRank(){
+
+        StringBuffer sb = new StringBuffer();
+
+        List<Money> moneyList = this.moneyList.getMoneyList();
+
+        String sendUserID = author.getId();
+
+        int i = 1;
+        int sendRank = 0;
+
+        sb.append("---- ");
+        sb.append(this.moneyList.getCurrency());
+        sb.append(" 所持数ランキング ----\n");
+
+        for (Money money : moneyList){
+
+            Member member = guild.getMemberById(money.getDiscordUserID());
+            if (member != null && !member.getUser().isBot()){
+                if (i <= 10){
+                    sb.append(i);
+                    sb.append("位 ");
+                    if (member.getNickname() != null){
+                        sb.append(member.getNickname());
+                    } else {
+                        sb.append(member.getUser().getName());
+                    }
+                    sb.append(" : ");
+                    sb.append(money.getMoney());
+                    sb.append(this.moneyList.getCurrency());
+                    sb.append("\n");
+                }
+
+                if (member.getId().equals(sendUserID)){
+                    sendRank = i;
+                }
+
+                i++;
+            }
+
+        }
+
+        sb.append("(あなたの順位は");
+        sb.append(sendRank);
+        sb.append("位です)");
+
+        message.reply(sb.toString()).queue();
 
     }
 
