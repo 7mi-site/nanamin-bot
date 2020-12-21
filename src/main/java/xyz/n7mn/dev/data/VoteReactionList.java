@@ -30,7 +30,7 @@ public class VoteReactionList {
 
                 UUID uuid = UUID.fromString(resultSet.getString("UUID"));
                 Guild guild = jda.getGuildById(resultSet.getString("GuildID"));
-                TextChannel textChannel = jda.getTextChannelById(resultSet.getString("TextChannnelID"));
+                TextChannel textChannel = jda.getTextChannelById(resultSet.getString("TextChannelID"));
                 Message message = null;
                 try {
                     message = textChannel.retrieveMessageById(resultSet.getString("MessageID")).complete();
@@ -43,16 +43,11 @@ public class VoteReactionList {
                 } catch (Exception e) {
                     // e.printStackTrace();
                 }
-                Emote emote = null;
-                try {
-                    emote = jda.getEmoteById(resultSet.getString("EmoteID"));
-                } catch (Exception e) {
-                    // e.printStackTrace();
-                }
+                String emoji = resultSet.getString("Emoji");
 
                 synchronized (reactionList) {
                     try {
-                        reactionList.add(new VoteReaction(uuid, guild, textChannel, member, message.getId(), emote));
+                        reactionList.add(new VoteReaction(uuid, guild, textChannel, member, message.getId(), emoji));
                     } catch (Exception e) {
                         // e.printStackTrace();
                     }
@@ -99,13 +94,13 @@ public class VoteReactionList {
 
         new Thread(()->{
             try {
-                PreparedStatement statement = con.prepareStatement("INSERT INTO `EmoteList` (`UUID`, `GuildID`, `TextChannelID`, `MessageID`, `DiscordMemberID`, `EmoteID`) VALUES (?, ?, ?, ?, ?, ?) ");
+                PreparedStatement statement = con.prepareStatement("INSERT INTO `EmoteList` (`UUID`, `GuildID`, `TextChannelID`, `MessageID`, `DiscordMemberID`, `Emoji`) VALUES (?, ?, ?, ?, ?, ?) ");
                 statement.setString(1, voteReaction.getUuid().toString());
                 statement.setString(2, voteReaction.getGuild().getId());
                 statement.setString(3, voteReaction.getChannel().getId());
                 statement.setString(4, voteReaction.getMessageId());
                 statement.setString(5, voteReaction.getMember().getId());
-                statement.setString(6, voteReaction.getEmote().getId());
+                statement.setString(6, voteReaction.getEmoji());
                 statement.execute();
                 statement.close();
             } catch (Exception e){
@@ -119,7 +114,7 @@ public class VoteReactionList {
 
         synchronized (reactionList){
             for (VoteReaction voteReaction1 : reactionList){
-                if (voteReaction1.getEmote().getId().equals(voteReaction.getEmote().getId()) && voteReaction1.getMessageId().equals(voteReaction.getMessageId())){
+                if (voteReaction1.getEmoji().equals(voteReaction.getEmoji()) && voteReaction1.getMessageId().equals(voteReaction.getMessageId())){
                     reactionList.remove(voteReaction1);
                     return;
                 }

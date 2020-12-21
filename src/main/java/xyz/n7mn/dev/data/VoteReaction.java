@@ -12,51 +12,27 @@ public class VoteReaction {
     private String messageId;
     private Member member;
     private MessageReaction.ReactionEmote reactionEmote;
-    private Emote emote;
+    private String emoji;
 
-    @Deprecated
-    public VoteReaction(UUID uuid, Guild guild, TextChannel channel, Member member, String messageId, MessageReaction.ReactionEmote reactionEmote){
-
-        this.uuid = uuid;
-        this.guild = guild;
-        this.channel = channel;
-        this.member = member;
-        this.messageId = messageId;
-        this.reactionEmote = reactionEmote;
-
-    }
-
-    @Deprecated
-    public VoteReaction(Guild guild, TextChannel channel, Member member, String messageId, MessageReaction.ReactionEmote reactionEmote) {
-
-        this.uuid = UUID.randomUUID();
-        this.guild = guild;
-        this.channel = channel;
-        this.member = member;
-        this.messageId = messageId;
-        this.reactionEmote = reactionEmote;
-
-    }
-
-    public VoteReaction(UUID uuid, Guild guild, TextChannel channel, Member member, String messageId, Emote emote){
+    public VoteReaction(UUID uuid, Guild guild, TextChannel channel, Member member, String messageId, String emoji){
 
         this.uuid = uuid;
         this.guild = guild;
         this.channel = channel;
         this.member = member;
         this.messageId = messageId;
-        this.emote = emote;
+        this.emoji = emoji;
 
     }
 
-    public VoteReaction(Guild guild, TextChannel channel, Member member, String messageId, Emote emote){
+    public VoteReaction(Guild guild, TextChannel channel, Member member, String messageId, String emoji){
 
         this.uuid = UUID.randomUUID();
         this.guild = guild;
         this.channel = channel;
         this.member = member;
         this.messageId = messageId;
-        this.emote = emote;
+        this.emoji = emoji;
 
     }
 
@@ -100,21 +76,11 @@ public class VoteReaction {
         this.messageId = messageId;
     }
 
-    @Deprecated
-    public MessageReaction.ReactionEmote getReactionEmote() {
-        return reactionEmote;
+    public String getEmoji() {
+        return emoji;
     }
 
-    @Deprecated
-    public void setReactionEmote(MessageReaction.ReactionEmote reactionEmote) {
-        this.reactionEmote = reactionEmote;
-    }
-
-    public Emote getEmote() {
-        return emote;
-    }
-
-    public void setEmote(Emote emote) {
-        this.emote = emote;
+    public void setEmote(String emoji) {
+        this.emoji = emoji;
     }
 }

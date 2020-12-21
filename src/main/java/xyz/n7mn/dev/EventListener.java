@@ -62,16 +62,21 @@ class EventListener extends ListenerAdapter {
         MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
         Message message = channel.retrieveMessageById(messageId).complete();
 
+        if (!reactionEmote.isEmoji() && message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
+            message.removeReaction(reactionEmote.getEmote(), event.getUser()).queue();
+            return;
+        }
+
         if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
             message.removeReaction(reactionEmote.getEmoji(), event.getUser()).queue();
 
         }
 
-        VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote.getEmote());
+        VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote.getEmoji());
 
         boolean f = false;
         for (VoteReaction voteRe  : voteReactionList.getList()){
-            if (voteRe.getMessageId().equals(messageId) && voteRe.getMember().getId().equals(member.getId()) && voteRe.getEmote().getId().equals(reactionEmote.getEmote().getId())){
+            if (voteRe.getMessageId().equals(messageId) && voteRe.getMember().getId().equals(member.getId()) && voteRe.getEmoji().equals(reactionEmote.getEmoji())){
                 f = true;
                 break;
             }
