@@ -1356,6 +1356,7 @@ public class ChatMessage {
             for (MessageReaction reaction : reactions){
                 List<String> nlist = new ArrayList<>();
                 for (VoteReaction voteReaction : list){
+                    voteReactionList.deleteList(voteReaction);
                     if (voteReaction.getMessageId().equals(message.getId()) && voteReaction.getEmoji().equals(reaction.getReactionEmote().getEmoji())){
                         if (voteReaction.getMember().getNickname() != null){
                             nlist.add(voteReaction.getMember().getNickname());
