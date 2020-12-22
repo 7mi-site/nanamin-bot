@@ -3,9 +3,9 @@ package xyz.n7mn.dev.chat;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import xyz.n7mn.dev.data.VoteReactionList;
 import xyz.n7mn.dev.game.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameCommand extends GameCommandClassInterface {
@@ -42,8 +42,13 @@ public class GameCommand extends GameCommandClassInterface {
             return;
         }
 
-        if (getMessageText().toLowerCase().equals("n.omikuji")){
+        if (getMessageText().toLowerCase().equals("n.omikuji") && !getGuild().getId().equals("517669763556704258")){
             omikuji();
+            return;
+        }
+
+        if (getMessageText().toLowerCase().equals("n.omikuji") && getGuild().getId().equals("517669763556704258")){
+            omikuji2();
             return;
         }
 
@@ -134,9 +139,42 @@ public class GameCommand extends GameCommandClassInterface {
         getMessage().reply(run).queue();
     }
 
+    private List<Omikuji> omikuji = new ArrayList<>();
     private void omikuji(){
-        Omikuji omikuji = new Omikuji();
-        String run = omikuji.run(getMoneySystem(), getMoneySystem().getMoney(getUser().getId()));
+
+        omikuji.add(new Omikuji("変態","変態は死刑ですっ！",-5));
+        omikuji.add(new Omikuji("凶","ざんねーん！",0));
+        omikuji.add(new Omikuji("吉","すごい微妙？",10));
+        omikuji.add(new Omikuji("小吉","ちょっと微妙？",20));
+        omikuji.add(new Omikuji("中吉","ふつうだね！",30));
+        omikuji.add(new Omikuji("大吉","やったね！",40));
+        omikuji.add(new Omikuji("遅刻","遅刻はダメですよ...",40));
+        omikuji.add(new Omikuji("ななみちゃん","ボーナスですっ！",100));
+
+        OmikujiGame omikujiGame = new OmikujiGame();
+        String run = omikujiGame.run(getMoneySystem(), omikuji, getMoneySystem().getMoney(getUser().getId()));
+        getMessage().reply(run).queue();
+    }
+
+    private void omikuji2(){
+        omikuji.add(new Omikuji("変態","変態は死刑ですっ！",-10));
+        omikuji.add(new Omikuji("凶","ざんねーん！",0));
+        omikuji.add(new Omikuji("吉","すごい微妙？",10));
+        omikuji.add(new Omikuji("小吉","ちょっと微妙？",20));
+        omikuji.add(new Omikuji("中吉","ふつうだね！",30));
+        omikuji.add(new Omikuji("大吉","やったね！",40));
+        omikuji.add(new Omikuji("遅刻","遅刻はダメですよ...",50));
+        omikuji.add(new Omikuji("ななみちゃん","ボーナスですっ！",100));
+
+        omikuji.add(new Omikuji("ゆるり","昼夜逆転には気をつけよう！",10));
+        omikuji.add(new Omikuji("砂",":Sand:",20));
+        omikuji.add(new Omikuji("パンマスター","/pan",25));
+        omikuji.add(new Omikuji("虫特攻",":thinking:",30));
+        omikuji.add(new Omikuji("金装備","はてな",35));
+        omikuji.add(new Omikuji("ふーぷれす",":thinking:",75));
+
+        OmikujiGame omikujiGame = new OmikujiGame();
+        String run = omikujiGame.run(getMoneySystem(), omikuji, getMoneySystem().getMoney(getUser().getId()));
         getMessage().reply(run).queue();
     }
 
