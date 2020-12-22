@@ -63,6 +63,7 @@ public class YululiCommand extends CommandClassInterface {
 
         if (getMessageText().toLowerCase().equals("n.n3m_")){
             n3m();
+            return;
         }
 
         if (getMessageText().toLowerCase().equals("n.baka")){
