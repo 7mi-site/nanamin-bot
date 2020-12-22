@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.*;
 
-public class MoneyList {
+public class MoneySystem {
 
     private Connection con = null;
 
@@ -18,7 +18,7 @@ public class MoneyList {
     List<Money> moneyList = Collections.synchronizedList(new ArrayList<>());
 
 
-    public MoneyList(){
+    public MoneySystem(){
         Gson gson = new Gson();
         String[] json = gson.fromJson(fileRead("./mysql.json"), String[].class);
 

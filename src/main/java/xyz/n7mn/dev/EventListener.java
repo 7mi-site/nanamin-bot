@@ -16,7 +16,7 @@ import xyz.n7mn.dev.api.data.eq.intensity.Pref;
 import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
 import xyz.n7mn.dev.game.Money;
-import xyz.n7mn.dev.game.MoneyList;
+import xyz.n7mn.dev.game.MoneySystem;
 
 import java.util.*;
 import java.util.List;
@@ -24,27 +24,29 @@ import java.util.List;
 class EventListener extends ListenerAdapter {
 
     private VoteReactionList voteReactionList = null;
-    private final MoneyList moneyList;
+    private final MoneySystem moneySystem;
 
     EventListener(){
 
-        moneyList = new MoneyList();
+        moneySystem = new MoneySystem();
 
     }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 
-        Money money = moneyList.getMoney(event.getAuthor().getId());
-        int money1 = money.getMoney() + 1;
-        moneyList.setMoney(event.getAuthor().getId(), money1);
+        if (!event.isWebhookMessage() && !event.getAuthor().isBot()){
+            Money money = moneySystem.getMoney(event.getAuthor().getId());
+            int money1 = money.getMoney() + 1;
+            moneySystem.setMoney(event.getAuthor().getId(), money1);
+        }
 
         if (event.getChannel().getType() == ChannelType.PRIVATE){
             new DMMessage(event.getMessage(), event.getAuthor()).run();
             return;
         }
 
-        new ChatMessage(event.getAuthor(), event.getMessage(), voteReactionList, moneyList).run();
+        new ChatMessage(event.getAuthor(), event.getMessage(), voteReactionList, moneySystem).run();
 
     }
 

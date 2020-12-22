@@ -9,7 +9,7 @@ public class Slot {
 
     int money = 100; // 1回
 
-    public String run(MoneyList moneyList, Money money){
+    public String run(MoneySystem moneySystem, Money money){
 
         if (money.getMoney() < 100){
             return "所持金が足りないですっ！出直してきてね！！";
@@ -54,7 +54,7 @@ public class Slot {
             flag = true;
         }
 
-        moneyList.setMoney(money.getDiscordUserID(), (money.getMoney() + plus));
+        moneySystem.setMoney(money.getDiscordUserID(), (money.getMoney() + plus));
 
         if (flag){
             return "あたり！ "+ (plus / this.money) + "倍！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`";

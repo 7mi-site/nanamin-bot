@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Omikuji {
 
-    public String run(MoneyList moneyList, Money money){
+    public String run(MoneySystem moneySystem, Money money){
 
         List<Integer> a = new ArrayList<>();
         a.add(0);
@@ -28,7 +28,7 @@ public class Omikuji {
         int slot1 = secureRandom.nextInt(a.size() - 1);
 
 
-        moneyList.setMoney(money.getDiscordUserID(), (money.getMoney() + a.get(slot1)));
+        moneySystem.setMoney(money.getDiscordUserID(), (money.getMoney() + a.get(slot1)));
 
         if (a.get(slot1).equals(0)){
             return "ざんねーん！\nあなたの運勢は 凶 でした！\n(獲得コインは0です。)";

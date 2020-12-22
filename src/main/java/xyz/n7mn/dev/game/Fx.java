@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 
 public class Fx {
 
-    public String run(MoneyList moneyList, Money money, int useMoney){
+    public String run(MoneySystem moneySystem, Money money, int useMoney){
 
         if (money.getMoney() <= useMoney){
             return "所持金が足りないですっ！";
@@ -37,7 +37,7 @@ public class Fx {
         int mo2 = useMoney * b;
         sb.append(mo);
         sb.append(" ");
-        sb.append(moneyList.getCurrency());
+        sb.append(moneySystem.getCurrency());
         sb.append("を元値にFX開始っ！！\n");
 
 
@@ -52,14 +52,14 @@ public class Fx {
                 mo = mo + n;
                 sb.append(n);
                 sb.append(" ");
-                sb.append(moneyList.getCurrency());
+                sb.append(moneySystem.getCurrency());
                 sb.append(" あがったよ！\n");
 
             } else {
                 mo = mo - n;
                 sb.append(n);
                 sb.append(" ");
-                sb.append(moneyList.getCurrency());
+                sb.append(moneySystem.getCurrency());
                 sb.append(" さがった...\n");
             }
         }
@@ -67,17 +67,17 @@ public class Fx {
         sb.append("最終的に");
         sb.append(mo);
         sb.append(" ");
-        sb.append(moneyList.getCurrency());
+        sb.append(moneySystem.getCurrency());
         sb.append("になったよ！\n\n");
 
         mo = mo - mo2;
         sb.append("(");
         sb.append(mo);
-        sb.append(moneyList.getCurrency());
+        sb.append(moneySystem.getCurrency());
         sb.append("獲得しました！)");
 
         nowMoney = nowMoney + mo;
-        moneyList.setMoney(money.getDiscordUserID(), nowMoney);
+        moneySystem.setMoney(money.getDiscordUserID(), nowMoney);
 
         return sb.toString();
 

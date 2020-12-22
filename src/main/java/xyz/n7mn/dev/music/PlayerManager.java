@@ -49,6 +49,8 @@ public class PlayerManager {
             public void trackLoaded(AudioTrack track) {
                 channel.sendMessage("再生する音楽を追加したよっ\n「" + track.getInfo().title+"」").queue();
                 play(musicManager,track);
+
+                System.out.println(musicManager.player.getPlayingTrack().getInfo().length);
             }
 
             @Override
