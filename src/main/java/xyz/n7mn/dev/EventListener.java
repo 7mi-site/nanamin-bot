@@ -37,8 +37,11 @@ class EventListener extends ListenerAdapter {
 
         if (!event.isWebhookMessage() && !event.getAuthor().isBot()){
             Money money = moneySystem.getMoney(event.getAuthor().getId());
-            int money1 = money.getMoney() + 1;
-            moneySystem.setMoney(event.getAuthor().getId(), money1);
+
+            if (money.getMoney() < Integer.MAX_VALUE){
+                int money1 = money.getMoney() + 1;
+                moneySystem.setMoney(event.getAuthor().getId(), money1);
+            }
         }
 
         if (event.getChannel().getType() == ChannelType.PRIVATE){

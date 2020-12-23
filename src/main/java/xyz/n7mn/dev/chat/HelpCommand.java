@@ -40,7 +40,7 @@ public class HelpCommand extends CommandClassInterface {
                 "`n.check` -- 動作確認\n" +
                 "`n.role <ユーザーID or 名前>` -- 指定ユーザーの情報を確認する\n" +
                 "`n.role <ユーザーID or 名前> <ロールID or ロールの名前>` -- 指定ユーザーのロールを追加または削除をする\n" +
-                "`n.game` -- ゲームメニュー";
+                "`n.game` -- ゲームメニュー\n";
         StringBuffer sb = new StringBuffer(helpText);
 
         if (!getGuild().getId().equals("517669763556704258")){

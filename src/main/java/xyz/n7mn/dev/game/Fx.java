@@ -33,8 +33,8 @@ public class Fx {
             b = 10;
         }
 
-        int mo = useMoney * b;
-        int mo2 = useMoney * b;
+        long mo = ((long) useMoney) * b;
+        long mo2 = ((long) useMoney) * b;
         sb.append(mo);
         sb.append(" ");
         sb.append(moneySystem.getCurrency());
@@ -46,8 +46,8 @@ public class Fx {
             sb.append((i + 1));
             sb.append("回目：");
 
-            int rr = mo2 * 2;
-            int n = new SecureRandom().nextInt(rr);
+            long rr = mo2 * 2;
+            long n = Math.abs(new SecureRandom().nextLong() % rr);
             if (new SecureRandom().nextBoolean()){
                 mo = mo + n;
                 sb.append(n);
@@ -75,7 +75,22 @@ public class Fx {
         sb.append(moneySystem.getCurrency());
         sb.append("獲得しました！)");
 
-        nowMoney = nowMoney + mo;
+        boolean f = false;
+        if (((long) nowMoney) + mo >= Integer.MAX_VALUE){
+            sb.append("\n(獲得金額が保有上限を超えたため、一部は他の方への借金地獄対策のための資金とさせていただきましたっ)");
+            f = true;
+        }
+
+        if (f){
+            nowMoney = Integer.MAX_VALUE;
+        } else {
+            if ((long) nowMoney + mo <= Integer.MIN_VALUE){
+                nowMoney = Integer.MIN_VALUE;
+            } else {
+                nowMoney = nowMoney + ((int) mo);
+            }
+        }
+
         moneySystem.setMoney(money.getDiscordUserID(), nowMoney);
 
         return sb.toString();

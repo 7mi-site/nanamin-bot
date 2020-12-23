@@ -109,7 +109,7 @@ public class ChatMessage {
             command = new YululiCommand(message.getTextChannel(), message);
         }
 
-        if (text.toLowerCase().equals("n.game") || text.toLowerCase().startsWith("n.money") || text.toLowerCase().equals("n.slot") || text.toLowerCase().equals("n.omikuji") || text.toLowerCase().startsWith("n.fx") || text.toLowerCase().startsWith("n.rank")){
+        if (text.toLowerCase().equals("n.game") || text.toLowerCase().startsWith("n.money") || text.toLowerCase().equals("n.slot") || text.toLowerCase().equals("n.omikuji") || text.toLowerCase().startsWith("n.fx") || text.toLowerCase().startsWith("n.rank") || text.toLowerCase().startsWith("n.yosogame") || text.toLowerCase().equals("n.nomoney")){
             command = new GameCommand(moneySystem, message.getTextChannel(), message);
         }
 

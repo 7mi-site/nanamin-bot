@@ -46,7 +46,7 @@ public class MoneySystem {
                         PreparedStatement statement = con.prepareStatement("SELECT * FROM Money");
                         statement.execute();
                         statement.close();
-                    } catch (SQLException e){
+                    } catch (Exception e){
 
                         try {
                             con = DriverManager.getConnection("jdbc:mysql://" + json[0] + ":"+json[1]+"/" + json[2] + json[3], json[4], json[5]);
@@ -54,7 +54,6 @@ public class MoneySystem {
                         } catch (SQLException e1){
                             // e1.printStackTrace();
                         }
-
                     }
                 }).start();
             }

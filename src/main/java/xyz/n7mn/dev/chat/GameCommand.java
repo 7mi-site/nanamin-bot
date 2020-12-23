@@ -60,6 +60,10 @@ public class GameCommand extends GameCommandClassInterface {
         if (getMessageText().toLowerCase().equals("n.rank")){
             moneyRank();
         }
+
+        if (getMessageText().toLowerCase().equals("n.nomoney")){
+            kyusai();
+        }
     }
 
     private void menu(){
@@ -68,9 +72,10 @@ public class GameCommand extends GameCommandClassInterface {
                 "`n.money` --- 現在の所持金をチェックする\n" +
                 "`n.slot` --- 1回 100"+getMoneySystem().getCurrency()+"でスロットが遊べる (当たりで最大10倍戻り)\n" +
                 "~~`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)~~ 開発中！\n" +
-                "`n.fx` --- あがったりさがったり\n" +
+                "`n.fx <賭け金>` --- あがったりさがったり\n" +
                 "`n.omikuji` --- おみくじ (結果によって"+getMoneySystem().getCurrency()+"がもらえます)\n" +
                 "`n.rank` --- "+getMoneySystem().getCurrency()+"所持数ランキング\n" +
+                "`n.nomoney` --- ななみちゃん救済 (所持金がマイナス1,000"+getMoneySystem().getCurrency()+"以上の方のみ使用可能です。)\n" +
                 "(今後さらに実装予定です！)";
         getMessage().reply(text).queue();
 
@@ -247,4 +252,9 @@ public class GameCommand extends GameCommandClassInterface {
 
     }
 
+    private void kyusai(){
+        Kyusai kyusai = new Kyusai();
+        String run = kyusai.run(getMoneySystem(), getMoneySystem().getMoney(getUser().getId()));
+        getMessage().reply(run).queue();
+    }
 }
