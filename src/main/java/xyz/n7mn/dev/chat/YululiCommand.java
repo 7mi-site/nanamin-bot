@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.shuffle;
@@ -66,6 +68,11 @@ public class YululiCommand extends CommandClassInterface {
 
         if (getMessageText().toLowerCase().equals("n.baka")){
             baka();
+            return;
+        }
+
+        if (getMessageText().toLowerCase().equals("n.pan")){
+            pan();
         }
     }
 
@@ -164,5 +171,23 @@ public class YululiCommand extends CommandClassInterface {
         } else {
             getTextChannel().sendMessage(me.getUser().getName()+"さんが馬鹿に選ばれましたっ！").queue();
         }
+    }
+
+    private void pan(){
+
+        String[] split = new String[]{
+                "https://yululi.n7mn.xyz/nana/PANmaster.png",
+                "https://yululi.n7mn.xyz/nana/PanMasterNETA01COMP.png",
+                "https://yululi.n7mn.xyz/nana/puyCRzt9_400x400.jpg"
+        };
+
+        List<String> list = Arrays.asList(split);
+        Collections.shuffle(list);
+
+        SecureRandom secureRandom = new SecureRandom();
+        int c = secureRandom.nextInt(list.size() - 1);
+
+        getTextChannel().sendMessage(list.get(c)).queue();
+
     }
 }

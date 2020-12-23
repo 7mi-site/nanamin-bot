@@ -54,7 +54,6 @@ public class Fx {
                 sb.append(" ");
                 sb.append(moneySystem.getCurrency());
                 sb.append(" あがったよ！\n");
-
             } else {
                 mo = mo - n;
                 sb.append(n);

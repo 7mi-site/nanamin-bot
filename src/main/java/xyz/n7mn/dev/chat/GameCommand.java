@@ -122,7 +122,11 @@ public class GameCommand extends GameCommandClassInterface {
                     getMoneySystem().setMoney(fromMoney.getDiscordUserID(), fromMoney.getMoney() - Integer.parseInt(split[3]));
                     getMoneySystem().setMoney(targetMoney.getDiscordUserID(), targetMoney.getMoney() + Integer.parseInt(split[3]));
 
-                    getMessage().reply(targetMember.getNickname() + "さんに "+split[3] + " "+ getMoneySystem().getCurrency()+"を送金しましたっ").queue();
+                    if (targetMember.getNickname() != null){
+                        getMessage().reply(targetMember.getNickname() + "さんに "+split[3] + " "+ getMoneySystem().getCurrency()+"を送金しましたっ").queue();
+                    } else {
+                        getMessage().reply(targetMember.getUser().getName() + "さんに "+split[3] + " "+ getMoneySystem().getCurrency()+"を送金しましたっ").queue();
+                    }
                 } else {
                     getMessage().reply("その人 実は存在しないらしい。").queue();
                 }
@@ -182,11 +186,14 @@ public class GameCommand extends GameCommandClassInterface {
 
         String[] split = getMessageText().split(" ", -1);
         Fx fx = new Fx();
-        System.out.println("debug "+split.length);
+        // System.out.println("debug "+split.length);
         if (split.length == 2){
             String run = fx.run(getMoneySystem(), getMoneySystem().getMoney(getUser().getId()), Integer.parseInt(split[1]));
             getMessage().reply(run).queue();
+            return;
         }
+
+        getMessage().reply("えらーですっ！\n`n.fx <掛け金>`で実行してください！").queue();
 
     }
 
