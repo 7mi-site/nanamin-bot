@@ -75,7 +75,7 @@ public class GameCommand extends GameCommandClassInterface {
                 "`n.fx <賭け金>` --- あがったりさがったり\n" +
                 "`n.omikuji` --- おみくじ (結果によって"+getMoneySystem().getCurrency()+"がもらえます)\n" +
                 "`n.rank` --- "+getMoneySystem().getCurrency()+"所持数ランキング\n" +
-                "`n.nomoney` --- ななみちゃん救済 (所持金がマイナス1,000"+getMoneySystem().getCurrency()+"以上の方のみ使用可能です。)\n" +
+                "`n.nomoney` --- ななみちゃん救済 (所持金がマイナス1,000"+getMoneySystem().getCurrency()+"以下(所持金 < -1000)の方のみ使用可能です。)\n" +
                 "(今後さらに実装予定です！)";
         getMessage().reply(text).queue();
 
