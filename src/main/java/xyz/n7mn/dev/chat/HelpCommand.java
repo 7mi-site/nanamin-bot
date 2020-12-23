@@ -27,7 +27,7 @@ public class HelpCommand extends CommandClassInterface {
 
         String helpText = "----- ななみちゃんbot ヘルプ Start -----\n" +
                 "**※このメッセージは送信専用です。返信しても何もできませんのでご注意ください。**\n" +
-                "**※バグの報告、要望などは https://discord.gg/QP2hRSQaVV までお願いします。**\n" +
+                "**※バグの報告、要望などは https://discord.gg/FnjCMzP7d4 までお願いします。**\n" +
                 "`n.vote`、`n.voteNt` -- アンケートを表示する(詳細はn.voteと打って詳細ヘルプを出してください)\n" +
                 "`n.voteStop <メッセージリンクのURL>` -- アンケートを終了する\n" +
                 "`n.ping` -- 応答を返す\n"+

@@ -69,7 +69,7 @@ public class DMMessage {
                 "ふぬ？なにもおきないですよ？\n" +
                 "\n" +
                 "このbotを入れるには：https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot\n" +
-                "botについてバグ報告、テスト、要望が出したい！： https://discord.gg/QP2hRSQaVV").queue((message -> {
+                "botについてバグ報告、テスト、要望が出したい！： https://discord.gg/FnjCMzP7d4").queue((message -> {
             message.suppressEmbeds(true).queue();
         }));
 
