@@ -47,6 +47,7 @@ public class GetMessageCommand extends CommandClassInterface {
 
         textChannelById.retrieveMessageById(split[6]).queue(message1 ->{
             String contentRaw = message1.getContentRaw();
+            System.out.println(contentRaw);
             boolean edited = message1.isEdited();
             User author = message1.getAuthor();
 

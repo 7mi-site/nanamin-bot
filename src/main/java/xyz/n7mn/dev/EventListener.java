@@ -160,6 +160,11 @@ class EventListener extends ListenerAdapter {
         TimerTask task = new TimerTask() {
             public void run() {
                 try {
+
+                    if (jda.getSelfUser().getId().equals("785322639295905792")){
+                        return;
+                    }
+
                     EarthquakeResult data1 = earthquake.getData();
                     for (Guild guild : jda.getGuilds()){
 
