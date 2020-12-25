@@ -160,14 +160,20 @@ public class RoleCommand extends CommandClassInterface {
                     }
                 }
 
-                if (!isRole){
-                    getGuild().addRoleToMember(member, setRole).queue();
-                    getMessage().reply(member.getUser().getName() + "さんをロール「"+setRole.getName()+"」に追加をしました！").queue();
-                    return;
-                }
+                try {
+                    if (!isRole){
+                        getGuild().addRoleToMember(member, setRole).queue();
+                        getMessage().reply(member.getUser().getName() + "さんをロール「"+setRole.getName()+"」に追加をしました！").queue();
+                        return;
+                    }
 
-                getGuild().removeRoleFromMember(member, setRole).queue();
-                getMessage().reply(member.getUser().getName() + "さんからロール「"+setRole.getName()+"」を削除しました！").queue();
+                    getGuild().removeRoleFromMember(member, setRole).queue();
+                    getMessage().reply(member.getUser().getName() + "さんからロール「"+setRole.getName()+"」を削除しました！").queue();
+                } catch (Exception e){
+
+                    getMessage().reply("ロール「"+setRole.getName()+"」は存在しないか 追加/削除することができないロールです！").queue();
+
+                }
 
             }
 
