@@ -58,7 +58,7 @@ public class ChatMessage {
         }
 
         if (!text.startsWith("n.") && !text.endsWith(".gold") && (guild.getId().equals("517669763556704258") || guild.getId().equals("781148066761670666"))){
-            command = new Yululi2Command(message.getTextChannel(), message);
+            command = new YululiVideoChatCommand(message.getTextChannel(), message);
             command.run();
             return;
         }
@@ -118,6 +118,10 @@ public class ChatMessage {
 
         if (text.toLowerCase().equals("n.game") || text.toLowerCase().startsWith("n.money") || text.toLowerCase().equals("n.slot") || text.toLowerCase().equals("n.omikuji") || text.toLowerCase().startsWith("n.fx") || text.toLowerCase().startsWith("n.rank") || text.toLowerCase().startsWith("n.yosogame") || text.toLowerCase().equals("n.nomoney")){
             command = new GameCommand(moneySystem, message.getTextChannel(), message);
+        }
+
+        if (text.toLowerCase().startsWith("n.yuvideo")){
+            command = new YululiVideoCommand(message.getTextChannel(), message);
         }
 
         if (command != null){
