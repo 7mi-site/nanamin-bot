@@ -32,7 +32,9 @@ public class Yululi2Command extends CommandClassInterface {
     @Override
     public void run() {
 
-        // System.out.println("デバッグ-a");
+        if (!getTextChannel().getId().equals("791394344727871488") && !getTextChannel().getId().equals("791844368281108490")){
+            return;
+        }
 
         List<TextChannel> textChannelList = getGuild().getTextChannels();
         for (TextChannel channel : textChannelList) {
@@ -50,6 +52,7 @@ public class Yululi2Command extends CommandClassInterface {
                                 TextChannel ch = getGuild().getTextChannelById(split[1].replaceAll("<", "").replaceAll(">", ""));
                                 // System.out.println("デバッグ-02 : " + (ch != null));
                                 if (ch != null) {
+
                                     String title = "";
                                     String content = "";
                                     String url = "";
@@ -121,7 +124,25 @@ public class Yululi2Command extends CommandClassInterface {
 
                                     // System.out.println("デバッグ-2");
 
-                                    getMessage().addReaction("\u2705").queue();
+                                    if (title.length() > 0 && url.length() > 0){
+                                        getMessage().addReaction("\u2705").queue();
+                                    } else if (content.length() > 0 || rule.length() > 0) {
+                                        getMessage().addReaction("\u26A0").queue();
+                                    } else if (title.length() == 0 && url.length() == 0){
+                                        getMessage().addReaction("\u2757").queue();
+                                    } else {
+                                        getMessage().addReaction("\u26A0").queue();
+                                    }
+
+                                    if (title.length() == 0 && url.length() == 0 && content.length() == 0 && rule.length() == 0){
+
+                                        ch.sendMessage("想定していないテキスト\n```\n" +
+                                                getMessageText() +
+                                                "\n```\n" +
+                                                "原文リンク：https://discord.com/channels/"+getGuild().getId()+"/"+getTextChannel().getId()+"/"+getMessage().getId()).queue();
+
+                                        return;
+                                    }
                                     ch.sendMessage("```\n" +
                                             "タイトル: " + title + "\n" +
                                             "ダウンロードリンク: " + url + "\n" +
