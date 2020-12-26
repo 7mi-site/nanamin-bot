@@ -1,21 +1,44 @@
-package xyz.n7mn.dev.game.old;
+package xyz.n7mn.dev.game;
 
-import xyz.n7mn.dev.game.Money;
-import xyz.n7mn.dev.game.MoneySystem;
+
+import net.dv8tion.jda.api.entities.Message;
 
 import java.security.SecureRandom;
 
-@Deprecated
-public class Fx {
 
-    public String run(MoneySystem moneySystem, Money money, int useMoney){
+public class FxGame extends GameInterface {
+
+    public FxGame(Message message, MoneySystem moneySystem) {
+        super(message, moneySystem);
+    }
+
+    @Override
+    public void run() {
+
+        String text = getMessage().getContentRaw();
+        String[] textSplit = text.split(" ", -1);
+
+        Money money = getMoneySystem().getMoney(getMessage().getMember().getId());
+
+        if (!text.equals("n.fx") && textSplit.length == 1){
+            return;
+        }
+
+        if (textSplit.length != 2){
+            getMessage().reply("えらーですっ！\n`n.fx <掛け金>`で実行してください！").queue();
+            return;
+        }
+
+        int useMoney = Integer.parseInt(textSplit[1]);
 
         if (money.getMoney() <= useMoney){
-            return "所持金が足りないですっ！";
+            getMessage().reply("所持金が足りないですっ！").queue();
+            return;
         }
 
         if (useMoney <= 0){
-            return "それはおかしいですよ...";
+            getMessage().reply("それはおかしいですよ...").queue();
+            return;
         }
 
         int nowMoney = money.getMoney();
@@ -41,7 +64,7 @@ public class Fx {
         long mo2 = ((long) useMoney) * b;
         sb.append(mo);
         sb.append(" ");
-        sb.append(moneySystem.getCurrency());
+        sb.append(getMoneySystem().getCurrency());
         sb.append("を元値にFX開始っ！！\n");
 
 
@@ -56,13 +79,13 @@ public class Fx {
                 mo = mo + n;
                 sb.append(n);
                 sb.append(" ");
-                sb.append(moneySystem.getCurrency());
+                sb.append(getMoneySystem().getCurrency());
                 sb.append(" あがったよ！\n");
             } else {
                 mo = mo - n;
                 sb.append(n);
                 sb.append(" ");
-                sb.append(moneySystem.getCurrency());
+                sb.append(getMoneySystem().getCurrency());
                 sb.append(" さがった...\n");
             }
         }
@@ -70,13 +93,13 @@ public class Fx {
         sb.append("最終的に");
         sb.append(mo);
         sb.append(" ");
-        sb.append(moneySystem.getCurrency());
+        sb.append(getMoneySystem().getCurrency());
         sb.append("になったよ！\n\n");
 
         mo = mo - mo2;
         sb.append("(");
         sb.append(mo);
-        sb.append(moneySystem.getCurrency());
+        sb.append(getMoneySystem().getCurrency());
         sb.append("獲得しました！)");
 
         boolean f = false;
@@ -95,10 +118,8 @@ public class Fx {
             }
         }
 
-        moneySystem.setMoney(money.getDiscordUserID(), nowMoney);
-
-        return sb.toString();
-
+        getMoneySystem().setMoney(money.getDiscordUserID(), nowMoney);
+        getMessage().reply(sb.toString()).queue();
     }
 
 }

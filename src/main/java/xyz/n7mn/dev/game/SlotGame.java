@@ -1,21 +1,26 @@
-package xyz.n7mn.dev.game.old;
+package xyz.n7mn.dev.game;
 
-import xyz.n7mn.dev.game.Money;
-import xyz.n7mn.dev.game.MoneySystem;
+import net.dv8tion.jda.api.entities.Message;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-@Deprecated
-public class Slot {
 
-    int money = 100; // 1回
+public class SlotGame extends GameInterface{
+    public SlotGame(Message message, MoneySystem moneySystem) {
+        super(message, moneySystem);
+    }
 
-    public String run(MoneySystem moneySystem, Money money){
+    @Override
+    public void run() {
+
+        Money money = getMoneySystem().getMoney(getMessage().getMember().getId());
+        int but = 100;
 
         if (money.getMoney() < 100){
-            return "所持金が足りないですっ！出直してきてね！！";
+            getMessage().reply("所持金が足りないですっ！出直してきてね！！").queue();
+            return;
         }
 
         List<Integer> a = new ArrayList<>();
@@ -45,26 +50,30 @@ public class Slot {
         int plus = -100;
         boolean flag = false;
         if (a.get(slot1).equals(b.get(slot2)) && b.get(slot2).equals(c.get(slot3))){
-            plus = this.money * 5;
+            plus = but * 5;
             if (a.get(slot1).equals(7) && b.get(slot2).equals(7) && c.get(slot3).equals(7)){
-                plus = this.money = 10;
+                plus = but = 10;
             }
             flag = true;
         }
 
         if (a.get(slot1).equals(7) && b.get(slot2).equals(7) && c.get(slot3).equals(3)){
-            plus = this.money * 8;
+            plus = but * 8;
             flag = true;
         }
 
-        moneySystem.setMoney(money.getDiscordUserID(), (money.getMoney() + plus));
-
-        if (flag){
-            return "あたり！ "+ (plus / this.money) + "倍！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`";
+        long tempInt = (money.getMoney() + (long) plus);
+        if (tempInt > Integer.MAX_VALUE){
+            tempInt = Integer.MAX_VALUE;
         }
 
-        return "ざんねーん！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`";
+        getMoneySystem().setMoney(money.getDiscordUserID(), (int) tempInt);
+
+        if (flag){
+            getMessage().reply("あたり！ "+ (plus / but) + "倍！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`").queue();
+            return;
+        }
+
+        getMessage().reply("ざんねーん！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`").queue();
     }
-
-
 }
