@@ -1,10 +1,12 @@
-package xyz.n7mn.dev.game;
+package xyz.n7mn.dev.game.old;
+
+import xyz.n7mn.dev.game.Money;
+import xyz.n7mn.dev.game.MoneySystem;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
+@Deprecated
 public class OmikujiGame {
 
     @Deprecated

@@ -1,15 +1,14 @@
 package xyz.n7mn.dev.game;
 
-public class YosoGame {
 
-    public String run(MoneySystem moneySystem, Money money){
+public class YosoGame extends GameInterface {
 
-        int nowMoney = money.getMoney();
-
-
-
-
-        return "";
+    public YosoGame(MoneySystem moneySystem, Money money) {
+        super(moneySystem, money);
     }
 
+    @Override
+    public String run() {
+        return "";
+    }
 }

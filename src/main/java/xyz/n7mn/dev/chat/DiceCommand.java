@@ -2,8 +2,6 @@ package xyz.n7mn.dev.chat;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import xyz.n7mn.dev.data.VoteReactionList;
-import xyz.n7mn.dev.game.MoneySystem;
 
 import java.security.SecureRandom;
 

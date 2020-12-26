@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import xyz.n7mn.dev.data.VoteReactionList;
-import xyz.n7mn.dev.game.MoneySystem;
 
 import java.text.SimpleDateFormat;
 import java.util.*;

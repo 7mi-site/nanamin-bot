@@ -5,8 +5,6 @@ import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
-import xyz.n7mn.dev.data.VoteReactionList;
-import xyz.n7mn.dev.game.MoneySystem;
 
 public class DMSendCommand extends CommandClassInterface {
 

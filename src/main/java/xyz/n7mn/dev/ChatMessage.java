@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
 import xyz.n7mn.dev.chat.*;
 import xyz.n7mn.dev.data.VoteReactionList;
-import xyz.n7mn.dev.game.*;
+import xyz.n7mn.dev.game.MoneySystem;
 
 public class ChatMessage {
 

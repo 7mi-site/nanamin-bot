@@ -2,7 +2,6 @@ package xyz.n7mn.dev.chat;
 
 import net.dv8tion.jda.api.entities.*;
 import xyz.n7mn.dev.data.VoteReactionList;
-import xyz.n7mn.dev.game.MoneySystem;
 
 import java.util.List;
 

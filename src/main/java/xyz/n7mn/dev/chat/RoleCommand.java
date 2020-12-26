@@ -1,12 +1,7 @@
 package xyz.n7mn.dev.chat;
 
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import xyz.n7mn.dev.data.VoteReactionList;
-import xyz.n7mn.dev.game.MoneySystem;
+import net.dv8tion.jda.api.entities.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -167,12 +162,17 @@ public class RoleCommand extends CommandClassInterface {
                         return;
                     }
 
-                    getGuild().removeRoleFromMember(member, setRole).queue();
+                    Member bot = getGuild().getMemberById(getJda().getSelfUser().getId());
+                    List<Role> roleList = bot.getRoles();
+                    if (!roleList.get(0).canInteract(setRole)){
+                        getMessage().reply("ロール「"+setRole.getName()+"」は追加/削除することができないロールです！").queue();
+                        return;
+                    }
+
+                    getGuild().addRoleToMember(member, setRole).queue();
                     getMessage().reply(member.getUser().getName() + "さんからロール「"+setRole.getName()+"」を削除しました！").queue();
                 } catch (Exception e){
-
-                    getMessage().reply("ロール「"+setRole.getName()+"」は存在しないか 追加/削除することができないロールです！").queue();
-
+                    getMessage().reply("ロール「"+setRole.getName()+"」は存在しないロールです！").queue();
                 }
 
             }

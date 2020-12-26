@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import xyz.n7mn.dev.game.*;
+import xyz.n7mn.dev.game.old.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,10 @@ public class GameCommand extends GameCommandClassInterface {
         if (getMessageText().toLowerCase().equals("n.nomoney")){
             kyusai();
         }
+
+        if (getMessageText().toLowerCase().startsWith("n.yosogame")){
+            yosogame();
+        }
     }
 
     private void menu(){
@@ -71,7 +76,7 @@ public class GameCommand extends GameCommandClassInterface {
                 "----- ななみちゃんbot ゲームメニュー -----\n" +
                 "`n.money` --- 現在の所持金をチェックする\n" +
                 "`n.slot` --- 1回 100"+getMoneySystem().getCurrency()+"でスロットが遊べる (当たりで最大10倍戻り)\n" +
-                "~~`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)~~ 開発中！\n" +
+                "`n.yosogame <賭け金> <数字>` --- 一つの数字を予想して当てるゲーム (当たりで10倍戻り)\n" +
                 "`n.fx <賭け金>` --- あがったりさがったり\n" +
                 "`n.omikuji` --- おみくじ (結果によって"+getMoneySystem().getCurrency()+"がもらえます)\n" +
                 "`n.rank` --- "+getMoneySystem().getCurrency()+"所持数ランキング\n" +
@@ -256,5 +261,21 @@ public class GameCommand extends GameCommandClassInterface {
         Kyusai kyusai = new Kyusai();
         String run = kyusai.run(getMoneySystem(), getMoneySystem().getMoney(getUser().getId()));
         getMessage().reply(run).queue();
+    }
+
+    private void yosogame(){
+
+        // n.yosogame <賭け金> <数字>
+        if (getMessageText().split(" ", -1).length == 3){
+
+            YosoGame yosoGame = new YosoGame(getMoneySystem(), getMoneySystem().getMoney(getUser().getId()));
+            getMessage().reply(yosoGame.run()).queue();
+
+            return;
+
+        }
+
+        getMessage().reply("えらーですっ！\n`n.yosogame <掛け金> <予想数字>`でお願いしますっ！").queue();
+
     }
 }

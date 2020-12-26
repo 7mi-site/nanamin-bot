@@ -1,5 +1,5 @@
-package xyz.n7mn.dev.game;
-
+package xyz.n7mn.dev.game.old;
+@Deprecated
 public class Omikuji {
 
     private String ResultText;

@@ -1,7 +1,11 @@
-package xyz.n7mn.dev.game;
+package xyz.n7mn.dev.game.old;
+
+import xyz.n7mn.dev.game.Money;
+import xyz.n7mn.dev.game.MoneySystem;
 
 import java.security.SecureRandom;
 
+@Deprecated
 public class Fx {
 
     public String run(MoneySystem moneySystem, Money money, int useMoney){
