@@ -43,17 +43,21 @@ class EventListener extends ListenerAdapter {
         GuildVoiceState state = event.getVoiceState();
         VoiceChannel channel = state.getChannel();
 
-        List<Member> members = channel.getMembers();
-        // System.out.println(members.size());
-        if (members.size() == 1){
+        try {
+            List<Member> members = channel.getMembers();
+            // System.out.println(members.size());
+            if (members.size() == 1){
 
-            System.out.println("aa");
-            AudioManager audioManager = channel.getGuild().getAudioManager();
-            PlayerManager Playermanager = PlayerManager.getINSTANCE();
-            GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(channel.getGuild());
-            guildMusicManager.player.stopTrack();
-            audioManager.closeAudioConnection();
+                // System.out.println("aa");
+                AudioManager audioManager = channel.getGuild().getAudioManager();
+                PlayerManager Playermanager = PlayerManager.getINSTANCE();
+                GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(channel.getGuild());
+                guildMusicManager.player.stopTrack();
+                audioManager.closeAudioConnection();
 
+            }
+        } catch (Exception e){
+            // e.printStackTrace();
         }
 
     }
