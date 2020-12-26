@@ -28,6 +28,8 @@ public class GameCommand extends GameCommandClassInterface {
     @Override
     public void run() {
 
+        Game game = null;
+
         if (getMessageText().toLowerCase().startsWith("n.game")){
             menu();
             return;
@@ -60,17 +62,24 @@ public class GameCommand extends GameCommandClassInterface {
 
         if (getMessageText().toLowerCase().equals("n.rank")){
             moneyRank();
+            return;
         }
 
         if (getMessageText().toLowerCase().equals("n.nomoney")){
             kyusai();
+            return;
         }
 
         if (getMessageText().toLowerCase().startsWith("n.yosogame")){
-            yosogame();
+            game = new YosoGame(getMessage(), getMoneySystem());
+        }
+
+        if (game != null){
+            game.run();
         }
     }
 
+    @Deprecated
     private void menu(){
         String text = "" +
                 "----- ななみちゃんbot ゲームメニュー -----\n" +
@@ -85,7 +94,7 @@ public class GameCommand extends GameCommandClassInterface {
         getMessage().reply(text).queue();
 
     }
-
+    @Deprecated
     private void money(){
 
         String t = getMessageText().replaceAll("　"," ");
@@ -146,7 +155,7 @@ public class GameCommand extends GameCommandClassInterface {
         }
 
     }
-
+    @Deprecated
     private void slot(){
         Slot slot = new Slot();
         String run = slot.run(getMoneySystem(), getMoneySystem().getMoney(getUser().getId()));
@@ -154,6 +163,7 @@ public class GameCommand extends GameCommandClassInterface {
     }
 
     private List<Omikuji> omikuji = new ArrayList<>();
+    @Deprecated
     private void omikuji(){
 
         omikuji.add(new Omikuji("変態","変態は死刑ですっ！",-5));
@@ -170,6 +180,7 @@ public class GameCommand extends GameCommandClassInterface {
         getMessage().reply(run).queue();
     }
 
+    @Deprecated
     private void omikuji2(){
         omikuji.add(new Omikuji("変態","変態は死刑ですっ！",-10));
         omikuji.add(new Omikuji("凶","ざんねーん！",0));
@@ -191,7 +202,7 @@ public class GameCommand extends GameCommandClassInterface {
         String run = omikujiGame.run(getMoneySystem(), omikuji, getMoneySystem().getMoney(getUser().getId()));
         getMessage().reply(run).queue();
     }
-
+    @Deprecated
     private void fx(){
 
         String[] split = getMessageText().split(" ", -1);
@@ -206,7 +217,7 @@ public class GameCommand extends GameCommandClassInterface {
         getMessage().reply("えらーですっ！\n`n.fx <掛け金>`で実行してください！").queue();
 
     }
-
+    @Deprecated
     private void moneyRank(){
 
         StringBuffer sb = new StringBuffer();
@@ -256,26 +267,11 @@ public class GameCommand extends GameCommandClassInterface {
         getMessage().reply(sb.toString()).queue();
 
     }
-
+    @Deprecated
     private void kyusai(){
         Kyusai kyusai = new Kyusai();
         String run = kyusai.run(getMoneySystem(), getMoneySystem().getMoney(getUser().getId()));
         getMessage().reply(run).queue();
     }
 
-    private void yosogame(){
-
-        // n.yosogame <賭け金> <数字>
-        if (getMessageText().split(" ", -1).length == 3){
-
-            YosoGame yosoGame = new YosoGame(getMoneySystem(), getMoneySystem().getMoney(getUser().getId()));
-            getMessage().reply(yosoGame.run()).queue();
-
-            return;
-
-        }
-
-        getMessage().reply("えらーですっ！\n`n.yosogame <掛け金> <予想数字>`でお願いしますっ！").queue();
-
-    }
 }

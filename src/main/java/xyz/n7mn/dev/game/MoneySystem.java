@@ -12,10 +12,10 @@ public class MoneySystem {
 
     private Connection con = null;
 
-    String coinName = "ななみコイン";
-    int defaultCoin = 100;
+    private final String coinName = "ななみコイン";
+    private int defaultCoin = 100;
 
-    List<Money> moneyList = Collections.synchronizedList(new ArrayList<>());
+    private List<Money> moneyList = Collections.synchronizedList(new ArrayList<>());
 
 
     public MoneySystem(){
@@ -30,7 +30,11 @@ public class MoneySystem {
             ResultSet resultSet = preparedStatement.executeQuery();
             synchronized (moneyList){
                 while (resultSet.next()){
-                    moneyList.add(new Money(UUID.fromString(resultSet.getString("UserID")), resultSet.getString("DiscordUserID"), resultSet.getInt("Money")));
+                    if (resultSet.getInt("Money") >= -1000){
+                        moneyList.add(new Money(UUID.fromString(resultSet.getString("UserID")), resultSet.getString("DiscordUserID"), resultSet.getInt("Money")));
+                    } else {
+                        moneyList.add(new Money(UUID.fromString(resultSet.getString("UserID")), resultSet.getString("DiscordUserID"), -1000));
+                    }
                 }
             }
             resultSet.close();

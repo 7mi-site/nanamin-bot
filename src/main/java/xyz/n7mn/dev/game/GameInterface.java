@@ -1,24 +1,26 @@
 package xyz.n7mn.dev.game;
 
+import net.dv8tion.jda.api.entities.Message;
+
 public abstract class GameInterface implements Game {
 
     private final MoneySystem moneySystem;
-    private final Money money;
+    private final Message message;
 
-    public GameInterface(MoneySystem moneySystem, Money money){
+    public GameInterface(Message message, MoneySystem moneySystem){
 
         this.moneySystem = moneySystem;
-        this.money = money;
+        this.message = message;
 
     }
 
-    public abstract String run();
+    public abstract void run();
 
     public MoneySystem getMoneySystem() {
         return moneySystem;
     }
 
-    public Money getMoney() {
-        return money;
+    public Message getMessage() {
+        return message;
     }
 }
