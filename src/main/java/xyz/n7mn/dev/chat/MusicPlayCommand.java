@@ -106,6 +106,8 @@ public class MusicPlayCommand extends CommandClassInterface {
             PlayerManager Playermanager = PlayerManager.getINSTANCE();
             Playermanager.loadAndPlay(getTextChannel(), split[1]);
 
+
+
             if (split.length == 3){
                 Playermanager.getGuildMusicManager(getGuild()).player.setVolume(Integer.parseInt(split[2]));
             } else {

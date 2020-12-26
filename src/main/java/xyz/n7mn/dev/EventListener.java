@@ -4,19 +4,24 @@ package xyz.n7mn.dev;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
 import xyz.n7mn.dev.api.data.eq.intensity.Area;
 import xyz.n7mn.dev.api.data.eq.intensity.Pref;
+import xyz.n7mn.dev.chat.MusicStopCommand;
 import xyz.n7mn.dev.data.VoteReaction;
 import xyz.n7mn.dev.data.VoteReactionList;
 import xyz.n7mn.dev.game.Money;
 import xyz.n7mn.dev.game.MoneySystem;
+import xyz.n7mn.dev.music.GuildMusicManager;
+import xyz.n7mn.dev.music.PlayerManager;
 
 import java.util.*;
 import java.util.List;
@@ -29,6 +34,27 @@ class EventListener extends ListenerAdapter {
     EventListener(){
 
         moneySystem = new MoneySystem();
+
+    }
+
+    @Override
+    public void onGenericGuildVoice(@NotNull GenericGuildVoiceEvent event) {
+
+        GuildVoiceState state = event.getVoiceState();
+        VoiceChannel channel = state.getChannel();
+
+        List<Member> members = channel.getMembers();
+        // System.out.println(members.size());
+        if (members.size() == 1){
+
+            System.out.println("aa");
+            AudioManager audioManager = channel.getGuild().getAudioManager();
+            PlayerManager Playermanager = PlayerManager.getINSTANCE();
+            GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(channel.getGuild());
+            guildMusicManager.player.stopTrack();
+            audioManager.closeAudioConnection();
+
+        }
 
     }
 

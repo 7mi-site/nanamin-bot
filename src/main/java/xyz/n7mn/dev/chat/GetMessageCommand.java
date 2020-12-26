@@ -42,25 +42,33 @@ public class GetMessageCommand extends CommandClassInterface {
             return;
         }
 
-        textChannelById.retrieveMessageById(split[6]).queue(message1 ->{
-            String contentRaw = message1.getContentRaw();
-            // System.out.println(contentRaw);
-            boolean edited = message1.isEdited();
-            User author = message1.getAuthor();
+        try {
+            textChannelById.retrieveMessageById(split[6]).queue(message1 ->{
+                try {
+                    String contentRaw = message1.getContentRaw();
+                    // System.out.println(contentRaw);
+                    boolean edited = message1.isEdited();
+                    User author = message1.getAuthor();
 
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.addField("内容", contentRaw, true);
-            MessageEmbed build = builder.build();
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.addField("内容", contentRaw, true);
+                    MessageEmbed build = builder.build();
 
-            getMessage().reply(
-                    "---- メッセージの情報 ----\n" +
-                            "投稿したチャンネル : " + message1.getChannel().getName() + "\n" +
-                            "文字数 : " + contentRaw.length() + "\n" +
-                            "編集済みかどうか : " + edited + "\n" +
-                            "投稿者 : " + author.getAsTag() + "\n"
-            ).embed(build).queue();
+                    getMessage().reply(
+                            "---- メッセージの情報 ----\n" +
+                                    "投稿したチャンネル : " + message1.getChannel().getName() + "\n" +
+                                    "文字数 : " + contentRaw.length() + "\n" +
+                                    "編集済みかどうか : " + edited + "\n" +
+                                    "投稿者 : " + author.getAsTag() + "\n"
+                    ).embed(build).queue();
+                } catch (Exception e){
+                    getMessage().reply("メッセージが存在しませんっ！").queue();
+                }
 
-        });
+            });
+        } catch (Exception e){
+            getMessage().reply("メッセージが存在しませんっ！").queue();
+        }
 
     }
 }
