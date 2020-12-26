@@ -1,7 +1,9 @@
 package xyz.n7mn.dev.chat;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.security.SecureRandom;
@@ -73,6 +75,11 @@ public class YululiCommand extends CommandClassInterface {
 
         if (getMessageText().toLowerCase().equals("n.pan")){
             pan();
+            return;
+        }
+
+        if (getMessageText().toLowerCase().equals("n.yululi")){
+            yululi();
         }
     }
 
@@ -189,5 +196,19 @@ public class YululiCommand extends CommandClassInterface {
 
         getTextChannel().sendMessage(list.get(c)).queue();
 
+    }
+
+    private void yululi(){
+
+        EmbedBuilder builder = new EmbedBuilder();
+
+        String[] url = new String[]{"https://twitter.com/Yululi_ch","https://www.youtube.com/channel/UC4UktYq8vt-N0ZDgnC5U6bQ","https://www.youtube.com/channel/UCG20JIY3L5hcAFBZk3XZGTQ"};
+        List<String> urlList = new ArrayList<>(Arrays.asList(url));
+        shuffle(urlList);
+
+        builder.setThumbnail("https://yululi.n7mn.xyz/nana/VjYrK6z9_400x400.jpg");
+        builder.setTitle("Yululi-ゆるり-", urlList.get(new SecureRandom().nextInt(urlList.size() - 1)));
+
+        getTextChannel().sendMessage(builder.build()).queue();
     }
 }

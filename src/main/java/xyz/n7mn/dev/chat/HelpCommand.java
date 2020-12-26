@@ -58,6 +58,7 @@ public class HelpCommand extends CommandClassInterface {
                     "`n.sc` -- 架空のスパチャを送る\n" +
                     "`n.pan` -- パンマスター\n" +
                     "`n.hentai` -- へんたいっ！\n" +
+                    "`n.yululi` -- ゆるり\n" +
                     "----- ななみちゃんbot ヘルプ End ----");
         }
 

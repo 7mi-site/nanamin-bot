@@ -10,7 +10,7 @@ import xyz.n7mn.dev.music.PlayerManager;
 
 import java.util.List;
 
-public class MusicCommand extends CommandClassInterface {
+public class MusicPlayCommand extends CommandClassInterface {
 
     /*
     JDA -> getJDA();
@@ -22,7 +22,7 @@ public class MusicCommand extends CommandClassInterface {
     String -> getMessageText();
     */
 
-    public MusicCommand(TextChannel textChannel, Message message) {
+    public MusicPlayCommand(TextChannel textChannel, Message message) {
         super(textChannel, message);
     }
 
@@ -31,12 +31,26 @@ public class MusicCommand extends CommandClassInterface {
 
         AudioManager audioManager = getGuild().getAudioManager();
 
-        if (!audioManager.isConnected()){
+        boolean play = audioManager.isConnected();
+
+        if (play){
+            PlayerManager Playermanager = PlayerManager.getINSTANCE();
+            GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(getGuild());
+            try {
+                if (guildMusicManager.player.getPlayingTrack().getInfo().title != null){
+                    play = true;
+                } else {
+                    play = false;
+                }
+            } catch (Exception e){
+                play = false;
+            }
+        }
+
+        if (!play){
             if (getMessage().isWebhookMessage() || getUser().isBot()){
                 return;
             }
-
-
 
             String[] split = getMessageText().split(" ", -1);
             if (split.length != 2 && split.length != 3){
@@ -53,7 +67,6 @@ public class MusicCommand extends CommandClassInterface {
             for (VoiceChannel vc : voiceChannels){
 
                 try {
-
                     // System.out.println(vc.getName() + " : " + vc.getMembers().size());
 
                     if (vc.getMembers().size() != 0){
@@ -98,14 +111,6 @@ public class MusicCommand extends CommandClassInterface {
             } else {
                 Playermanager.getGuildMusicManager(getGuild()).player.setVolume(100);
             }
-        } else {
-            PlayerManager Playermanager = PlayerManager.getINSTANCE();
-            GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(getGuild());
-            guildMusicManager.player.stopTrack();
-            audioManager.closeAudioConnection();
-
-            getMessage().delete().queue();
-            getTextChannel().sendMessage("再生を終了しましたっ！").queue();
         }
 
     }

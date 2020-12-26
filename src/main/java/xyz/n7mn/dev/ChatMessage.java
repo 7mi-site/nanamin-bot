@@ -81,9 +81,13 @@ public class ChatMessage {
         if (text.toLowerCase().startsWith("n.random")){
             command = new RandomCommand(message.getTextChannel(), message);
         }
-        if (text.toLowerCase().startsWith("n.play") || text.toLowerCase().startsWith("n.stop")){
-            command = new MusicCommand(message.getTextChannel(), message);
+        if (text.toLowerCase().startsWith("n.play")){
+            command = new MusicPlayCommand(message.getTextChannel(), message);
         }
+        if (text.toLowerCase().startsWith("n.stop")){
+            command = new MusicStopCommand(message.getTextChannel(), message);
+        }
+
         if (text.equals("n.check")){
             command = new SystemCheckCommand(message.getTextChannel(), message);
         }
@@ -111,7 +115,7 @@ public class ChatMessage {
         }
 
         if (text.equals("n.gold") || text.equals("n.れにょこ") || text.equals("n.rennyoko") || text.equals("n.renyoko") || text.equals("n.ﾚﾆｮｺ") || text.equals("n.レニョコ") || text.equals("n.sand") || text.equals("n.sc") || text.equals("n.hentai") ||
-                (text.endsWith(".gold") && !text.equals(".gold") && !text.equals("z.gold") && guild.getId().equals("517669763556704258")) || text.equals("n.pan") || text.startsWith("n.kouta") || text.toLowerCase().startsWith("n.n3m_") || text.toLowerCase().startsWith("n.7mi_chan") || text.toLowerCase().equals("n.baka")){
+                (text.endsWith(".gold") && !text.equals(".gold") && !text.equals("z.gold") && guild.getId().equals("517669763556704258")) || text.equals("n.pan") || text.startsWith("n.kouta") || text.toLowerCase().startsWith("n.n3m_") || text.toLowerCase().startsWith("n.7mi_chan") || text.toLowerCase().equals("n.baka") || text.toLowerCase().equals("n.yululi")){
             command = new YululiCommand(message.getTextChannel(), message);
         }
 
@@ -134,6 +138,10 @@ public class ChatMessage {
 
         if (text.toLowerCase().equals("n.repeat")){
             command = new MusicRepCommand(message.getTextChannel(), message);
+        }
+
+        if (text.toLowerCase().startsWith("n.sebunku") || text.toLowerCase().startsWith("n.playsebunku")){
+            command = new SebunkuCommand(message.getTextChannel(), message);
         }
 
         if (command != null){
