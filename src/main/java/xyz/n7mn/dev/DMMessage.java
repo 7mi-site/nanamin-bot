@@ -3,6 +3,7 @@ package xyz.n7mn.dev;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
+import xyz.n7mn.dev.chat.HelpCommand;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class DMMessage {
     public void run(){
         // 最初にコマンドを受ける地点
 
-        if (author.getId().equals("529463370089234466") && text.startsWith("n.")){
+        if (author.getId().equals("529463370089234466") && text.startsWith("n.") && !text.toLowerCase().equals("n.help")){
             admin();
             return;
         }
@@ -65,9 +66,15 @@ public class DMMessage {
             return;
         }
 
+        if (message.getContentRaw().equals("n.help")){
+            HelpCommand.run(message.getPrivateChannel());
+            return;
+        }
+
         message.getPrivateChannel().sendMessage(
                 "ふぬ？なにもおきないですよ？\n" +
                 "\n" +
+                "ヘルプを見るには「n.help」を入力してください\n" +
                 "このbotを入れるには：https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot\n" +
                 "botについてバグ報告、テスト、要望が出したい！： https://discord.gg/FnjCMzP7d4").queue((message -> {
             message.suppressEmbeds(true).queue();
