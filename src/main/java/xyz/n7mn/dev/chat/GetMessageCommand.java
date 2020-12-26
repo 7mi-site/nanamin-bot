@@ -45,12 +45,25 @@ public class GetMessageCommand extends CommandClassInterface {
 
         textChannelById.retrieveMessageById(split[6]).queue(message1 ->{
             String contentRaw = message1.getContentRaw();
-            System.out.println(contentRaw);
+            // System.out.println(contentRaw);
             boolean edited = message1.isEdited();
             User author = message1.getAuthor();
 
+            if (contentRaw.length() <= 1000){
+                getMessage().reply(
+                        "```\n" + contentRaw + "\n```\n" +
+                        "---- メッセージの情報 ----\n" +
+                        "投稿したチャンネル : "+message1.getChannel().getName()+"\n" +
+                        "文字数 : " + contentRaw.length()+"\n" +
+                        "編集済みかどうか : " + edited+"\n" +
+                        "投稿者 : "+author.getAsTag()+"\n"
+                ).queue();
+                return;
+            }
+
             getMessage().reply(
-                    "---- メッセージの情報 ----\n" +
+                            "```\n" + contentRaw.substring(0, 1000) + "\n(1000文字を超えているため省略しています)\n```\n" +
+                            "---- メッセージの情報 ----\n" +
                             "投稿したチャンネル : "+message1.getChannel().getName()+"\n" +
                             "文字数 : " + contentRaw.length()+"\n" +
                             "編集済みかどうか : " + edited+"\n" +
