@@ -132,6 +132,10 @@ public class ChatMessage {
             command = new PlayMusicCommand(message.getTextChannel(), message);
         }
 
+        if (text.toLowerCase().equals("n.repeat")){
+            command = new MusicRepCommand(message.getTextChannel(), message);
+        }
+
         if (command != null){
             command.run();
         }
