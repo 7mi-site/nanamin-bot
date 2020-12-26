@@ -2,6 +2,7 @@ package xyz.n7mn.dev.chat;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import xyz.n7mn.dev.NanamiSystem;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class SystemCheckCommand extends CommandClassInterface {
     @Override
     public void run() {
 
-        getMessage().reply("---- ななみちゃんbot実行テスト結果 ----\n" + "応答 : OK").queue(message -> {
+        getMessage().reply("---- ななみちゃんbot Ver"+ NanamiSystem.getVersion() +"実行テスト結果 ----\n" + "応答 : OK").queue(message -> {
 
             StringBuffer sb = new StringBuffer(message.getContentRaw()+"\n");
             TextChannel jisinChannel = null;
