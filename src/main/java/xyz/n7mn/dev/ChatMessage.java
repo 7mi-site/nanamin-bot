@@ -128,6 +128,10 @@ public class ChatMessage {
             command = new MusicVolCommand(message.getTextChannel(), message);
         }
 
+        if (text.toLowerCase().equals("n.nowplay")){
+            command = new PlayMusicCommand(message.getTextChannel(), message);
+        }
+
         if (command != null){
             command.run();
         }
