@@ -52,7 +52,7 @@ public class ChatMessage {
             }
         }
 
-        ChatClassInterface command = null;
+        Chat command = null;
         if (author.isBot()){
             return;
         }
@@ -122,6 +122,10 @@ public class ChatMessage {
 
         if (text.toLowerCase().startsWith("n.yuvideo")){
             command = new YululiVideoCommand(message.getTextChannel(), message);
+        }
+
+        if (text.toLowerCase().startsWith("n.musicvolume")){
+            command = new MusicVolCommand(message.getTextChannel(), message);
         }
 
         if (command != null){

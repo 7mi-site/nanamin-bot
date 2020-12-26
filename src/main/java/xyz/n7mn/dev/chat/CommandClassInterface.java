@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.*;
 import xyz.n7mn.dev.data.VoteReactionList;
 import xyz.n7mn.dev.game.MoneySystem;
 
-public abstract class CommandClassInterface implements ChatClassInterface {
+public abstract class CommandClassInterface implements Chat {
 
     private final JDA jda;
     private final Guild guild;

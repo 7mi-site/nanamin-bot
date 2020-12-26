@@ -11,7 +11,7 @@ import xyz.n7mn.dev.game.MoneySystem;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class VoteCommandClassInterface implements ChatClassInterface {
+public abstract class VoteCommandClassInterface implements Chat {
 
     private final JDA jda;
     private final Guild guild;

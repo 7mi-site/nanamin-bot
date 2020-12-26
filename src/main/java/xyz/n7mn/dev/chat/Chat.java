@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.*;
 import xyz.n7mn.dev.data.VoteReactionList;
 import xyz.n7mn.dev.game.MoneySystem;
 
-public abstract interface ChatClassInterface {
+public abstract interface Chat {
 
 
     void run();

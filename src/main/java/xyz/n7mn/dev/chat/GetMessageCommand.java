@@ -1,9 +1,8 @@
 package xyz.n7mn.dev.chat;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 
 public class GetMessageCommand extends CommandClassInterface {
 
@@ -49,26 +48,18 @@ public class GetMessageCommand extends CommandClassInterface {
             boolean edited = message1.isEdited();
             User author = message1.getAuthor();
 
-            if (contentRaw.length() <= 1000){
-                getMessage().reply(
-                        "```\n" + contentRaw + "\n```\n" +
-                        "---- メッセージの情報 ----\n" +
-                        "投稿したチャンネル : "+message1.getChannel().getName()+"\n" +
-                        "文字数 : " + contentRaw.length()+"\n" +
-                        "編集済みかどうか : " + edited+"\n" +
-                        "投稿者 : "+author.getAsTag()+"\n"
-                ).queue();
-                return;
-            }
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.addField("内容", contentRaw, true);
+            MessageEmbed build = builder.build();
 
             getMessage().reply(
-                            "```\n" + contentRaw.substring(0, 1000) + "\n(1000文字を超えているため省略しています)\n```\n" +
-                            "---- メッセージの情報 ----\n" +
-                            "投稿したチャンネル : "+message1.getChannel().getName()+"\n" +
-                            "文字数 : " + contentRaw.length()+"\n" +
-                            "編集済みかどうか : " + edited+"\n" +
-                            "投稿者 : "+author.getAsTag()+"\n"
-            ).queue();
+                    "---- メッセージの情報 ----\n" +
+                            "投稿したチャンネル : " + message1.getChannel().getName() + "\n" +
+                            "文字数 : " + contentRaw.length() + "\n" +
+                            "編集済みかどうか : " + edited + "\n" +
+                            "投稿者 : " + author.getAsTag() + "\n"
+            ).embed(build).queue();
+
         });
 
     }
