@@ -116,7 +116,11 @@ public class ChatMessage {
 
         if (text.equals("n.gold") || text.equals("n.れにょこ") || text.equals("n.rennyoko") || text.equals("n.renyoko") || text.equals("n.ﾚﾆｮｺ") || text.equals("n.レニョコ") || text.equals("n.sand") || text.equals("n.sc") || text.equals("n.hentai") ||
                 (text.endsWith(".gold") && !text.equals(".gold") && !text.equals("z.gold") && guild.getId().equals("517669763556704258")) || text.equals("n.pan") || text.startsWith("n.kouta") || text.toLowerCase().startsWith("n.n3m_") || text.toLowerCase().startsWith("n.7mi_chan") ||
-                text.toLowerCase().equals("n.baka") || text.toLowerCase().equals("n.yululi") || text.toLowerCase().equals("n.poti") || text.toLowerCase().equals("n.kuretiki") || text.toLowerCase().equals("n.ys")){
+                text.toLowerCase().equals("n.baka") || text.toLowerCase().equals("n.yululi") || text.toLowerCase().equals("n.poti") || text.toLowerCase().equals("n.kuretiki") || text.toLowerCase().equals("n.ys") || text.toLowerCase().equals("n.yululi2")){
+            command = new YululiCommand(message.getTextChannel(), message);
+        }
+
+        if (text.toLowerCase().startsWith("n.sebunku") || text.toLowerCase().startsWith("n.playsebunku")){
             command = new YululiCommand(message.getTextChannel(), message);
         }
 
@@ -141,9 +145,6 @@ public class ChatMessage {
             command = new MusicRepCommand(message.getTextChannel(), message);
         }
 
-        if (text.toLowerCase().startsWith("n.sebunku") || text.toLowerCase().startsWith("n.playsebunku")){
-            command = new SebunkuCommand(message.getTextChannel(), message);
-        }
 
         if (command != null){
             command.run();

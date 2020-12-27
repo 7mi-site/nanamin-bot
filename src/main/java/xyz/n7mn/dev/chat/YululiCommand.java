@@ -2,7 +2,8 @@ package xyz.n7mn.dev.chat;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import xyz.n7mn.dev.game.GoldImg;
+import net.dv8tion.jda.api.managers.AudioManager;
+import xyz.n7mn.dev.music.PlayerManager;
 
 import java.awt.*;
 import java.security.SecureRandom;
@@ -33,7 +34,11 @@ public class YululiCommand extends CommandClassInterface {
 
     private String[] poti_url = new String[]{
             "https://yululi.n7mn.xyz/nana/poti/2020-12-26_22.49.08.png",
-            "https://yululi.n7mn.xyz/nana/poti/2020-12-26_22.49.57.png"
+            "https://yululi.n7mn.xyz/nana/poti/2020-12-26_22.49.57.png",
+            "https://yululi.n7mn.xyz/nana/poti/2020-12-27_18.31.34.png",
+            "https://yululi.n7mn.xyz/nana/poti/2020-12-27_18.30.54.png",
+            "https://yululi.n7mn.xyz/nana/poti/2020-12-27_18.29.21.png",
+            "https://yululi.n7mn.xyz/nana/poti/2020-12-27_17.52.24.png"
     };
 
     private String[] kuretiki_url = new String[]{
@@ -65,6 +70,30 @@ public class YululiCommand extends CommandClassInterface {
 
     private List<GoldImg> goldImgList = new ArrayList<>();
     private String[] kouta_url = null;
+
+    private String[] sebunku_url = new String[]{
+            "https://yululi.n7mn.xyz/nana/sebunku/image0_1.png" +
+            "https://yululi.n7mn.xyz/nana/sebunku/Desktop_Screenshot_2020.12.26_-_19.57.00.16.png",
+            "https://yululi.n7mn.xyz/nana/sebunku/Desktop_Screenshot_2020.04.06_-_13.09.44.32.png",
+            "https://yululi.n7mn.xyz/nana/sebunku/1389.png",
+            "https://yululi.n7mn.xyz/nana/sebunku/1387.png",
+            "https://yululi.n7mn.xyz/nana/sebunku/1321.png",
+            "https://yululi.n7mn.xyz/nana/sebunku/1013.png",
+            "https://yululi.n7mn.xyz/nana/sebunku/215af548349a7f50.jpg",
+            "https://yululi.n7mn.xyz/nana/sebunku/2.png",
+            "https://yululi.n7mn.xyz/nana/sebunku/1_2.png",
+            "https://youtu.be/lwOnJUqBQhY"
+    };
+
+    private String[] yululi_url = new String[]{
+            "https://yululi.n7mn.xyz/nana/kouta/Desktop_Screenshot_2020.12.27_-_16.31.18.84.png",
+            "https://yululi.n7mn.xyz/nana/yululi/freeeeee.png",
+            "https://yululi.n7mn.xyz/nana/yululi/e451eabd993592bffd6ffe78ebe669af.png",
+            "https://yululi.n7mn.xyz/nana/yululi/98db7496472626488b2ab74ad8c43117.png",
+            "https://yululi.n7mn.xyz/nana/yululi/9ba6a53c0f688eafda0b7f927fa691d5.png",
+            "https://yululi.n7mn.xyz/nana/yululi/9.png",
+            "https://yululi.n7mn.xyz/nana/yululi/2_2.png"
+    };
 
 
     public YululiCommand(TextChannel textChannel, Message message) {
@@ -102,6 +131,8 @@ public class YululiCommand extends CommandClassInterface {
         goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-05-06_21.17.04.png","レールを持っているKouta1212"));
         goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-05-06_21.17.18.png","レールを持っているKouta1212 on SEUS"));
         goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-05-06_21.23.50.png","Tokyo_2020 in RTM"));
+        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/Desktop_Screenshot_2020.12.27_-_16.31.18.84.png", "yululi in CastleStage"));
+        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/8.png", ""));
 
         kouta_url = new String[goldImgList.size()];
         int i = 0;
@@ -176,6 +207,16 @@ public class YululiCommand extends CommandClassInterface {
 
         if (getMessageText().toLowerCase().equals("n.ys")){
             image();
+            return;
+        }
+
+        if (getMessageText().toLowerCase().equals("n.sebunku") || getMessageText().toLowerCase().equals("n.playsebunku")){
+            sebunku();
+            return;
+        }
+
+        if (getMessageText().toLowerCase().equals("n.yululi2")){
+            yululi2();
         }
     }
 
@@ -327,6 +368,69 @@ public class YululiCommand extends CommandClassInterface {
 
     }
 
+    private void sebunku(){
+        if (getMessageText().toLowerCase().startsWith("n.sebunku")){
+
+            List<String> urlList = new ArrayList<>(Arrays.asList(sebunku_url));
+            shuffle(urlList);
+            int i = new SecureRandom().nextInt(urlList.size() - 1);
+
+            EmbedBuilder builder = new EmbedBuilder();
+            if (!urlList.get(i).startsWith("https://youtu.be")){
+                builder.setTitle("sebunku");
+                builder.setThumbnail("https://yululi.n7mn.xyz/nana/sebunku/body.png");
+                builder.setImage(urlList.get(i));
+                builder.setColor(Color.PINK);
+                getTextChannel().sendMessage(builder.build()).queue();
+                return;
+            }
+
+            getTextChannel().sendMessage(urlList.get(i)).queue();
+
+            return;
+        }
+
+        if (getMessageText().toLowerCase().startsWith("n.playsebunku")){
+
+            AudioManager audioManager = getGuild().getAudioManager();
+            if (!audioManager.isConnected()){
+                List<VoiceChannel> voiceChannels = getGuild().getVoiceChannels();
+                // voiceChannel = voiceChannels.get(0);
+
+                VoiceChannel voiceChannel = null;
+                for (VoiceChannel vc : voiceChannels){
+                    try {
+                        // System.out.println(vc.getName() + " : " + vc.getMembers().size());
+
+                        if (vc.getMembers().size() != 0){
+                            List<Member> members = vc.getMembers();
+
+                            for (Member member : members){
+
+                                if (getMember().getId().equals(member.getId())){
+                                    voiceChannel = vc;
+                                }
+
+                            }
+
+                        }
+                    } catch (Exception e){
+                        // e.printStackTrace();
+                    }
+
+                }
+
+                if (voiceChannel != null){
+                    audioManager.openAudioConnection(voiceChannel);
+                }
+            }
+
+            PlayerManager Playermanager = PlayerManager.getINSTANCE();
+            Playermanager.loadAndPlay(getTextChannel(), "https://www.youtube.com/watch?v=lwOnJUqBQhY");
+
+        }
+    }
+
     private void poti(){
 
         List<String> urlList = new ArrayList<>(Arrays.asList(poti_url));
@@ -364,6 +468,44 @@ public class YululiCommand extends CommandClassInterface {
         urlList.addAll(Arrays.asList(pan_url));
         urlList.addAll(Arrays.asList(poti_url));
         urlList.addAll(Arrays.asList(kuretiki_url));
+        urlList.addAll(Arrays.asList(sebunku_url));
+        urlList.addAll(Arrays.asList(yululi_url));
+
+        String[] add = new String[]{
+                "https://yululi.n7mn.xyz/nana/y/Desktop_Screenshot_2020.12.26_-_19.57.00.16.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.20.28.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.20.12.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.08.50.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.04.35.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.03.05.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.01.47.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.00.10.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.00.02.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.59.52.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.59.35.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.58.44.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.58.40.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.58.06.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.56.18.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.54.49_2.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.52.24.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.51.55.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.51.29.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.51.19.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.51.05.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.50.56.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.50.43.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.50.40.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.50.15.png",
+                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.48.18.png",
+                "https://yululi.n7mn.xyz/nana/y/1155.png",
+                "https://yululi.n7mn.xyz/nana/y/1043.png",
+                "https://yululi.n7mn.xyz/nana/y/1027.png",
+                "https://yululi.n7mn.xyz/nana/y/1013.png",
+                "https://yululi.n7mn.xyz/nana/y/221.png"
+        };
+
+        urlList.addAll(Arrays.asList(add));
 
         shuffle(urlList);
         int i = new SecureRandom().nextInt(urlList.size() - 1);
@@ -375,5 +517,18 @@ public class YululiCommand extends CommandClassInterface {
 
         getTextChannel().sendMessage(builder.build()).queue();
 
+    }
+
+    private void yululi2(){
+        List<String> urlList = new ArrayList<>(Arrays.asList(yululi_url));
+        shuffle(urlList);
+        int i = new SecureRandom().nextInt(urlList.size() - 1);
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle("yululi");
+        builder.setThumbnail("https://yululi.n7mn.xyz/nana/yululi/body.png");
+        builder.setImage(urlList.get(i));
+
+        getTextChannel().sendMessage(builder.build()).queue();
     }
 }

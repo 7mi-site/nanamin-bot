@@ -129,6 +129,7 @@ public class HelpCommand extends CommandClassInterface {
                         "`n.pan` -- パンマスター\n" +
                         "`n.hentai` -- へんたいっ！\n" +
                         "`n.yululi` -- ゆるり\n" +
+                        "`n.yululi2` -- ゆるり\n" +
                         "`n.poti` -- ポチ\n" +
                         "`n.kuretiki` -- クレチキ\n" +
                         "`n.ys` -- ゆるり鯖全体\n" +

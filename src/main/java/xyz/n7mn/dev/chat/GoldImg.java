@@ -1,4 +1,4 @@
-package xyz.n7mn.dev.game;
+package xyz.n7mn.dev.chat;
 
 public class GoldImg {
     private String URL;
