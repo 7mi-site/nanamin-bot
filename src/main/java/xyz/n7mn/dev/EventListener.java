@@ -40,8 +40,16 @@ class EventListener extends ListenerAdapter {
     @Override
     public void onGenericGuildVoice(@NotNull GenericGuildVoiceEvent event) {
 
+
         GuildVoiceState state = event.getVoiceState();
-        VoiceChannel channel = state.getChannel();
+        AudioManager audioManager = state.getGuild().getAudioManager();
+
+        if (!audioManager.isConnected()){
+            return;
+        }
+
+        PlayerManager Playermanager = PlayerManager.getINSTANCE();
+        VoiceChannel channel = audioManager.getConnectedChannel();
 
         try {
             List<Member> members = channel.getMembers();
@@ -49,8 +57,7 @@ class EventListener extends ListenerAdapter {
             if (members.size() == 1){
 
                 // System.out.println("aa");
-                AudioManager audioManager = channel.getGuild().getAudioManager();
-                PlayerManager Playermanager = PlayerManager.getINSTANCE();
+
                 GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(channel.getGuild());
                 guildMusicManager.player.stopTrack();
                 audioManager.closeAudioConnection();
