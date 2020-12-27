@@ -27,112 +27,112 @@ public class YululiCommand extends CommandClassInterface {
     */
 
     private String[] pan_url = new String[]{
-            "https://yululi.n7mn.xyz/nana/PANmaster.png",
-            "https://yululi.n7mn.xyz/nana/PanMasterNETA01COMP.png",
-            "https://yululi.n7mn.xyz/nana/puyCRzt9_400x400.jpg"
+            "https://nana-bot.n7mn.xyz/PANmaster.png",
+            "https://nana-bot.n7mn.xyz/PanMasterNETA01COMP.png",
+            "https://nana-bot.n7mn.xyz/puyCRzt9_400x400.jpg"
     };
 
     private String[] poti_url = new String[]{
-            "https://yululi.n7mn.xyz/nana/poti/2020-12-26_22.49.08.png",
-            "https://yululi.n7mn.xyz/nana/poti/2020-12-26_22.49.57.png",
-            "https://yululi.n7mn.xyz/nana/poti/2020-12-27_18.31.34.png",
-            "https://yululi.n7mn.xyz/nana/poti/2020-12-27_18.30.54.png",
-            "https://yululi.n7mn.xyz/nana/poti/2020-12-27_18.29.21.png",
-            "https://yululi.n7mn.xyz/nana/poti/2020-12-27_17.52.24.png"
+            "https://nana-bot.n7mn.xyz/poti/2020-12-26_22.49.08.png",
+            "https://nana-bot.n7mn.xyz/poti/2020-12-26_22.49.57.png",
+            "https://nana-bot.n7mn.xyz/poti/2020-12-27_18.31.34.png",
+            "https://nana-bot.n7mn.xyz/poti/2020-12-27_18.30.54.png",
+            "https://nana-bot.n7mn.xyz/poti/2020-12-27_18.29.21.png",
+            "https://nana-bot.n7mn.xyz/poti/2020-12-27_17.52.24.png"
     };
 
     private String[] kuretiki_url = new String[]{
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.23.00.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.20.32.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.20.30.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.20.18.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.19.24.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.18.37.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.18.14.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.18.10.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.17.39.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.13.39.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.13.18.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.11.51.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.10.53.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.09.28.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.08.55.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.06.53.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_14.01.00.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_13.59.53.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_13.52.16.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_13.51.06.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_13.50.11.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_13.42.05.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_13.41.15.png",
-            "https://yululi.n7mn.xyz/nana/kuretiki/2020-12-27_13.39.19.png"
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.23.00.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.20.32.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.20.30.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.20.18.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.19.24.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.18.37.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.18.14.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.18.10.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.17.39.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.13.39.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.13.18.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.11.51.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.10.53.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.09.28.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.08.55.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.06.53.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_14.01.00.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_13.59.53.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_13.52.16.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_13.51.06.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_13.50.11.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_13.42.05.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_13.41.15.png",
+            "https://nana-bot.n7mn.xyz/kuretiki/2020-12-27_13.39.19.png"
     };
 
     private List<GoldImg> goldImgList = new ArrayList<>();
     private String[] kouta_url = null;
 
     private String[] sebunku_url = new String[]{
-            "https://yululi.n7mn.xyz/nana/sebunku/image0_1.png" +
-            "https://yululi.n7mn.xyz/nana/sebunku/Desktop_Screenshot_2020.12.26_-_19.57.00.16.png",
-            "https://yululi.n7mn.xyz/nana/sebunku/Desktop_Screenshot_2020.04.06_-_13.09.44.32.png",
-            "https://yululi.n7mn.xyz/nana/sebunku/1389.png",
-            "https://yululi.n7mn.xyz/nana/sebunku/1387.png",
-            "https://yululi.n7mn.xyz/nana/sebunku/1321.png",
-            "https://yululi.n7mn.xyz/nana/sebunku/1013.png",
-            "https://yululi.n7mn.xyz/nana/sebunku/215af548349a7f50.jpg",
-            "https://yululi.n7mn.xyz/nana/sebunku/2.png",
-            "https://yululi.n7mn.xyz/nana/sebunku/1_2.png",
+            "https://nana-bot.n7mn.xyz/sebunku/image0_1.png" +
+            "https://nana-bot.n7mn.xyz/sebunku/Desktop_Screenshot_2020.12.26_-_19.57.00.16.png",
+            "https://nana-bot.n7mn.xyz/sebunku/Desktop_Screenshot_2020.04.06_-_13.09.44.32.png",
+            "https://nana-bot.n7mn.xyz/sebunku/1389.png",
+            "https://nana-bot.n7mn.xyz/sebunku/1387.png",
+            "https://nana-bot.n7mn.xyz/sebunku/1321.png",
+            "https://nana-bot.n7mn.xyz/sebunku/1013.png",
+            "https://nana-bot.n7mn.xyz/sebunku/215af548349a7f50.jpg",
+            "https://nana-bot.n7mn.xyz/sebunku/2.png",
+            "https://nana-bot.n7mn.xyz/sebunku/1_2.png",
             "https://youtu.be/lwOnJUqBQhY"
     };
 
     private String[] yululi_url = new String[]{
-            "https://yululi.n7mn.xyz/nana/kouta/Desktop_Screenshot_2020.12.27_-_16.31.18.84.png",
-            "https://yululi.n7mn.xyz/nana/yululi/freeeeee.png",
-            "https://yululi.n7mn.xyz/nana/yululi/e451eabd993592bffd6ffe78ebe669af.png",
-            "https://yululi.n7mn.xyz/nana/yululi/98db7496472626488b2ab74ad8c43117.png",
-            "https://yululi.n7mn.xyz/nana/yululi/9ba6a53c0f688eafda0b7f927fa691d5.png",
-            "https://yululi.n7mn.xyz/nana/yululi/9.png",
-            "https://yululi.n7mn.xyz/nana/yululi/2_2.png"
+            "https://nana-bot.n7mn.xyz/kouta/Desktop_Screenshot_2020.12.27_-_16.31.18.84.png",
+            "https://nana-bot.n7mn.xyz/yululi/freeeeee.png",
+            "https://nana-bot.n7mn.xyz/yululi/e451eabd993592bffd6ffe78ebe669af.png",
+            "https://nana-bot.n7mn.xyz/yululi/98db7496472626488b2ab74ad8c43117.png",
+            "https://nana-bot.n7mn.xyz/yululi/9ba6a53c0f688eafda0b7f927fa691d5.png",
+            "https://nana-bot.n7mn.xyz/yululi/9.png",
+            "https://nana-bot.n7mn.xyz/yululi/2_2.png"
     };
 
 
     public YululiCommand(TextChannel textChannel, Message message) {
         super(textChannel, message);
 
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/kouta2.png","Kouta1212 in Rush"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-10_01.31.15.png","Kouta1212 in サバイバルサーバー"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-10_01.30.43.png","Kouta1212 in サバイバルサーバー"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-07_22.29.57.png","Kouta1212 in Rush"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/kouta.png","Kouta1212 in CoreBreakingPVP"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-19_16.47.28.png","Kouta1212 in KartRace"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-14_21.27.04.png","Kouta1212 in Rush"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-02-02_20.51.22.png","Kouta1212 in Mapperサーバー"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-02-02_21.26.10.png","Kouta1212 with Sand in Mapperサーバー"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-30_23.59.11.png","Kouta1212 in VillagerDefence"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-30_23.56.15.png","Kouta1212 in VillagerDefence"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-02-02_18.39.38.png",""));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-25_22.07.25.png","Kouta1212 in CoreBreakingPVP"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-21_18.18.57.png","Kouta1212 in サバイバルサーバー"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-14_21.32.08.png","Kouta1212 in Rush"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-02-15_14.58.35.png","Kouta1212 in CoreBreakingPVP"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-03-14_134452.png",""));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-03-14_13.46.16.png",""));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-02-15_14.58.35.png","Kouta1212 in CoreBreakingPVP"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-03-19_15.09.45.png","osu__player in 逃走中"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-03-05_21.48.47.png","Tokyo_2020 in ???"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-02-03_18.24.41.png","Kouta1212 in Rush"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-02-02_21.21.57.png","Kouta1212 with dropped gold armor in Mapperサーバー"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-26_19.39.30.png","甲羅を持ったKouta1212"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-25_22.05.11_2.png","パンを持ったKouta1212"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-19_16.47.20.png","Kouta1212 in KartRace"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-05-06_18.03.36.png","TNTを持ってるKouta1212"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-01-20_20.45.27.png","Kouta1212 in KartRace"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-05-06_18.03.36.png","Kouta1212 in RTM"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-05-06_21.17.04.png","レールを持っているKouta1212"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-05-06_21.17.18.png","レールを持っているKouta1212 on SEUS"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/2020-05-06_21.23.50.png","Tokyo_2020 in RTM"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/Desktop_Screenshot_2020.12.27_-_16.31.18.84.png", "yululi in CastleStage"));
-        goldImgList.add(new GoldImg("https://yululi.n7mn.xyz/nana/kouta/8.png", ""));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/kouta2.png","Kouta1212 in Rush"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-10_01.31.15.png","Kouta1212 in サバイバルサーバー"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-10_01.30.43.png","Kouta1212 in サバイバルサーバー"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-07_22.29.57.png","Kouta1212 in Rush"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/kouta.png","Kouta1212 in CoreBreakingPVP"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-19_16.47.28.png","Kouta1212 in KartRace"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-14_21.27.04.png","Kouta1212 in Rush"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-02-02_20.51.22.png","Kouta1212 in Mapperサーバー"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-02-02_21.26.10.png","Kouta1212 with Sand in Mapperサーバー"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-30_23.59.11.png","Kouta1212 in VillagerDefence"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-30_23.56.15.png","Kouta1212 in VillagerDefence"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-02-02_18.39.38.png",""));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-25_22.07.25.png","Kouta1212 in CoreBreakingPVP"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-21_18.18.57.png","Kouta1212 in サバイバルサーバー"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-14_21.32.08.png","Kouta1212 in Rush"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-02-15_14.58.35.png","Kouta1212 in CoreBreakingPVP"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-03-14_134452.png",""));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-03-14_13.46.16.png",""));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-02-15_14.58.35.png","Kouta1212 in CoreBreakingPVP"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-03-19_15.09.45.png","osu__player in 逃走中"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-03-05_21.48.47.png","Tokyo_2020 in ???"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-02-03_18.24.41.png","Kouta1212 in Rush"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-02-02_21.21.57.png","Kouta1212 with dropped gold armor in Mapperサーバー"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-26_19.39.30.png","甲羅を持ったKouta1212"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-25_22.05.11_2.png","パンを持ったKouta1212"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-19_16.47.20.png","Kouta1212 in KartRace"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_18.03.36.png","TNTを持ってるKouta1212"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-20_20.45.27.png","Kouta1212 in KartRace"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_18.03.36.png","Kouta1212 in RTM"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_21.17.04.png","レールを持っているKouta1212"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_21.17.18.png","レールを持っているKouta1212 on SEUS"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_21.23.50.png","Tokyo_2020 in RTM"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/Desktop_Screenshot_2020.12.27_-_16.31.18.84.png", "yululi in CastleStage"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/8.png", ""));
 
         kouta_url = new String[goldImgList.size()];
         int i = 0;
@@ -234,7 +234,7 @@ public class YululiCommand extends CommandClassInterface {
         builder.setTitle("こうたちゃんの金装備は神！");
         builder.setDescription(goldImgList.get(i).getContent());
         builder.setColor(Color.ORANGE);
-        builder.setThumbnail("https://yululi.n7mn.xyz/nana/kouta/body.png");
+        builder.setThumbnail("https://nana-bot.n7mn.xyz/kouta/body.png");
         builder.setImage(goldImgList.get(i).getURL());
 
         getTextChannel().sendMessage(goldImgList.get(i).getURL()).embed(builder.build()).queue();
@@ -348,7 +348,7 @@ public class YululiCommand extends CommandClassInterface {
         List<String> urlList = new ArrayList<>(Arrays.asList(url));
         shuffle(urlList);
 
-        builder.setThumbnail("https://yululi.n7mn.xyz/nana/VjYrK6z9_400x400.jpg");
+        builder.setThumbnail("https://nana-bot.n7mn.xyz/VjYrK6z9_400x400.jpg");
         int i = new SecureRandom().nextInt(urlList.size() - 1);
         builder.setTitle("Yululi-ゆるり-", urlList.get(i));
         builder.setDescription(urlList.get(i));
@@ -378,7 +378,7 @@ public class YululiCommand extends CommandClassInterface {
             EmbedBuilder builder = new EmbedBuilder();
             if (!urlList.get(i).startsWith("https://youtu.be")){
                 builder.setTitle("sebunku");
-                builder.setThumbnail("https://yululi.n7mn.xyz/nana/sebunku/body.png");
+                builder.setThumbnail("https://nana-bot.n7mn.xyz/sebunku/body.png");
                 builder.setImage(urlList.get(i));
                 builder.setColor(Color.PINK);
                 getTextChannel().sendMessage(builder.build()).queue();
@@ -439,7 +439,7 @@ public class YululiCommand extends CommandClassInterface {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("poti_336");
-        builder.setThumbnail("https://yululi.n7mn.xyz/nana/poti/body.png");
+        builder.setThumbnail("https://nana-bot.n7mn.xyz/poti/body.png");
         builder.setImage(urlList.get(i));
 
         getTextChannel().sendMessage(builder.build()).queue();
@@ -454,7 +454,7 @@ public class YululiCommand extends CommandClassInterface {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("vd23z12");
-        builder.setThumbnail("https://yululi.n7mn.xyz/nana/kuretiki/body.png");
+        builder.setThumbnail("https://nana-bot.n7mn.xyz/kuretiki/body.png");
         builder.setImage(urlList.get(i));
 
         getTextChannel().sendMessage(builder.build()).queue();
@@ -472,37 +472,37 @@ public class YululiCommand extends CommandClassInterface {
         urlList.addAll(Arrays.asList(yululi_url));
 
         String[] add = new String[]{
-                "https://yululi.n7mn.xyz/nana/y/Desktop_Screenshot_2020.12.26_-_19.57.00.16.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.20.28.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.20.12.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.08.50.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.04.35.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.03.05.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.01.47.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.00.10.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_18.00.02.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.59.52.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.59.35.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.58.44.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.58.40.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.58.06.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.56.18.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.54.49_2.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.52.24.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.51.55.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.51.29.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.51.19.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.51.05.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.50.56.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.50.43.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.50.40.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.50.15.png",
-                "https://yululi.n7mn.xyz/nana/y/2020-12-27_17.48.18.png",
-                "https://yululi.n7mn.xyz/nana/y/1155.png",
-                "https://yululi.n7mn.xyz/nana/y/1043.png",
-                "https://yululi.n7mn.xyz/nana/y/1027.png",
-                "https://yululi.n7mn.xyz/nana/y/1013.png",
-                "https://yululi.n7mn.xyz/nana/y/221.png"
+                "https://nana-bot.n7mn.xyz/y/Desktop_Screenshot_2020.12.26_-_19.57.00.16.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_18.20.28.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_18.20.12.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_18.08.50.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_18.04.35.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_18.03.05.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_18.01.47.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_18.00.10.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_18.00.02.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.59.52.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.59.35.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.58.44.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.58.40.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.58.06.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.56.18.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.54.49_2.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.52.24.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.51.55.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.51.29.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.51.19.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.51.05.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.50.56.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.50.43.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.50.40.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.50.15.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-27_17.48.18.png",
+                "https://nana-bot.n7mn.xyz/y/1155.png",
+                "https://nana-bot.n7mn.xyz/y/1043.png",
+                "https://nana-bot.n7mn.xyz/y/1027.png",
+                "https://nana-bot.n7mn.xyz/y/1013.png",
+                "https://nana-bot.n7mn.xyz/y/221.png"
         };
 
         urlList.addAll(Arrays.asList(add));
@@ -512,7 +512,7 @@ public class YululiCommand extends CommandClassInterface {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Yululi Server");
-        builder.setThumbnail("https://yululi.n7mn.xyz/nana/VjYrK6z9_400x400.jpg");
+        builder.setThumbnail("https://nana-bot.n7mn.xyz/VjYrK6z9_400x400.jpg");
         builder.setImage(urlList.get(i));
 
         getTextChannel().sendMessage(builder.build()).queue();
@@ -526,7 +526,7 @@ public class YululiCommand extends CommandClassInterface {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("yululi");
-        builder.setThumbnail("https://yululi.n7mn.xyz/nana/yululi/body.png");
+        builder.setThumbnail("https://nana-bot.n7mn.xyz/yululi/body.png");
         builder.setImage(urlList.get(i));
 
         getTextChannel().sendMessage(builder.build()).queue();
