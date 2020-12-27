@@ -39,6 +39,7 @@ public class HelpCommand extends CommandClassInterface {
                 "`n.play <URL>` -- 音楽を再生する(停止する場合は`n.stop`)\n" +
                 "`n.musicVolume <0～100>` -- 音楽の音量を変更する。\n" +
                 "`n.nowPlay` -- 今再生している音楽を取得する\n" +
+                "`n.repeat` -- 今再生している音楽をループさせる\n" +
                 "`n.burn` -- :fire:\n" +
                 "`n.burst` -- どっかーん\n" +
                 "`n.check` -- 動作確認\n" +
@@ -63,6 +64,9 @@ public class HelpCommand extends CommandClassInterface {
                     "`n.pan` -- パンマスター\n" +
                     "`n.hentai` -- へんたいっ！\n" +
                     "`n.yululi` -- ゆるり\n" +
+                    "`n.poti` -- ポチ\n" +
+                    "`n.kuretiki` -- クレチキ\n" +
+                    "`n.ys` -- ゆるり鯖全体\n" +
                     "----- ななみちゃんbot ヘルプ End ----");
         }
 
@@ -88,6 +92,7 @@ public class HelpCommand extends CommandClassInterface {
                     "`n.play <URL>` -- 音楽を再生する(停止する場合は`n.stop`)\n" +
                     "`n.musicVolume <0～100>` -- 音楽の音量を変更する。\n" +
                     "`n.nowPlay` -- 今再生している音楽を取得する\n" +
+                    "`n.repeat` -- 今再生している音楽をループさせる\n" +
                     "`n.burn` -- :fire:\n" +
                     "`n.burst` -- どっかーん\n" +
                     "`n.check` -- 動作確認\n" +
@@ -124,6 +129,9 @@ public class HelpCommand extends CommandClassInterface {
                         "`n.pan` -- パンマスター\n" +
                         "`n.hentai` -- へんたいっ！\n" +
                         "`n.yululi` -- ゆるり\n" +
+                        "`n.poti` -- ポチ\n" +
+                        "`n.kuretiki` -- クレチキ\n" +
+                        "`n.ys` -- ゆるり鯖全体\n" +
                         "----- ななみちゃんbot ヘルプ End ----");
             }
 
