@@ -145,7 +145,7 @@ public class ChatMessage {
             command = new MusicRepCommand(message.getTextChannel(), message);
         }
 
-        if (text.toLowerCase().startsWith("n.music")){
+        if (text.toLowerCase().equals("n.music")){
             command = new MusicCommand(message.getTextChannel(), message);
         }
 
