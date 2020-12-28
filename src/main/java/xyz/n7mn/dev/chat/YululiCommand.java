@@ -72,7 +72,7 @@ public class YululiCommand extends CommandClassInterface {
     private String[] kouta_url = null;
 
     private String[] sebunku_url = new String[]{
-            "https://nana-bot.n7mn.xyz/sebunku/image0_1.png" +
+            "https://nana-bot.n7mn.xyz/sebunku/image0_1.png",
             "https://nana-bot.n7mn.xyz/sebunku/Desktop_Screenshot_2020.12.26_-_19.57.00.16.png",
             "https://nana-bot.n7mn.xyz/sebunku/Desktop_Screenshot_2020.04.06_-_13.09.44.32.png",
             "https://nana-bot.n7mn.xyz/sebunku/1389.png",
@@ -237,7 +237,9 @@ public class YululiCommand extends CommandClassInterface {
         builder.setThumbnail("https://nana-bot.n7mn.xyz/kouta/body.png");
         builder.setImage(goldImgList.get(i).getURL());
 
-        getTextChannel().sendMessage(goldImgList.get(i).getURL()).embed(builder.build()).queue();
+        getTextChannel().sendMessage(goldImgList.get(i).getURL()).embed(builder.build()).queue(message -> {
+            message.addReaction("\uD83D\uDCAF").queue();
+        });
 
     }
 
