@@ -503,7 +503,7 @@ public class YululiCommand extends CommandClassInterface {
                 "https://nana-bot.n7mn.xyz/y/1043.png",
                 "https://nana-bot.n7mn.xyz/y/1027.png",
                 "https://nana-bot.n7mn.xyz/y/1013.png",
-                "https://nana-bot.n7mn.xyz/sebunku/2.png",
+                "https://nana-bot.n7mn.xyz/y/2.png",
                 "https://nana-bot.n7mn.xyz/y/221.png"
         };
 
