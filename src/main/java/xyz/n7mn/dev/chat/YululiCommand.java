@@ -129,7 +129,7 @@ public class YululiCommand extends CommandClassInterface {
         goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-01-20_20.45.27.png","Kouta1212 in KartRace"));
         goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_18.03.36.png","Kouta1212 in RTM"));
         goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_21.17.04.png","レールを持っているKouta1212"));
-        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_21.17.18.png","レールを持っているKouta1212 on SEUS"));
+        goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_21.17.18.png","レールを持っているKouta1212 with SEUS shader"));
         goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/2020-05-06_21.23.50.png","Tokyo_2020 in RTM"));
         goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/Desktop_Screenshot_2020.12.27_-_16.31.18.84.png", "yululi in CastleStage"));
         goldImgList.add(new GoldImg("https://nana-bot.n7mn.xyz/kouta/8.png", ""));

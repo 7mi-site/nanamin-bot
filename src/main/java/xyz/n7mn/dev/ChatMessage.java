@@ -42,10 +42,10 @@ public class ChatMessage {
                 PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
 
                 String debug = "----- Debug ----- \n" +
-                        "サーバ名: " + guild.getName() +"\n" +
+                        "```\nサーバ名: " + guild.getName() +"\n" +
                         "発言チャンネル名: " + message.getTextChannel().getName() + "\n" +
                         "発言者: " + author.getAsTag() + "\n" +
-                        "発言内容：`"+text+"`";
+                        "発言内容："+text+"\n```";
                 dm.sendMessage(debug).queue();
             } catch (Exception e){
                 e.printStackTrace();
@@ -145,6 +145,9 @@ public class ChatMessage {
             command = new MusicRepCommand(message.getTextChannel(), message);
         }
 
+        if (text.toLowerCase().startsWith("n.music")){
+            command = new MusicCommand(message.getTextChannel(), message);
+        }
 
         if (command != null){
             command.run();

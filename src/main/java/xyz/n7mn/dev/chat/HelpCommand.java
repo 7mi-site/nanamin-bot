@@ -36,16 +36,15 @@ public class HelpCommand extends CommandClassInterface {
                 "`n.nullpo` または `n.ぬるぽ` -- ガッ\n"+
                 "`n.dice` -- さいころを振る\n"+
                 "`n.random <文字列1> <文字列2> <...> <文字列n>` -- 指定された文字列の中から一つを表示する\n" +
-                "`n.play <URL>` -- 音楽を再生する(停止する場合は`n.stop`)\n" +
-                "`n.musicVolume <0～100>` -- 音楽の音量を変更する。\n" +
-                "`n.nowPlay` -- 今再生している音楽を取得する\n" +
-                "`n.repeat` -- 今再生している音楽をループさせる\n" +
                 "`n.burn` -- :fire:\n" +
                 "`n.burst` -- どっかーん\n" +
                 "`n.check` -- 動作確認\n" +
                 "`n.role <ユーザーID or 名前>` -- 指定ユーザーの情報を確認する\n" +
                 "`n.role <ユーザーID or 名前> <ロールID or ロールの名前>` -- 指定ユーザーのロールを追加または削除をする\n" +
-                "`n.game` -- ゲームメニュー\n";
+                "`n.music` -- 音楽関係メニュー\n" +
+                "`n.game` -- ゲームメニュー\n" +
+                "~~`n.quiz` -- クイズメニュー~~ 近日実装予定です！\n" +
+                "";
         StringBuffer sb = new StringBuffer(helpText);
 
         if (!getGuild().getId().equals("517669763556704258")){
