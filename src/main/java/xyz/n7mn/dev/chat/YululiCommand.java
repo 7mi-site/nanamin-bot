@@ -80,7 +80,6 @@ public class YululiCommand extends CommandClassInterface {
             "https://nana-bot.n7mn.xyz/sebunku/1321.png",
             "https://nana-bot.n7mn.xyz/sebunku/1013.png",
             "https://nana-bot.n7mn.xyz/sebunku/215af548349a7f50.jpg",
-            "https://nana-bot.n7mn.xyz/sebunku/2.png",
             "https://nana-bot.n7mn.xyz/sebunku/1_2.png",
             "https://youtu.be/lwOnJUqBQhY"
     };
@@ -504,6 +503,7 @@ public class YululiCommand extends CommandClassInterface {
                 "https://nana-bot.n7mn.xyz/y/1043.png",
                 "https://nana-bot.n7mn.xyz/y/1027.png",
                 "https://nana-bot.n7mn.xyz/y/1013.png",
+                "https://nana-bot.n7mn.xyz/sebunku/2.png",
                 "https://nana-bot.n7mn.xyz/y/221.png"
         };
 
