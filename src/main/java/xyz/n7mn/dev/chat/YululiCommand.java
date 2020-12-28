@@ -504,7 +504,10 @@ public class YululiCommand extends CommandClassInterface {
                 "https://nana-bot.n7mn.xyz/y/1027.png",
                 "https://nana-bot.n7mn.xyz/y/1013.png",
                 "https://nana-bot.n7mn.xyz/y/2.png",
-                "https://nana-bot.n7mn.xyz/y/221.png"
+                "https://nana-bot.n7mn.xyz/y/221.png",
+                "https://nana-bot.n7mn.xyz/y/hqdefault_live.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-28_17.26.55.png",
+                "https://nana-bot.n7mn.xyz/y/2020-12-28_17.32.21.png"
         };
 
         urlList.addAll(Arrays.asList(add));
