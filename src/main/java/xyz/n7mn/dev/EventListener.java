@@ -14,6 +14,8 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.Command.CommandSystem;
 import xyz.n7mn.dev.Command.Help;
+import xyz.n7mn.dev.Command.money.Money;
+import xyz.n7mn.dev.Command.money.MoneySystem;
 import xyz.n7mn.dev.Command.music.GuildMusicManager;
 import xyz.n7mn.dev.Command.music.PlayerManager;
 import xyz.n7mn.dev.Command.vote.VoteData;
@@ -121,6 +123,19 @@ public class EventListener extends ListenerAdapter {
                 message1.suppressEmbeds(true).queue();
             }));
             return;
+        }
+
+        Money data = MoneySystem.getData(event.getAuthor().getId());
+        if (data == null){
+            MoneySystem.createData(event.getAuthor().getId());
+            data = MoneySystem.getDefaultData(event.getAuthor().getId());
+        }
+
+        long tempInt = data.getMoney() + 1L;
+        if (tempInt > Integer.MAX_VALUE){
+            MoneySystem.updateData(new Money(data.getUserID(), data.getMoney()));
+        } else {
+            MoneySystem.updateData(new Money(data.getUserID(), data.getMoney() + 1));
         }
 
         CommandSystem.run(event.getTextChannel(), event.getMessage());
