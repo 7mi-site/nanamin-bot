@@ -1,347 +1,126 @@
 package xyz.n7mn.dev;
 
-
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.managers.AudioManager;
-import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
+import xyz.n7mn.dev.Command.CommandSystem;
+import xyz.n7mn.dev.Command.Help;
+import xyz.n7mn.dev.Command.vote.VoteData;
+import xyz.n7mn.dev.Command.vote.VoteSystem;
 import xyz.n7mn.dev.api.Earthquake;
-import xyz.n7mn.dev.api.data.EarthquakeResult;
-import xyz.n7mn.dev.api.data.eq.intensity.Area;
-import xyz.n7mn.dev.api.data.eq.intensity.Pref;
-import xyz.n7mn.dev.chat.MusicStopCommand;
-import xyz.n7mn.dev.data.VoteReaction;
-import xyz.n7mn.dev.data.VoteReactionList;
-import xyz.n7mn.dev.game.Money;
-import xyz.n7mn.dev.game.MoneySystem;
-import xyz.n7mn.dev.music.GuildMusicManager;
-import xyz.n7mn.dev.music.PlayerManager;
 
-import java.util.*;
+import java.awt.*;
 import java.util.List;
 
-class EventListener extends ListenerAdapter {
-
-    private VoteReactionList voteReactionList = null;
-    private final MoneySystem moneySystem;
-
-    EventListener(){
-
-        moneySystem = new MoneySystem();
-
-    }
+public class EventListener extends ListenerAdapter {
+    private static Database database = null;
 
     @Override
     public void onGenericGuildVoice(@NotNull GenericGuildVoiceEvent event) {
-
-
-        GuildVoiceState state = event.getVoiceState();
-        AudioManager audioManager = state.getGuild().getAudioManager();
-
-        if (!audioManager.isConnected()){
-            return;
-        }
-
-        PlayerManager Playermanager = PlayerManager.getINSTANCE();
-        VoiceChannel channel = audioManager.getConnectedChannel();
-
-        try {
-            List<Member> members = channel.getMembers();
-            // System.out.println(members.size());
-            if (members.size() == 1){
-
-                // System.out.println("aa");
-
-                GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(channel.getGuild());
-                guildMusicManager.player.stopTrack();
-                audioManager.closeAudioConnection();
-
-            }
-        } catch (Exception e){
-            // e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-
-        if (!event.isWebhookMessage() && !event.getAuthor().isBot()){
-            Money money = moneySystem.getMoney(event.getAuthor().getId());
-
-            if (money.getMoney() < Integer.MAX_VALUE){
-                int money1 = money.getMoney() + 1;
-                moneySystem.setMoney(event.getAuthor().getId(), money1);
-            }
-        }
-
-        if (event.getChannel().getType() == ChannelType.PRIVATE){
-            new DMMessage(event.getMessage(), event.getAuthor()).run();
-            return;
-        }
-
-        new ChatMessage(event.getAuthor(), event.getMessage(), voteReactionList, moneySystem).run();
-
+        // super.onGenericGuildVoice(event);
     }
 
     @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
-        // super.onGuildMessageReactionAdd(event);
         if (event.getUser().isBot()){
             return;
         }
 
-        Guild guild = event.getGuild();
-        TextChannel channel = event.getChannel();
-        Member member = event.getMember();
-        String messageId = event.getMessageId();
-        MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
-        Message message = channel.retrieveMessageById(messageId).complete();
+        VoteSystem system = new VoteSystem();
+        Message message = event.retrieveMessage().complete();
 
-        if (!reactionEmote.isEmoji() && message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-            message.removeReaction(reactionEmote.getEmote(), event.getUser()).queue();
-            return;
-        }
+        if (system.isVote(message) && event.getReaction().getReactionEmote().isEmoji()){
+            message.removeReaction(event.getReaction().getReactionEmote().getEmoji(), event.getUser()).queue();
+            PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
+            EmbedBuilder builder = new EmbedBuilder();
 
-        if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-            message.removeReaction(reactionEmote.getEmoji(), event.getUser()).queue();
-
-        }
-
-        VoteReaction voteReaction = new VoteReaction(guild, channel, member, messageId, reactionEmote.getEmoji());
-        if (message.getContentRaw().startsWith("--- 以下の内容で投票を開始しました。 リアクションで投票してください。 ---")){
-
-            boolean add_flag = false;
-
-            String[] regionalList = new String[]{
-                    "\uD83C\uDDE6",
-                    "\uD83C\uDDE7",
-                    "\uD83C\uDDE8",
-                    "\uD83C\uDDE9",
-                    "\uD83C\uDDEA",
-                    "\uD83C\uDDEB",
-                    "\uD83C\uDDEC",
-                    "\uD83C\uDDED",
-                    "\uD83C\uDDEE",
-                    "\uD83C\uDDEF",
-                    "\uD83C\uDDF0",
-                    "\uD83C\uDDF1",
-                    "\uD83C\uDDF2",
-                    "\uD83C\uDDF3",
-                    "\uD83C\uDDF4",
-                    "\uD83C\uDDF5",
-                    "\uD83C\uDDF6",
-                    "\uD83C\uDDF7",
-                    "\uD83C\uDDF8",
-                    "\uD83C\uDDF9"
-            };
-
-            for (String regional : regionalList){
-                if (regional.equals(voteReaction.getEmoji())){
-                    add_flag = true;
-                    break;
+            List<VoteData> list = VoteSystem.getVoteDataList(message);
+            for (VoteData data : list){
+                if (data.getUserId().equals(event.getUser().getId()) && data.getEmoji().equals(event.getReaction().getReactionEmote().getEmoji())){
+                    builder.setTitle("えらー",message.getJumpUrl());
+                    builder.setDescription("投票済みの選択肢ですっ！");
+                    builder.setColor(Color.RED);
+                    privateChannel.sendMessage(builder.build()).queue();
+                    return;
                 }
             }
-
-            boolean f = false;
-            for (VoteReaction voteRe  : voteReactionList.getList()){
-                if (voteRe.getMessageId().equals(messageId) && voteRe.getMember().getId().equals(member.getId()) && voteRe.getEmoji().equals(reactionEmote.getEmoji())){
-                    f = true;
-                    break;
-                }
-            }
-
-            if (add_flag){
-                if (!f){
-                    voteReactionList.addList(voteReaction);
-                }
-
-                PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
-                if (!f){
-                    privateChannel.sendMessage(reactionEmote.getAsReactionCode() + "に投票しました！").queue();
-                } else {
-                    privateChannel.sendMessage("投票済みの選択肢です！！").queue();
-                }
+            builder.setTitle("投票完了っ",message.getJumpUrl());
+            builder.setDescription(event.getReactionEmote().getEmoji() + "に投票しました！");
+            privateChannel.sendMessage(builder.build()).queue();
+            VoteSystem.addReaction(message, event.getMember(), event.getReaction().getReactionEmote().getEmoji());
+        } else if (system.isVote(message)){
+            if (event.getReaction().getReactionEmote().isEmoji()){
+                message.removeReaction(event.getReaction().getReactionEmote().getEmoji(), event.getUser()).queue();
+            } else {
+                message.removeReaction(event.getReaction().getReactionEmote().getEmote(), event.getUser()).queue();
             }
         }
     }
 
     @Override
-    public void onReady(ReadyEvent event) {
-
-        JDA jda = event.getJDA();
-        List<Guild> guilds = jda.getGuilds();
-        System.out.println("現在 " + guilds.size() + "サーバーで動いてるらしい。");
-        int i = 0;
-        for (Guild guild : guilds){
-
-            System.out.println(guild.getId() + " : " + guild.getName());
-
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (event.isWebhookMessage()){
+            return;
         }
 
-        voteReactionList = new VoteReactionList(jda);
-        Earthquake earthquake = new Earthquake();
+        if (event.getAuthor().isBot()){
+            return;
+        }
 
-        long[] lastId = new long[]{-1};
-
-        Timer timer = new Timer();
-
-        final String[] sokuhoText = {""};
-
-        TimerTask task = new TimerTask() {
-            public void run() {
-                try {
-
-                    if (jda.getSelfUser().getId().equals("785322639295905792")){
-                        return;
-                    }
-
-                    EarthquakeResult data1 = earthquake.getData();
-                    for (Guild guild : jda.getGuilds()){
-
-                        List<TextChannel> textChannels = guild.getTextChannels();
-                        for (TextChannel ch : textChannels){
-
-                            if (ch.getName().equals("nanami_setting")){
-
-                                MessageHistory.MessageRetrieveAction after = ch.getHistoryAfter(1, 100);
-                                after.queue((messageHistory -> {
-
-                                    List<Message> retrievedHistory = messageHistory.getRetrievedHistory();
-                                    for (Message message : retrievedHistory){
-                                        if (message.getContentRaw().toLowerCase().startsWith("jisin: ")){
-
-                                            String[] split = message.getContentRaw().split(" ");
-
-                                            try {
-                                                TextChannel channel = guild.getTextChannelById(split[1].replaceAll("<","").replaceAll(">",""));
-                                                if (channel != null){
-                                                    if (earthquake.getLastEventID() != -1){
-
-                                                        System.out.println("Debug : 地震情報取得");
-                                                        EarthquakeResult data = earthquake.getData();
-                                                        if (new Date().getTime() - data.getHead().getReportDateTime().getTime() > 300000){
-                                                            System.out.println("Debug : 時間差 " + (new Date().getTime() - data.getHead().getReportDateTime().getTime()));
-                                                            continue;
-                                                        }
-
-                                                        if (data.getHead().getEventID() == lastId[0] && (sokuhoText[0].length() != 0 && data.getHead().getInfoKind().equals(sokuhoText[0]))){
-                                                            System.out.println("Debug : 前と同じ");
-                                                            continue;
-                                                        }
-
-                                                        System.out.println("地震情報を送信しました : " + channel.getName());
-                                                        StringBuffer sb = new StringBuffer();
-                                                        if (earthquake.getData().getHead().getInfoKind().equals("地震情報")){
-                                                            sb.append("------ 地震情報 (ここから) ------\n");
-                                                            sb.append(data.getHead().getHeadline());
-                                                            sb.append("\n");
-                                                            sb.append("震源地は");
-                                                            sb.append(data.getBody().getEarthquake().getHypocenter().getName());
-                                                            sb.append("(");
-                                                            sb.append(data.getBody().getEarthquake().getHypocenter().getLongitude());
-                                                            sb.append(",");
-                                                            sb.append(data.getBody().getEarthquake().getHypocenter().getLatitude());
-                                                            sb.append(")\n");
-                                                            sb.append("マグニチュードは M ");
-                                                            sb.append(data.getBody().getEarthquake().getMagnitude());
-                                                            sb.append("と推定されています。\n");
-                                                            sb.append(data.getBody().getComments().getObservation());
-                                                            sb.append("\n");
-                                                            sb.append("最大震度は ");
-                                                            sb.append(data.getBody().getIntensity().getObservation().getMaxInt());
-                                                            sb.append(" です。\n");
-
-                                                            sb.append("---- 各地の震度 ---- \n");
-                                                            Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
-                                                            for (Pref perf : prefList){
-                                                                Area[] areaList = perf.getArea();
-
-                                                                for (Area area : areaList){
-
-                                                                    sb.append(area.getName());
-                                                                    sb.append(" 震度 ");
-                                                                    sb.append(area.getMaxInt());
-                                                                    sb.append("\n");
-
-                                                                    if (sb.length() >= 1900){
-
-                                                                        channel.sendMessage(sb.toString()).queue();
-                                                                        sb.delete(0, sb.length());
-
-                                                                    }
-
-                                                                }
-
-                                                            }
-
-                                                            sb.append("------ 地震情報 (ここまで) ------");
-                                                            channel.sendMessage(sb.toString()).queue();
-                                                            System.out.println("Debug : send");
-                                                        } else if (earthquake.getData().getHead().getInfoKind().equals("震度速報")) {
-                                                            sb.append("**------ 地震速報 (ここから) ------**\n");
-                                                            sb.append(data.getHead().getHeadline());
-                                                            sb.append("\n");
-                                                            Pref[] prefList = data.getBody().getIntensity().getObservation().getPref();
-                                                            for (Pref perf : prefList){
-                                                                Area[] areaList = perf.getArea();
-
-                                                                for (Area area : areaList){
-
-                                                                    sb.append(area.getName());
-                                                                    sb.append(" 震度 ");
-                                                                    sb.append(area.getMaxInt());
-                                                                    sb.append("\n");
-
-                                                                }
-
-                                                            }
-
-                                                            sb.append(data.getBody().getComments().getObservation());
-                                                            sb.append("\n");
-                                                            sb.append("**------ 地震速報 (ここまで) ------**\n");
-                                                            channel.sendMessage(sb.toString()).queue();
-                                                            System.out.println("Debug : send2");
-                                                        }
-
-
-
-                                                    }
-
-                                                }
-                                            } catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-                                    }
-
-                                }));
-                            }
-                        }
-                    }
-                    if (data1 != null){
-                        lastId[0] = data1.getHead().getEventID();
-                        sokuhoText[0] = data1.getHead().getInfoKind();
-                    }
-                } catch (Exception e){
-
-                    RestAction<User> nanami = jda.retrieveUserById("529463370089234466");
-                    PrivateChannel dm = nanami.complete().openPrivateChannel().complete();
-                    String debug = "----- Error ----- \n" + e.fillInStackTrace().toString();
-                    dm.sendMessage(debug).queue();
-
-                }
+        if (event.isFromType(ChannelType.PRIVATE)){
+            Message message = event.getMessage();
+            if (message.getContentRaw().startsWith("ぱんつ何色") || message.getContentRaw().startsWith("パンツ何色")){
+                message.getPrivateChannel().sendMessage("へんたいっ！").queue();
+                return;
             }
-        };
 
-        timer.scheduleAtFixedRate(task, 0, (1000 * 60));
+            if (message.getContentRaw().startsWith("にゃーん")){
+                message.getPrivateChannel().sendMessage("にゃーん").queue(message1 -> {
+                    message1.addReaction("\uD83D\uDC31").queue();
+                });
+                return;
+            }
+
+            if (message.getContentRaw().startsWith("パンツ食べますか") || message.getContentRaw().startsWith("ぱんつ食べますか")){
+                message.getPrivateChannel().sendMessage(":thinking:").queue();
+                return;
+            }
+
+            if (message.getContentRaw().startsWith("n.help")){
+                Help.run(event.getPrivateChannel(), message.getContentRaw());
+                return;
+            }
+
+            message.getPrivateChannel().sendMessage(
+                    "ふぬ？なにもおきないですよ？\n" +
+                            "\n" +
+                            "ヘルプを見るには「n.help」を入力してください\n" +
+                            "このbotを入れるには：https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot\n" +
+                            "botについてバグ報告、テスト、要望が出したい！： https://discord.gg/FnjCMzP7d4").queue((message1 -> {
+                message1.suppressEmbeds(true).queue();
+            }));
+            return;
+        }
+
+        CommandSystem.run(event.getTextChannel(), event.getMessage());
+
     }
 
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        database = new Database();
+        Earthquake earthquake = new Earthquake();
+        EarthquakeListener listener = new EarthquakeListener(event.getJDA(), earthquake);
+    }
+
+    public static Database getDatabase(){
+        return database;
+    }
 }
