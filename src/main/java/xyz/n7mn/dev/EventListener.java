@@ -4,14 +4,18 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.PrivateChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.Command.CommandSystem;
 import xyz.n7mn.dev.Command.Help;
+import xyz.n7mn.dev.Command.music.GuildMusicManager;
+import xyz.n7mn.dev.Command.music.PlayerManager;
 import xyz.n7mn.dev.Command.vote.VoteData;
 import xyz.n7mn.dev.Command.vote.VoteSystem;
 import xyz.n7mn.dev.api.Earthquake;
@@ -25,6 +29,16 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onGenericGuildVoice(@NotNull GenericGuildVoiceEvent event) {
         // super.onGenericGuildVoice(event);
+        AudioManager audioManager = event.getGuild().getAudioManager();
+        if (audioManager.isConnected()){
+            VoiceChannel channel = audioManager.getConnectedChannel();
+            if (channel.getMembers().size() <= 1){
+                PlayerManager Playermanager = PlayerManager.getINSTANCE();
+                GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(event.getGuild());
+                guildMusicManager.player.stopTrack();
+                audioManager.closeAudioConnection();
+            }
+        }
     }
 
     @Override
