@@ -20,6 +20,8 @@ import xyz.n7mn.dev.Command.vote.VoteSystem;
 import xyz.n7mn.dev.api.Earthquake;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class EventListener extends ListenerAdapter {
@@ -88,6 +90,18 @@ public class EventListener extends ListenerAdapter {
         }
 
         if (event.isFromType(ChannelType.PRIVATE)){
+
+            User nana = event.getJDA().getUserById("529463370089234466");
+            EmbedBuilder builder = new EmbedBuilder();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            builder.setTitle("実行ログ").setFooter(sdf.format(new Date())).setColor(Color.PINK);
+            builder.addField("実行者", event.getAuthor().getAsTag()+"\n("+event.getAuthor().getId()+")", false);
+            builder.addField("内容", event.getMessage().getContentRaw(), false);
+            builder.addField("メッセージリンクURL", event.getMessage().getJumpUrl(), false);
+
+            nana.openPrivateChannel().complete().sendMessage(builder.build()).queue();
+
             Message message = event.getMessage();
             if (message.getContentRaw().startsWith("ぱんつ何色") || message.getContentRaw().startsWith("パンツ何色")){
                 message.getPrivateChannel().sendMessage("へんたいっ！").queue();
