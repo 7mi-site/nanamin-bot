@@ -1,4 +1,4 @@
-package xyz.n7mn.dev.old.chat;
+package xyz.n7mn.dev.old;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
