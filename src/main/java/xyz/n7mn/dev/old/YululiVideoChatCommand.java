@@ -7,7 +7,7 @@ import xyz.n7mn.dev.i.HelpData;
 
 
 import java.util.List;
-
+@Deprecated
 public class YululiVideoChatCommand extends Chat {
 
     public YululiVideoChatCommand(TextChannel textChannel, Message message) {

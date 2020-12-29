@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class YululiFunction {
     
     public static String clip(Message message){

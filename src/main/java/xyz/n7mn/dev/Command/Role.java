@@ -73,15 +73,15 @@ public class Role extends Chat {
 
             StringBuffer sb = new StringBuffer();
 
-            sb.append("----- ");
+            sb.append("----- `");
             if (member.getNickname() != null){
                 sb.append(member.getNickname());
                 sb.append(" (");
                 sb.append(member.getUser().getAsTag());
-                sb.append(")さんの情報 -----\n");
+                sb.append(")`さんの情報 -----\n");
             } else {
                 sb.append(member.getUser().getAsTag());
-                sb.append("さんの情報 -----\n");
+                sb.append("`さんの情報 -----\n");
             }
 
             Date joinTime = Date.from(member.getTimeJoined().toInstant());
@@ -90,6 +90,9 @@ public class Role extends Chat {
 
             sb.append("botかどうか : `");
             sb.append(isBot);
+            sb.append("`\n");
+            sb.append("ユーザーID : `");
+            sb.append(member.getUser().getId());
             sb.append("`\n");
             sb.append("入室日時 : `");
             sb.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(joinTime));
