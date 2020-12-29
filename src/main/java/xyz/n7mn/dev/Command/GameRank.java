@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import xyz.n7mn.dev.Command.money.Money;
+import xyz.n7mn.dev.Command.money.MoneyComparator;
 import xyz.n7mn.dev.Command.money.MoneySystem;
 import xyz.n7mn.dev.i.Game;
 
@@ -19,6 +20,7 @@ public class GameRank extends Game {
         StringBuffer sb = new StringBuffer();
 
         List<Money> moneyList = MoneySystem.getMoneyList(getGuild());
+        moneyList.sort(new MoneyComparator());
 
         String sendUserID = getMessage().getMember().getId();
 
