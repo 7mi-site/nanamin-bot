@@ -12,21 +12,11 @@ import java.util.List;
 public class MoneySystem {
 
     private static Connection con = null;
-    private static boolean isConnect = false;
     public static final String Currency = "ななみコイン";
-
-    public MoneySystem(){
-
-        if (EventListener.getDatabase() != null){
-            con = EventListener.getDatabase().getConnect();
-        }
-
-        isConnect = (con != null);
-
-    }
 
     public static Money getData(String discordUserID){
 
+        con = EventListener.getDatabase().getConnect();
         if (con != null){
             try {
                 PreparedStatement statement = con.prepareStatement("SELECT * FROM MoneyList WHERE UserID = ?");
@@ -57,6 +47,7 @@ public class MoneySystem {
 
     public static void createData(String discordUserID){
 
+        con = EventListener.getDatabase().getConnect();
         if (con != null){
             new Thread(()->{
                 try {
@@ -76,6 +67,7 @@ public class MoneySystem {
 
     public static void updateData(Money money){
 
+        con = EventListener.getDatabase().getConnect();
         if (con != null){
             new Thread(()->{
                 try {
@@ -102,6 +94,7 @@ public class MoneySystem {
     public static List<Money> getMoneyList(){
         List<Money> moneyList = new ArrayList<>();
 
+        con = EventListener.getDatabase().getConnect();
         if (con != null) {
             try {
                 PreparedStatement statement = con.prepareStatement("SELECT * FROM MoneyList");
