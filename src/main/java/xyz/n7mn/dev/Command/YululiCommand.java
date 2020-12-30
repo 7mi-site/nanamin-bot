@@ -133,13 +133,15 @@ public class YululiCommand extends Chat {
             List<ImageData> imageDataList = ImgSystem.getImageDataList("pan");
             int i = new SecureRandom().nextInt(imageDataList.size());
 
-            builder.setTitle("");
+            // builder.setTitle("");
             builder.setDescription(imageDataList.get(i).getDescription());
             builder.setThumbnail("https://nana-bot.n7mn.xyz/pan/food_francepan.png");
             builder.setImage(imageDataList.get(i).getImageURL());
             builder.setColor(Color.ORANGE);
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessage(builder.build()).queue(message -> {
+                message.addReaction("\uD83D\uDCAF").queue();
+            });
             return;
         }
 

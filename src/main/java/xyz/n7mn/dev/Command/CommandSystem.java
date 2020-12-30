@@ -80,7 +80,7 @@ public class CommandSystem {
             system = new MusicNowPlay(textChannel, message);
         }
 
-        if (messageText.toLowerCase().equals("n.musicvolume") || messageText.toLowerCase().equals("n.volume")){
+        if (messageText.toLowerCase().startsWith("n.musicvolume") || messageText.toLowerCase().startsWith("n.volume")){
             system = new MusicVolume(textChannel, message);
         }
 

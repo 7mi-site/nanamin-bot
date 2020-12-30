@@ -62,14 +62,12 @@ public class Vote extends Chat {
                         c++;
                         continue;
                     }
-
                     if (c == 1 && !temp.startsWith("t:") && !temp.startsWith("time:")){
                         title = temp;
                         c++;
                         continue;
                     }
-
-                    if (c == 2 && !time.equals("")){
+                    if (c == 2 && title.equals("")){
                         title = temp;
                         c++;
                         continue;
@@ -77,7 +75,7 @@ public class Vote extends Chat {
 
                     if (temp.toLowerCase().startsWith("t:") || temp.toLowerCase().startsWith("time:")){
                         time = temp;
-                        i++;
+                        c++;
                         continue;
                     }
 
@@ -87,16 +85,21 @@ public class Vote extends Chat {
                 }
             } else if (temp2.length > 1) {
                 for (String temp : temp2) {
-                    if (c == 0 && !temp.startsWith("t:") && !temp.startsWith("time:")){
+                    if (c == 0){
+                        c++;
+                        continue;
+                    }
+                    if (c == 1 && !temp.startsWith("t:") && !temp.startsWith("time:")){
                         title = temp;
                         c++;
                         continue;
                     }
-                    if (c == 1 && !time.equals("")){
+                    if (c == 2 && title.equals("")){
                         title = temp;
                         c++;
                         continue;
                     }
+
                     if (temp.toLowerCase().startsWith("t:") || temp.toLowerCase().startsWith("time:")){
                         time = temp;
                         c++;
@@ -123,6 +126,7 @@ public class Vote extends Chat {
                         c++;
                         continue;
                     }
+
                     if (temp.toLowerCase().startsWith("t:") || temp.toLowerCase().startsWith("time:")){
                         time = temp;
                         c++;

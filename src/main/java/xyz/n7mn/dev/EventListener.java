@@ -57,6 +57,7 @@ public class EventListener extends ListenerAdapter {
 
         if (system.isVote(message) && event.getReaction().getReactionEmote().isEmoji()){
             message.removeReaction(event.getReaction().getReactionEmote().getEmoji(), event.getUser()).queue();
+
             PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
             EmbedBuilder builder = new EmbedBuilder();
 

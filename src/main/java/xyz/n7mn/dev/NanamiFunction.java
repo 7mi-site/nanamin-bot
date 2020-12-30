@@ -99,24 +99,18 @@ public class NanamiFunction {
         long ms = -1;
         Matcher matcher = Pattern.compile("(\\d+)").matcher(time);
         if (matcher.find()){
-            System.out.println(matcher.group(1));
+            // System.out.println(matcher.group(1));
         }
 
         try {
             // 秒
             if (time.toLowerCase().endsWith("s")){
                 ms = Long.parseLong(matcher.group(1)) * 1000;
-            }
-            // 分
-            if (time.toLowerCase().endsWith("m")){
+            } else if (time.toLowerCase().endsWith("m")){
                 ms = (Long.parseLong(matcher.group(1)) * 60) * 1000;
-            }
-            // 時
-            if (time.toLowerCase().endsWith("h")){
+            } else if (time.toLowerCase().endsWith("h")){
                 ms = ((Long.parseLong(matcher.group(1)) * 60) * 60) * 1000;
-            }
-            // 日
-            if (time.toLowerCase().endsWith("d")){
+            } else if (time.toLowerCase().endsWith("d")){
                 ms = (((Long.parseLong(matcher.group(1)) * 60) * 60) * 24) * 1000;
             } else {
                 ms = Long.parseLong(matcher.group(1)) * 1000;

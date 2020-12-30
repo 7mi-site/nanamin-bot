@@ -82,25 +82,26 @@ public class VoteSystem {
     }
 
     public static void addReaction(Message message, Member member, String emoji){
-        Connection con = null;
-        if (EventListener.getDatabase() != null){
-            con = EventListener.getDatabase().getConnect();
-        }
-        if (con == null){
-            return;
-        }
+        new Thread(()->{
+            Connection con = null;
+            if (EventListener.getDatabase() != null){
+                con = EventListener.getDatabase().getConnect();
+            }
+            if (con == null){
+                return;
+            }
 
-        try {
-            PreparedStatement statement = con.prepareStatement("INSERT INTO `VoteEmojiList`(`MessageID`, `UserID`, `Emoji`) VALUES (?, ?, ?);");
-            statement.setString(1, message.getId());
-            statement.setString(2, member.getId());
-            statement.setString(3, emoji);
-            statement.execute();
-            statement.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
+            try {
+                PreparedStatement statement = con.prepareStatement("INSERT INTO `VoteEmojiList`(`MessageID`, `UserID`, `Emoji`) VALUES (?, ?, ?);");
+                statement.setString(1, message.getId());
+                statement.setString(2, member.getId());
+                statement.setString(3, emoji);
+                statement.execute();
+                statement.close();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public static List<VoteData> getVoteDataList(Message message){

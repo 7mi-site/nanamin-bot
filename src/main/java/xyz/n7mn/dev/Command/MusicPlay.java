@@ -28,86 +28,71 @@ public class MusicPlay extends Chat {
 
         boolean play = audioManager.isConnected();
 
-        if (play){
-            PlayerManager Playermanager = PlayerManager.getINSTANCE();
-            GuildMusicManager guildMusicManager = Playermanager.getGuildMusicManager(getGuild());
-            try {
-                if (guildMusicManager.player.getPlayingTrack().getInfo().title != null){
-                    play = true;
-                } else {
-                    play = false;
-                }
-            } catch (Exception e){
-                play = false;
-            }
+        if (getMessage().isWebhookMessage() || getUser().isBot()){
+            return;
         }
 
-        if (!play){
-            if (getMessage().isWebhookMessage() || getUser().isBot()){
-                return;
-            }
+        String[] split = getMessageText().split(" ", -1);
+        if (split.length != 2 && split.length != 3){
+            getMessage().reply("音楽を再生するには\nボイスチャンネルに入ってから\n`n.play <URL>` または `n.play <URL> <0-100>`でお願いしますっ！").queue();
+            return;
+        }
 
-            String[] split = getMessageText().split(" ", -1);
-            if (split.length != 2 && split.length != 3){
-                getMessage().reply("音楽を再生するには\nボイスチャンネルに入ってから\n`n.play <URL>` または `n.play <URL> <0-100>`でお願いしますっ！").queue();
-                return;
-            }
+        boolean find = false;
 
-            boolean find = false;
+        List<VoiceChannel> voiceChannels = getGuild().getVoiceChannels();
+        // voiceChannel = voiceChannels.get(0);
 
-            List<VoiceChannel> voiceChannels = getGuild().getVoiceChannels();
-            // voiceChannel = voiceChannels.get(0);
+        VoiceChannel voiceChannel = null;
+        for (VoiceChannel vc : voiceChannels){
 
-            VoiceChannel voiceChannel = null;
-            for (VoiceChannel vc : voiceChannels){
+            try {
+                // System.out.println(vc.getName() + " : " + vc.getMembers().size());
 
-                try {
-                    // System.out.println(vc.getName() + " : " + vc.getMembers().size());
+                if (vc.getMembers().size() != 0){
+                    List<Member> members = vc.getMembers();
 
-                    if (vc.getMembers().size() != 0){
-                        List<Member> members = vc.getMembers();
+                    for (Member member : members){
 
-                        for (Member member : members){
-
-                            if (getMember().getId().equals(member.getId())){
-                                find = true;
-                                voiceChannel = vc;
-                            }
-
+                        if (getMember().getId().equals(member.getId())){
+                            find = true;
+                            voiceChannel = vc;
                         }
 
                     }
 
-                } catch (Exception e){
-                    // e.printStackTrace();
                 }
 
+            } catch (Exception e){
+                // e.printStackTrace();
             }
 
-            if (!find){
-                getMessage().reply("どこかのボイスチャンネルに入ってくださいっ！！").queue();
-                return;
-            }
-
-            if (!split[1].toLowerCase().startsWith("http")){
-                getMessage().reply("わたしの知ってるURLじゃないみたい...").queue();
-                return;
-            }
-
-            getMessage().delete().queue();
-            //Guild guild = event.getJDA().getGuildById(event.getGuild().getId());
-            audioManager.openAudioConnection(voiceChannel);
-
-            PlayerManager Playermanager = PlayerManager.getINSTANCE();
-            Playermanager.loadAndPlay(getTextChannel(), split[1]);
-
-
-
-            if (split.length == 3){
-                Playermanager.getGuildMusicManager(getGuild()).player.setVolume(Integer.parseInt(split[2]));
-            } else {
-                Playermanager.getGuildMusicManager(getGuild()).player.setVolume(100);
-            }
         }
+
+        if (!find){
+            getMessage().reply("どこかのボイスチャンネルに入ってくださいっ！！").queue();
+            return;
+        }
+
+        if (!split[1].toLowerCase().startsWith("http")){
+            getMessage().reply("わたしの知ってるURLじゃないみたい...").queue();
+            return;
+        }
+
+        getMessage().delete().queue();
+        //Guild guild = event.getJDA().getGuildById(event.getGuild().getId());
+        audioManager.openAudioConnection(voiceChannel);
+
+        PlayerManager Playermanager = PlayerManager.getINSTANCE();
+        Playermanager.loadAndPlay(getTextChannel(), split[1]);
+
+
+
+        if (split.length == 3){
+            Playermanager.getGuildMusicManager(getGuild()).player.setVolume(Integer.parseInt(split[2]));
+        } else {
+            Playermanager.getGuildMusicManager(getGuild());
+        }
+
     }
 }

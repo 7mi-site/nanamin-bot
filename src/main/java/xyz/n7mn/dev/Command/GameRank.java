@@ -28,6 +28,8 @@ public class GameRank extends Game {
 
         int i = 1;
         int sendRank = 0;
+        int c = 0;
+        int sendC = 0;
 
         EmbedBuilder builder = new EmbedBuilder();
 
@@ -48,23 +50,24 @@ public class GameRank extends Game {
                     }
 
                     if (member.getId().equals(sendUserID)){
-                        builder.addField(i+"位 ("+money.getMoney()+" "+MoneySystem.getCurrency()+")", "**"+name+"**", false);
+                        builder.addField(i+"位 ("+money.getMoney()+" "+MoneySystem.getCurrency()+")", "`"+name+"` (あなたですっ！)", false);
                     } else {
-                        builder.addField(i+"位 ("+money.getMoney()+" "+MoneySystem.getCurrency()+")", name, false);
+                        builder.addField(i+"位 ("+money.getMoney()+" "+MoneySystem.getCurrency()+")", "`"+name+"`", false);
                     }
 
                 }
 
                 if (member.getId().equals(sendUserID)){
                     sendRank = i;
+                    sendC = c;
                 }
 
                 i++;
             }
-
+            c++;
         }
 
-        builder.addField("あなたの順位",sendRank + " 位 ("+moneyList.get(i - 1).getMoney()+"コイン)", false);
+        builder.addField("あなたの順位",sendRank + " 位 ("+moneyList.get(sendC).getMoney()+"コイン)", false);
         getMessage().reply(builder.build()).queue();
     }
 }
