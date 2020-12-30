@@ -69,6 +69,7 @@ public class EventListener extends ListenerAdapter {
             }
             builder.setTitle("投票完了っ",message.getJumpUrl());
             builder.setDescription(event.getReactionEmote().getEmoji() + "に投票しました！");
+            builder.setColor(Color.GREEN);
             privateChannel.sendMessage(builder.build()).queue();
             VoteSystem.addReaction(message, event.getMember(), event.getReaction().getReactionEmote().getEmoji());
         } else if (system.isVote(message)){
@@ -275,7 +276,8 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         database = new Database();
-        EarthquakeListener listener = new EarthquakeListener(event.getJDA(), earthquake);
+        new EarthquakeListener(event.getJDA(), earthquake);
+        new VoteCheck(event.getJDA(), database);
     }
 
     public static Database getDatabase(){

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class NanamiFunction {
 
-    private static String ver = "1.4.3";
+    private static String ver = "1.4.4";
 
     public static String getVersion(){
         return ver;
