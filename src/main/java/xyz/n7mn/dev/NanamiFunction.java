@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NanamiFunction {
 
@@ -95,25 +97,29 @@ public class NanamiFunction {
     public static long getMs(String time){
 
         long ms = -1;
+        Matcher matcher = Pattern.compile("(\\d+)").matcher(time);
+        if (matcher.find()){
+            System.out.println(matcher.group(1));
+        }
 
         try {
             // 秒
             if (time.toLowerCase().endsWith("s")){
-                ms = Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("s","")) * 1000;
+                ms = Long.parseLong(matcher.group(1)) * 1000;
             }
             // 分
             if (time.toLowerCase().endsWith("m")){
-                ms = (Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("m","")) * 60) * 1000;
+                ms = (Long.parseLong(matcher.group(1)) * 60) * 1000;
             }
             // 時
             if (time.toLowerCase().endsWith("h")){
-                ms = ((Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("h","")) * 60) * 60) * 1000;
+                ms = ((Long.parseLong(matcher.group(1)) * 60) * 60) * 1000;
             }
             // 日
             if (time.toLowerCase().endsWith("d")){
-                ms = (((Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("h","")) * 60) * 60) * 24) * 1000;
+                ms = (((Long.parseLong(matcher.group(1)) * 60) * 60) * 24) * 1000;
             } else {
-                ms = Long.parseLong(time.toLowerCase().replaceAll("t:","").replaceAll("time:","").replaceAll("s","")) * 1000;
+                ms = Long.parseLong(matcher.group(1)) * 1000;
             }
 
         } catch (Exception e){
