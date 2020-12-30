@@ -58,16 +58,23 @@ public class Vote extends Chat {
             int c = 0;
             if (temp1.length > 1) {
                 for (String temp : temp1) {
-                    if (c == 0 && !temp.startsWith("t:") && !temp.startsWith("time:")){
+                    if (c == 0){
+                        c++;
+                        continue;
+                    }
+
+                    if (c == 1 && !temp.startsWith("t:") && !temp.startsWith("time:")){
                         title = temp;
                         c++;
                         continue;
                     }
-                    if (c == 1 && !time.equals("")){
+
+                    if (c == 2 && !time.equals("")){
                         title = temp;
                         c++;
                         continue;
                     }
+
                     if (temp.toLowerCase().startsWith("t:") || temp.toLowerCase().startsWith("time:")){
                         time = temp;
                         i++;

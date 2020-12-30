@@ -26,6 +26,7 @@ import java.util.List;
 
 public class EventListener extends ListenerAdapter {
     private static Database database = null;
+    private Earthquake earthquake = new Earthquake();
 
     @Override
     public void onGenericGuildVoice(@NotNull GenericGuildVoiceEvent event) {
@@ -274,7 +275,6 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         database = new Database();
-        Earthquake earthquake = new Earthquake();
         EarthquakeListener listener = new EarthquakeListener(event.getJDA(), earthquake);
     }
 
