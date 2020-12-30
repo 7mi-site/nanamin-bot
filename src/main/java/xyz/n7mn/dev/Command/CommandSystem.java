@@ -2,6 +2,7 @@ package xyz.n7mn.dev.Command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import xyz.n7mn.dev.Akeome;
 import xyz.n7mn.dev.i.System;
 
 import java.awt.*;
@@ -193,6 +194,10 @@ public class CommandSystem {
 
         if (messageText.toLowerCase().startsWith("n.votecheck")){
             system = new VoteCheck(textChannel, message);
+        }
+
+        if (!messageText.toLowerCase().startsWith("n.")){
+            system = new Akeome(textChannel, message);
         }
 
         if (messageText.toLowerCase().startsWith("n.") || system != null){

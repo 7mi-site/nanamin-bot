@@ -64,12 +64,11 @@ public class Msg extends Chat {
                     }
 
                 });
+                return;
             } catch (Exception e){
                 getMessage().reply("メッセージが存在しませんっ！").queue();
+                return;
             }
-
-            getMessage().reply("見つからないよぉ").queue();
-            return;
         }
 
         JDA jda = getGuild().getJDA();

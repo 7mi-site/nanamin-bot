@@ -73,6 +73,7 @@ public class Help extends Chat {
     private static final String gameText1 = "" +
             "`n.money` --- 現在の所持金\n" +
             "`n.rank` --- 所持金ランキング\n" +
+            "~~`n.bank` --- ななみちゃん銀行~~\n" +
             "`n.slot` --- スロット\n" +
             "`n.yosogame` --- 数字予想ゲーム\n" +
             "`n.fx` --- FXもどき\n" +
@@ -82,6 +83,7 @@ public class Help extends Chat {
     private static final String gameText2 = "" +
             "`n.money` --- 現在の所持金を表示する\n" +
             "`n.money pay <相手のID or 名前> <金額>` --- 指定した相手に送金をする\n" +
+            "~~`n.bank` --- ななみちゃん銀行~~\n" +
             "`n.rank` --- 所持金ランキング\n" +
             "`n.slot` --- スロット (1回100ななみコイン　最大当たり10倍)\n" +
             "`n.yosogame <賭け金> <予想数字>` --- 数字予想ゲーム (当たり10倍)\n" +
@@ -291,7 +293,12 @@ public class Help extends Chat {
                 "獲得金額は10,000～50,000のどれかですっ"
         ));
         helpData.add(new HelpData(1107, "n.bank","" +
-                ""
+                "ななみちゃん銀行\n" +
+                "書式 `n.bank`\n" +
+                "ああああああああああああああ\n" +
+                "テキストテキストテキストテキスト\n" +
+                "ああああああああああああああ\n" +
+                "テキストテキストテキストテキスト\n"
         ));
 
         helpData.add(new HelpData(1200, "n.quizRank","" +
