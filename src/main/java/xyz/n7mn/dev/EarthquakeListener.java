@@ -102,12 +102,14 @@ public class EarthquakeListener {
                             sb.append(area.getMaxInt());
                             sb.append("\n");
 
-                            for (City city :area.getCity()){
-                                sb.append("`");
-                                sb.append(city.getName());
-                                sb.append(" 震度 ");
-                                sb.append(city.getMaxInt());
-                                sb.append("`\n");
+                            if (InfoKind.equals("地震情報")){
+                                for (City city :area.getCity()){
+                                    sb.append("`");
+                                    sb.append(city.getName());
+                                    sb.append(" 震度 ");
+                                    sb.append(city.getMaxInt());
+                                    sb.append("`\n");
+                                }
                             }
                         }
                         builder.addField(pref.getName(), sb.toString(), true);
@@ -155,7 +157,7 @@ public class EarthquakeListener {
             }
         };
 
-        timer.scheduleAtFixedRate(task, 0L, 60000);
+        timer.schedule(task, 0L, 60000);
         System.out.println("地震情報受信準備完了...");
     }
 

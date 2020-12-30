@@ -17,7 +17,7 @@ import java.util.List;
 
 public class NanamiFunction {
 
-    private static String ver = "1.4.2";
+    private static String ver = "1.5-dev";
 
     public static String getVersion(){
         return ver;
