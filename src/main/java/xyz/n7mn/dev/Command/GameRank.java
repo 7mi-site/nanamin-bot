@@ -1,5 +1,6 @@
 package xyz.n7mn.dev.Command;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -8,6 +9,7 @@ import xyz.n7mn.dev.Command.money.MoneyComparator;
 import xyz.n7mn.dev.Command.money.MoneySystem;
 import xyz.n7mn.dev.i.Game;
 
+import java.awt.*;
 import java.util.List;
 
 public class GameRank extends Game {
@@ -27,26 +29,30 @@ public class GameRank extends Game {
         int i = 1;
         int sendRank = 0;
 
-        sb.append("---- ");
-        sb.append(MoneySystem.getCurrency());
-        sb.append(" 所持数ランキング ----\n");
+        EmbedBuilder builder = new EmbedBuilder();
 
+        builder.setTitle(MoneySystem.getCurrency() + " 所持数ランキング");
+        builder.setDescription(getGuild().getName() + "でのランキングです！");
+        builder.setColor(Color.ORANGE);
         for (Money money : moneyList){
 
             Member member = getMessage().getGuild().getMemberById(money.getUserID());
             if (member != null && !member.getUser().isBot()){
                 if (i <= 10){
-                    sb.append(i);
-                    sb.append("位 ");
+
+                    String name = "";
                     if (member.getNickname() != null){
-                        sb.append(member.getNickname());
+                        name = member.getNickname();
                     } else {
-                        sb.append(member.getUser().getName());
+                        name = member.getUser().getName();
                     }
-                    sb.append(" : ");
-                    sb.append(money.getMoney());
-                    sb.append(MoneySystem.getCurrency());
-                    sb.append("\n");
+
+                    if (member.getId().equals(sendUserID)){
+                        builder.addField(i+"位 ("+money.getMoney()+" "+MoneySystem.getCurrency()+")", "**"+name+"**", false);
+                    } else {
+                        builder.addField(i+"位 ("+money.getMoney()+" "+MoneySystem.getCurrency()+")", name, false);
+                    }
+
                 }
 
                 if (member.getId().equals(sendUserID)){
@@ -58,10 +64,7 @@ public class GameRank extends Game {
 
         }
 
-        sb.append("(あなたの順位は");
-        sb.append(sendRank);
-        sb.append("位です)");
-
-        getMessage().reply(sb.toString()).queue();
+        builder.addField("あなたの順位",sendRank + " 位 ("+moneyList.get(i - 1).getMoney()+"コイン)", false);
+        getMessage().reply(builder.build()).queue();
     }
 }
