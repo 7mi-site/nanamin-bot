@@ -168,15 +168,35 @@ public class NanamiFunction {
 
             resultDataList.sort(new VoteComparator());
 
+            List<MessageEmbed.Field> fields = message1.getEmbeds().get(0).getFields();
+
+
             StringBuffer sb = new StringBuffer("**投票結果**\n");
             sb.append("投票タイトル : `");
             sb.append(message1.getEmbeds().get(0).getTitle());
             sb.append("`\n");
             for (VoteResultData data : resultDataList){
-                sb.append(data.getEmoji());
-                sb.append(" : ");
-                sb.append(data.getCount());
-                sb.append("票\n");
+                for (MessageEmbed.Field field : fields){
+                    //System.out.println(field.getName());
+                    if (field.getName() != null && field.getName().equals("選択肢")){
+                        String value = field.getValue();
+                        //System.out.println(value);
+                        String[] valueList = value.split("\n", -1);
+                        for (String v : valueList){
+                            String[] str = v.split(" ", -1);
+                            if (str[0].equals(data.getEmoji())){
+                                sb.append(str[0]);
+                                sb.append(" ");
+                                sb.append(str[2]);
+                                sb.append(" : ");
+                                sb.append(data.getCount());
+                                sb.append("票\n");
+                            }
+                        }
+
+                    }
+                }
+
             }
 
             builder.setTitle("結果データ");
