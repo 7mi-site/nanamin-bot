@@ -2,12 +2,13 @@ package xyz.n7mn.dev.Command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import xyz.n7mn.dev.Akeome;
 import xyz.n7mn.dev.i.System;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class CommandSystem {
@@ -196,7 +197,9 @@ public class CommandSystem {
             system = new VoteCheck(textChannel, message);
         }
 
-        if (!messageText.toLowerCase().startsWith("n.")){
+        Matcher matcher = Pattern.compile("(.*)あけおめ(.*)").matcher(messageText);
+        Matcher matcher2 = Pattern.compile("(.*)誕生日(.*)").matcher(messageText);
+        if (matcher.find() || matcher2.find()){
             system = new Akeome(textChannel, message);
         }
 
