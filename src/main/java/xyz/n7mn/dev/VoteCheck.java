@@ -50,7 +50,7 @@ public class VoteCheck {
 
                                 Matcher matcher = Pattern.compile("(.*)ごろ").matcher(text);
                                 if (matcher.find()){
-                                    System.out.println(matcher.group(1));
+                                    // System.out.println(matcher.group(1));
 
                                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                     Date messageDate = sdf.parse(matcher.group(1));
