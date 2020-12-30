@@ -18,6 +18,9 @@ public class CommandSystem {
         System system = null;
         String messageText = message.getContentRaw();
 
+        if (messageText.startsWith("https://discord.com")){
+            system = new URLChecker(textChannel, message);
+        }
 
         if (messageText.toLowerCase().startsWith("n.help")){
             system = new Help(textChannel, message);
@@ -27,7 +30,7 @@ public class CommandSystem {
             system = new Ping(textChannel, message);
         }
 
-        if (messageText.toLowerCase().startsWith("n.vote") && !messageText.toLowerCase().startsWith("n.votestop")){
+        if (messageText.toLowerCase().startsWith("n.vote") && !messageText.toLowerCase().startsWith("n.votestop") && !messageText.toLowerCase().startsWith("n.votecheck")){
             system = new Vote(textChannel, message);
         }
 
@@ -186,6 +189,10 @@ public class CommandSystem {
 
         if (messageText.toLowerCase().equals("n.check")){
             system = new CheckCommand(textChannel, message);
+        }
+
+        if (messageText.toLowerCase().startsWith("n.votecheck")){
+            system = new VoteCheck(textChannel, message);
         }
 
         if (messageText.toLowerCase().startsWith("n.") || system != null){

@@ -20,7 +20,8 @@ public class Help extends Chat {
     private static final String voteText1 = "" +
             "`n.vote` -- アンケートをタイトルありで表示する\n" +
             "`n.voteNt` -- アンケートをタイトルなしで表示する\n" +
-            "`n.voteStop <メッセージリンクのURL>` -- アンケートを終了する";
+            "`n.voteStop <メッセージリンクのURL>` -- アンケートを終了する" +
+            "`n.voteCheck <メッセージリンクのURL>` -- アンケートの途中結果を見る";
 
     private static final String voteText2 = "" +
             "`n.vote`、`n.voteNt`の使い方\n" +
@@ -238,6 +239,11 @@ public class Help extends Chat {
                 "書式 `n.musicVolume <音量>`または`n.volume <音量>`"
         ));
         helpData.add(new HelpData(1016, "n.role",roleText2));
+
+        helpData.add(new HelpData(1017, "n.voteCheck","" +
+                "途中結果をDMに送りますっ\n]" +
+                "書式 `n.voteCheck <メッセージURL>`"
+        ));
 
         helpData.add(new HelpData(1100, "n.money","" +
                 "現在の所持金を表示したり他の人に送金できたりしますっ\n" +

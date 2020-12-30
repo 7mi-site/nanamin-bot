@@ -69,7 +69,6 @@ public class YululiCommand extends Chat {
 
 
             StringBuffer stringBuffer = new StringBuffer();
-
             stringBuffer.append(f);
 
             for (int i = 0; i < count; i++){
