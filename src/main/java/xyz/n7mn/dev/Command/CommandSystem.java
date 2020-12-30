@@ -18,6 +18,9 @@ public class CommandSystem {
         System system = null;
         String messageText = message.getContentRaw();
 
+        if (messageText.startsWith("https://discord.com")){
+            system = new URLChecker(textChannel, message);
+        }
 
         if (messageText.toLowerCase().startsWith("n.help")){
             system = new Help(textChannel, message);
