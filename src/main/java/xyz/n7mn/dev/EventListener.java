@@ -55,8 +55,11 @@ public class EventListener extends ListenerAdapter {
         VoteSystem system = new VoteSystem();
         Message message = event.retrieveMessage().complete();
 
-        if (system.isVote(message) && event.getReaction().getReactionEmote().isEmoji()){
+        if (system.isVote(message)){
             message.removeReaction(event.getReaction().getReactionEmote().getEmoji(), event.getUser()).queue();
+        }
+
+        if (system.isVote(message) && event.getReaction().getReactionEmote().isEmoji()){
 
             PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
             EmbedBuilder builder = new EmbedBuilder();
@@ -76,12 +79,6 @@ public class EventListener extends ListenerAdapter {
             builder.setColor(Color.GREEN);
             privateChannel.sendMessage(builder.build()).queue();
             VoteSystem.addReaction(message, event.getMember(), event.getReaction().getReactionEmote().getEmoji());
-        } else if (system.isVote(message)){
-            if (event.getReaction().getReactionEmote().isEmoji()){
-                message.removeReaction(event.getReaction().getReactionEmote().getEmoji(), event.getUser()).queue();
-            } else {
-                message.removeReaction(event.getReaction().getReactionEmote().getEmote(), event.getUser()).queue();
-            }
         }
     }
 
@@ -260,18 +257,19 @@ public class EventListener extends ListenerAdapter {
             return;
         }
 
-        Money data = MoneySystem.getData(event.getAuthor().getId());
-        if (data == null){
-            MoneySystem.createData(event.getAuthor().getId());
-            data = MoneySystem.getDefaultData(event.getAuthor().getId());
-        }
-
-        long tempInt = data.getMoney() + 1L;
-        if (tempInt > Integer.MAX_VALUE){
-            MoneySystem.updateData(new Money(data.getUserID(), data.getMoney()));
-        } else {
-            MoneySystem.updateData(new Money(data.getUserID(), data.getMoney() + 1));
-        }
+        new Thread(()->{
+            Money data = MoneySystem.getData(event.getAuthor().getId());
+            if (data == null){
+                MoneySystem.createData(event.getAuthor().getId());
+                data = MoneySystem.getDefaultData(event.getAuthor().getId());
+            }
+            long tempInt = data.getMoney() + 1L;
+            if (tempInt > Integer.MAX_VALUE){
+                MoneySystem.updateData(new Money(data.getUserID(), data.getMoney()));
+            } else {
+                MoneySystem.updateData(new Money(data.getUserID(), data.getMoney() + 1));
+            }
+        }).start();
 
         CommandSystem.run(event.getTextChannel(), event.getMessage());
 

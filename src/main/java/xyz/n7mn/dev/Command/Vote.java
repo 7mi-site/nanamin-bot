@@ -31,7 +31,8 @@ public class Vote extends Chat {
 
     @Override
     public void run() {
-
+        //System.out.println("受信完了");
+        //long start = System.currentTimeMillis();
         EmbedBuilder builder = new EmbedBuilder().setColor(Color.ORANGE);
 
         if (getMessageText().toLowerCase().equals("n.vote") || getMessageText().toLowerCase().equals("n.votent")){
@@ -48,75 +49,50 @@ public class Vote extends Chat {
         String time = "";
         String title = "(タイトルなし)";
 
-        if (getMessageText().toLowerCase().startsWith("n.vote") && !getMessageText().toLowerCase().startsWith("n.votent")) {
+        String text = getMessageText();
+        String[] temp1 = text.split("\n", -1);
+        String[] temp2 = text.replaceAll("　", " ").split(" ", -1);
 
-            String text = getMessageText().replaceAll("n.vote ", "");
-            String[] temp1 = text.split("\n", -1);
-            String[] temp2 = text.replaceAll("　", " ").split(" ", -1);
+        if (getMessageText().toLowerCase().startsWith("n.vote") && !getMessageText().toLowerCase().startsWith("n.votent")) {
 
             int i = 0;
             int c = 0;
-            if (temp1.length > 1) {
-                for (String temp : temp1) {
-                    if (c == 0){
-                        c++;
-                        continue;
-                    }
-                    if (c == 1 && !temp.startsWith("t:") && !temp.startsWith("time:")){
-                        title = temp;
-                        c++;
-                        continue;
-                    }
-                    if (c == 2 && title.equals("")){
-                        title = temp;
-                        c++;
-                        continue;
-                    }
 
-                    if (temp.toLowerCase().startsWith("t:") || temp.toLowerCase().startsWith("time:")){
-                        time = temp;
-                        c++;
-                        continue;
-                    }
+            final String[] tempList;
+            if (temp1.length > 1){
+                tempList = temp1;
+            } else {
+                tempList = temp2;
+            }
 
-                    voteRegionalDataList.add(new VoteRegionalData(temp, regionalList[i]));
-                    i++;
+            for (String temp : tempList) {
+                if (c == 0){
                     c++;
+                    continue;
                 }
-            } else if (temp2.length > 1) {
-                for (String temp : temp2) {
-                    if (c == 0){
-                        c++;
-                        continue;
-                    }
-                    if (c == 1 && !temp.startsWith("t:") && !temp.startsWith("time:")){
-                        title = temp;
-                        c++;
-                        continue;
-                    }
-                    if (c == 2 && title.equals("")){
-                        title = temp;
-                        c++;
-                        continue;
-                    }
-
-                    if (temp.toLowerCase().startsWith("t:") || temp.toLowerCase().startsWith("time:")){
-                        time = temp;
-                        c++;
-                        continue;
-                    }
-
-                    voteRegionalDataList.add(new VoteRegionalData(temp, regionalList[i]));
-                    i++;
+                if (c == 1 && !temp.startsWith("t:") && !temp.startsWith("time:")){
+                    title = temp;
                     c++;
+                    continue;
                 }
+                if (c == 2 && title.equals("")){
+                    title = temp;
+                    c++;
+                    continue;
+                }
+
+                if (temp.toLowerCase().startsWith("t:") || temp.toLowerCase().startsWith("time:")){
+                    time = temp;
+                    c++;
+                    continue;
+                }
+
+                voteRegionalDataList.add(new VoteRegionalData(temp, regionalList[i]));
+                i++;
+                c++;
             }
 
         } else if (getMessageText().toLowerCase().startsWith("n.votent")){
-
-            String text = getMessageText();
-            String[] temp1 = text.split("\n", -1);
-            String[] temp2 = text.replaceAll("　", " ").split(" ", -1);
 
             int i = 0;
             int c = 0;
@@ -155,7 +131,9 @@ public class Vote extends Chat {
                 }
             }
         }
-
+        //final long[] end = {System.currentTimeMillis()};
+        //System.out.println("選択肢等組み立て完了 : " + (end[0] - start) + " ms");
+        //start = System.currentTimeMillis();
         if (voteRegionalDataList.size() == 0){
             getMessage().reply("えらーですっ\n選択肢が見つかりませんでしたっ！！").queue(message -> {
                 message.addReaction("\u26A0").queue();
@@ -204,8 +182,11 @@ public class Vote extends Chat {
         }
 
         builder.addField("選択肢", sb.toString(), false);
-
+        //end[0] = System.currentTimeMillis();
+        //System.out.println("埋め込みテキスト作成完了 : " + (end[0] - start) + " ms");
+        //start = System.currentTimeMillis();
         getMessage().delete().queue();
+        //long finalStart = start;
         getTextChannel().sendMessage(builder.build()).queue(message -> {
             for (VoteRegionalData voteData : voteRegionalDataList){
                 message.addReaction(voteData.getEmoji()).queue();
@@ -223,6 +204,8 @@ public class Vote extends Chat {
             if (ms != -1){
                 timer.schedule(task, ms);
             }
+            //end[0] = System.currentTimeMillis();
+            //System.out.println("メッセージ削除からリアクション追加まで : " + (end[0] - finalStart) + " ms");
         });
     }
 }

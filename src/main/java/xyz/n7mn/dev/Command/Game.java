@@ -13,8 +13,8 @@ public class Game extends xyz.n7mn.dev.i.Game {
     @Override
     public void run() {
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle(Help.getHelpData(8).getHelpTitle());
-        builder.setDescription(Help.getHelpData(8).getHelpMessage());
+        builder.setTitle(Help.getHelpData(9).getHelpTitle());
+        builder.setDescription(Help.getHelpData(9).getHelpMessage());
 
         getMessage().reply(builder.build()).queue();
     }

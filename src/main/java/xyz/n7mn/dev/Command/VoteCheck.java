@@ -1,7 +1,6 @@
 package xyz.n7mn.dev.Command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import xyz.n7mn.dev.Command.vote.VoteData;
 import xyz.n7mn.dev.Command.vote.VoteSystem;

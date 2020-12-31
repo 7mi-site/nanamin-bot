@@ -197,6 +197,10 @@ public class CommandSystem {
             system = new VoteCheck(textChannel, message);
         }
 
+        if (messageText.toLowerCase().startsWith("n.nomoney2")){
+            system = new GameNomoney2(textChannel, message);
+        }
+
         Matcher matcher = Pattern.compile("(.*)あけおめ(.*)").matcher(messageText);
         Matcher matcher2 = Pattern.compile("(.*)誕生日(.*)").matcher(messageText);
         if (matcher.find() || matcher2.find()){

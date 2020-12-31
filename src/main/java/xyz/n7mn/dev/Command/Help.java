@@ -78,7 +78,8 @@ public class Help extends Chat {
             "`n.yosogame` --- 数字予想ゲーム\n" +
             "`n.fx` --- FXもどき\n" +
             "`n.omikuji` --- おみくじ\n" +
-            "`n.nomoney` --- ななみちゃん救済";
+            "`n.nomoney` --- ななみちゃん救済\n" +
+            "`n.nomoney2` --- ？？？";
 
     private static final String gameText2 = "" +
             "`n.money` --- 現在の所持金を表示する\n" +
@@ -89,7 +90,8 @@ public class Help extends Chat {
             "`n.yosogame <賭け金> <予想数字>` --- 数字予想ゲーム (当たり10倍)\n" +
             "`n.fx <賭け金>` --- FXもどき\n" +
             "`n.omikuji` --- おみくじ\n" +
-            "`n.nomoney` --- ななみちゃん救済 (所持コイン < -1000のときのみ使用可能)";
+            "`n.nomoney` --- ななみちゃん救済 (所持コイン < -1000のときのみ使用可能)\\n\" +\n" +
+            "`n.nomoney2` --- ？？？";
 
     private static final String quizText1 = "" +
             "`n.QuizData`\n" +

@@ -75,6 +75,12 @@ public class MoneyCommand extends Game {
                         MoneySystem.createData(targetMember.getId());
                     }
 
+                    long temp = (long)targetMoney.getMoney() + (long)Integer.parseInt(split[3]);
+                    if (temp > Integer.MAX_VALUE){
+                        getMessage().reply("相手は上限に達していますっ！！").queue();
+                        return;
+                    }
+
                     Money money1 = new Money(fromMoney.getUserID(), fromMoney.getMoney() - Integer.parseInt(split[3]));
                     Money money2 = new Money(targetMoney.getUserID(), targetMoney.getMoney() + Integer.parseInt(split[3]));
                     MoneySystem.updateData(money1);
