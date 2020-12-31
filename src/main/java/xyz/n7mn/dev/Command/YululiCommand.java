@@ -216,5 +216,15 @@ public class YululiCommand extends Chat {
             getTextChannel().sendMessage(builder.build()).queue();
         }
 
+        if (getMessageText().toLowerCase().equals("n.fuck")){
+            List<ImageData> imageDataList = ImgSystem.getImageDataList("fuck");
+            int i = new SecureRandom().nextInt(imageDataList.size());
+
+            builder.setTitle(imageDataList.get(i).getDescription());
+            builder.setDescription(imageDataList.get(i).getImageURL());
+
+            getTextChannel().sendMessage(builder.build()).queue();
+        }
+
     }
 }

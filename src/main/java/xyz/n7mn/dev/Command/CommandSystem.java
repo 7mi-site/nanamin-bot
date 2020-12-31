@@ -201,9 +201,16 @@ public class CommandSystem {
             system = new GameNomoney2(textChannel, message);
         }
 
+        if (messageText.toLowerCase().startsWith("n.fuck")){
+            system = new YululiCommand(textChannel, message);
+        }
+
         Matcher matcher = Pattern.compile("(.*)あけおめ(.*)").matcher(messageText);
         Matcher matcher2 = Pattern.compile("(.*)誕生日(.*)").matcher(messageText);
-        if (matcher.find() || matcher2.find()){
+        Matcher matcher3 = Pattern.compile("(.*)Happy(.*)New(.*)Year(.*)").matcher(messageText);
+        Matcher matcher4 = Pattern.compile("(.*)あけましておめでとう(.*)").matcher(messageText);
+
+        if (matcher.find() || matcher2.find() || matcher3.find() || matcher4.find()){
             system = new Akeome(textChannel, message);
         }
 

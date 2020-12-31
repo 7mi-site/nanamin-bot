@@ -25,8 +25,9 @@ public class Akeome extends Chat {
         Matcher matcher = Pattern.compile("(.*)あけおめ(.*)").matcher(getMessageText());
         Matcher matcher2 = Pattern.compile("(.*)誕生日(.*)").matcher(getMessageText());
         Matcher matcher3 = Pattern.compile("(.*)Happy(.*)New(.*)Year(.*)").matcher(getMessageText());
+        Matcher matcher4 = Pattern.compile("(.*)あけましておめでとう(.*)").matcher(getMessageText());
 
-        if (matcher.find() || matcher3.find()){
+        if (matcher.find() || matcher3.find() || matcher4.find()){
             getMessage().addReaction("\uD83C\uDF8D").queue();
         }
 

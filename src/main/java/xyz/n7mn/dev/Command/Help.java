@@ -119,7 +119,8 @@ public class Help extends Chat {
             "`n.yululi` -- ゆるり\n" +
             "`n.poti` -- ポチ\n" +
             "`n.kuretiki` -- クレチキ\n" +
-            "`n.ys` -- ゆるり鯖全体\n";
+            "`n.ys` -- ゆるり鯖全体\n" +
+            "`n.fuck` -- thinking\n";
 
 
     private static void init(){
