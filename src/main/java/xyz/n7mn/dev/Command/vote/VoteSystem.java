@@ -61,7 +61,7 @@ public class VoteSystem {
                 return true;
             }
         }
-        VoteSystemSub.addMessageCache(message.getId());
+
         //System.out.println("キャッシュなし");
 
         try {
@@ -73,6 +73,7 @@ public class VoteSystem {
             if (set.next()){
                 set.close();
                 statement.close();
+                VoteSystemSub.addMessageCache(message.getId());
                 return true;
             }
             set.close();

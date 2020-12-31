@@ -13,9 +13,15 @@ public class MoneySystem {
 
     private static Connection con = null;
     public static final String Currency = "ななみコイン";
+    private static int count = 0;
 
     public static Money getData(String discordUserID){
 
+        int i = 0;
+        while (count > 0){
+            //System.out.println("count1 : " + count);
+            i++;
+        }
         con = EventListener.getDatabase().getConnect();
         if (con != null){
             try {
@@ -49,8 +55,10 @@ public class MoneySystem {
 
         con = EventListener.getDatabase().getConnect();
         if (con != null){
+            count++;
             new Thread(()->{
                 try {
+
                     PreparedStatement statement = con.prepareStatement("INSERT INTO `MoneyList`(`UserID`, `Money`) VALUES (?, ?)");
                     statement.setString(1, discordUserID);
                     statement.setInt(2, 100);
@@ -61,6 +69,7 @@ public class MoneySystem {
                 }
 
             }).start();
+            count--;
         }
 
     }
@@ -69,6 +78,7 @@ public class MoneySystem {
 
         con = EventListener.getDatabase().getConnect();
         if (con != null){
+            count++;
             new Thread(()->{
                 try {
                     PreparedStatement statement = con.prepareStatement("UPDATE `MoneyList` SET `Money`= ? WHERE `UserID` = ?");
@@ -81,6 +91,7 @@ public class MoneySystem {
                 }
 
             }).start();
+            count--;
         }
 
     }
@@ -92,8 +103,14 @@ public class MoneySystem {
     }
 
     public static List<Money> getMoneyList(){
-        List<Money> moneyList = new ArrayList<>();
+        int i = 0;
+        while (count > 0){
+            //System.out.println("count2 : " + count);
+            i++;
+        }
+        count++;
 
+        List<Money> moneyList = new ArrayList<>();
         con = EventListener.getDatabase().getConnect();
         if (con != null) {
             try {
@@ -108,11 +125,12 @@ public class MoneySystem {
                 e.printStackTrace();
             }
         }
-
+        count--;
         return moneyList;
     }
 
     public static List<Money> getMoneyList(Guild guild){
+
         List<Money> moneyList = getMoneyList();
         List<Money> moneyResultList = new ArrayList<>();
 
@@ -123,5 +141,9 @@ public class MoneySystem {
         }
 
         return moneyResultList;
+    }
+
+    public static int getCount(){
+        return count;
     }
 }

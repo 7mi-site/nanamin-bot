@@ -24,8 +24,6 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class EventListener extends ListenerAdapter {
     private static Database database = null;
@@ -52,33 +50,42 @@ public class EventListener extends ListenerAdapter {
             return;
         }
 
-        VoteSystem system = new VoteSystem();
         Message message = event.retrieveMessage().complete();
 
-        if (system.isVote(message)){
-            message.removeReaction(event.getReaction().getReactionEmote().getEmoji(), event.getUser()).queue();
-        }
+        if (VoteSystem.isVote(message)){
 
-        if (system.isVote(message) && event.getReaction().getReactionEmote().isEmoji()){
-
-            PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
-            EmbedBuilder builder = new EmbedBuilder();
-
-            List<VoteData> list = VoteSystem.getVoteDataList(message);
-            for (VoteData data : list){
-                if (data.getUserId().equals(event.getUser().getId()) && data.getEmoji().equals(event.getReaction().getReactionEmote().getEmoji())){
-                    builder.setTitle("えらー",message.getJumpUrl());
-                    builder.setDescription("投票済みの選択肢ですっ！");
-                    builder.setColor(Color.RED);
-                    privateChannel.sendMessage(builder.build()).queue();
-                    return;
+            String[] string = NanamiFunction.getRegionalList();
+            boolean isFlag = false;
+            for (String s : string){
+                if (event.getReactionEmote().getEmoji().equals(s)){
+                    isFlag = true;
+                    break;
                 }
             }
-            builder.setTitle("投票完了っ",message.getJumpUrl());
-            builder.setDescription(event.getReactionEmote().getEmoji() + "に投票しました！");
-            builder.setColor(Color.GREEN);
-            privateChannel.sendMessage(builder.build()).queue();
-            VoteSystem.addReaction(message, event.getMember(), event.getReaction().getReactionEmote().getEmoji());
+
+            if (isFlag){
+                message.removeReaction(event.getReaction().getReactionEmote().getEmoji(), event.getUser()).queue();
+                PrivateChannel privateChannel = event.getUser().openPrivateChannel().complete();
+                EmbedBuilder builder = new EmbedBuilder();
+
+                List<VoteData> list = VoteSystem.getVoteDataList(message);
+                for (VoteData data : list){
+                    if (data.getUserId().equals(event.getUser().getId()) && data.getEmoji().equals(event.getReaction().getReactionEmote().getEmoji())){
+                        builder.setTitle("えらー",message.getJumpUrl());
+                        builder.setDescription("投票済みの選択肢ですっ！");
+                        builder.setColor(Color.RED);
+                        privateChannel.sendMessage(builder.build()).queue();
+                        return;
+                    }
+                }
+                builder.setTitle("投票完了っ",message.getJumpUrl());
+                builder.setDescription(event.getReactionEmote().getEmoji() + "に投票しました！");
+                builder.setColor(Color.GREEN);
+                privateChannel.sendMessage(builder.build()).queue();
+
+                VoteSystem.addReaction(message, event.getMember(), event.getReaction().getReactionEmote().getEmoji());
+            }
+
         }
     }
 

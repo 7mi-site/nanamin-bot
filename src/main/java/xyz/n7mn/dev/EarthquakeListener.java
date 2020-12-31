@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import xyz.n7mn.dev.Command.money.MoneySystem;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
 import xyz.n7mn.dev.api.data.eq.intensity.Area;
