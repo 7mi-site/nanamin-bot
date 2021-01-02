@@ -22,6 +22,11 @@ public class GameFx extends Game {
 
         Money money = MoneySystem.getData(getMessage().getMember().getId());
 
+        if (money == null){
+            money = MoneySystem.getDefaultData(getMember().getId());
+            MoneySystem.createData(money.getUserID());
+        }
+
         if (!text.equals("n.fx") && textSplit.length == 1){
             return;
         }
@@ -31,7 +36,18 @@ public class GameFx extends Game {
             return;
         }
 
-        int useMoney = Integer.parseInt(textSplit[1]);
+        int useMoney = -1;
+        try {
+            if (Long.parseLong(textSplit[1]) <= Integer.MAX_VALUE){
+                useMoney = Integer.parseInt(textSplit[1]);
+            } else if (Long.parseLong(textSplit[1]) < Integer.MIN_VALUE) {
+                useMoney = Integer.MIN_VALUE;
+            } else if (Long.parseLong(textSplit[1]) > Integer.MAX_VALUE){
+                useMoney = Integer.MAX_VALUE;
+            }
+        } catch (Exception e){
+            // e.printStackTrace();
+        }
 
         if (money.getMoney() <= useMoney){
             getMessage().reply("所持金が足りないですっ！").queue();
@@ -67,6 +83,25 @@ public class GameFx extends Game {
             b = 20;
         }
 
+        if (useMoney >= 100000){
+            sb.append("元値 40倍もーど！\n");
+            b = 40;
+        }
+
+        if (useMoney >= 1000000){
+            sb.append("元値 80倍もーど！\n");
+            b = 80;
+        }
+
+        if (useMoney >= 10000000){
+            sb.append("元値 160倍もーど！\n");
+            b = 160;
+        }
+
+        if (useMoney >= 100000000){
+            sb.append("元値 320倍もーど！\n");
+            b = 320;
+        }
         long mo = ((long) useMoney) * b;
         long mo2 = ((long) useMoney) * b;
         sb.append(mo);

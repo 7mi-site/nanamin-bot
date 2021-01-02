@@ -5,7 +5,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
+import net.dv8tion.jda.api.events.message.MessageEmbedEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -287,6 +289,11 @@ public class EventListener extends ListenerAdapter {
         database = new Database();
         new EarthquakeListener(event.getJDA(), earthquake);
         new VoteCheck(event.getJDA(), database);
+    }
+
+    @Override
+    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
+        //super.onGuildMessageDelete(event);
     }
 
     public static Database getDatabase(){

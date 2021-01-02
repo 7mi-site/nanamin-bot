@@ -50,7 +50,12 @@ public class Msg extends Chat {
 
                         EmbedBuilder builder = new EmbedBuilder();
                         builder.addField("内容", contentRaw, true);
-                        MessageEmbed build = builder.build();
+                        MessageEmbed build;
+                        if (contentRaw.length() > 0){
+                            build = builder.build();
+                        } else {
+                            build = message1.getEmbeds().get(0);
+                        }
 
                         getMessage().reply(
                                 "---- メッセージの情報 ----\n" +

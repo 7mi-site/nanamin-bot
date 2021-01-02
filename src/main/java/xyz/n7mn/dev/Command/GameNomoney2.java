@@ -38,9 +38,16 @@ public class GameNomoney2 extends Game {
         double d = new SecureRandom().nextInt(100) * 0.01;
         int i = (int)(Math.abs(data.getMoney()) * d);
 
-        int m = data.getMoney() + i;
 
-        MoneySystem.updateData(new Money(data.getUserID(), m));
+        long m = (long)data.getMoney() + i;
+        if (m < Integer.MIN_VALUE){
+            m = Integer.MIN_VALUE;
+        } else if (m > Integer.MAX_VALUE) {
+            m = Integer.MAX_VALUE;
+        }
+
+
+        MoneySystem.updateData(new Money(data.getUserID(), (int)m));
         getMessage().reply("ふーん...\n(所持金が"+m+" "+MoneySystem.getCurrency()+"になりました。)").queue();
 
     }

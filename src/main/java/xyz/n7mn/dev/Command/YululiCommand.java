@@ -183,7 +183,7 @@ public class YululiCommand extends Chat {
 
             builder.setTitle("vd23z12","https://ja.namemc.com/profile/vd23z12.1");
             builder.setDescription(imageDataList.get(i).getDescription());
-            builder.setThumbnail("https://nana-bot.n7mn.xyz/poti/body.png");
+            builder.setThumbnail("https://nana-bot.n7mn.xyz/kuretiki/body.png");
             builder.setImage(imageDataList.get(i).getImageURL());
 
             getTextChannel().sendMessage(builder.build()).queue();
