@@ -51,7 +51,7 @@ public class MoneySystemSub {
             tempList.addAll(moneyList);
         }
 
-        for (Money money : moneyList){
+        for (Money money : tempList){
 
             if (money.getUserID().equals(userId)){
                 return true;
