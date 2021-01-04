@@ -21,7 +21,8 @@ public class MoneySystemSub {
             tempList.addAll(moneyList);
         }
 
-        if (tempList.size() < 1){
+        if (tempList.size() < 2){
+            tempList.clear();
             Connection con = EventListener.getDatabase().getConnect();
             if (con != null) {
                 try {
