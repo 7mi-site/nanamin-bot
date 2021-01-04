@@ -78,22 +78,22 @@ public class GameFx extends Game {
             b = 10;
         }
 
-        if (useMoney >= 10000){
+        if (useMoney >= 10000 && useMoney < 100000){
             sb.append("元値 20倍もーど！\n");
             b = 20;
         }
 
-        if (useMoney >= 100000){
+        if (useMoney >= 100000 && useMoney < 1000000){
             sb.append("元値 40倍もーど！\n");
             b = 40;
         }
 
-        if (useMoney >= 1000000){
+        if (useMoney >= 1000000 && useMoney < 10000000){
             sb.append("元値 80倍もーど！\n");
             b = 80;
         }
 
-        if (useMoney >= 10000000){
+        if (useMoney >= 10000000 && useMoney < 100000000){
             sb.append("元値 160倍もーど！\n");
             b = 160;
         }

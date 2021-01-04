@@ -11,18 +11,16 @@ import java.util.List;
 
 public class MoneySystem {
 
-    private static Connection con = null;
     public static final String Currency = "ななみコイン";
-    private static int count = 0;
 
     public static Money getData(String discordUserID){
 
-        int i = 0;
-        while (count > 0){
-            //System.out.println("count1 : " + count);
-            i++;
+        Money moneyData = MoneySystemSub.getMoneyData(discordUserID);
+        if (moneyData != null){
+            return moneyData;
         }
-        con = EventListener.getDatabase().getConnect();
+
+        Connection con = EventListener.getDatabase().getConnect();
         if (con != null){
             try {
                 PreparedStatement statement = con.prepareStatement("SELECT * FROM MoneyList WHERE UserID = ?");
@@ -47,15 +45,19 @@ public class MoneySystem {
 
     public static Money getDefaultData(String discordUserID){
 
+        if (MoneySystemSub.isFoundData(discordUserID)){
+            return MoneySystemSub.getMoneyData(discordUserID);
+        }
         return new Money(discordUserID, 100);
 
     }
 
     public static void createData(String discordUserID){
 
-        con = EventListener.getDatabase().getConnect();
+        MoneySystemSub.create(discordUserID);
+
+        Connection con = EventListener.getDatabase().getConnect();
         if (con != null){
-            count++;
             new Thread(()->{
                 try {
 
@@ -69,16 +71,16 @@ public class MoneySystem {
                 }
 
             }).start();
-            count--;
         }
 
     }
 
     public static void updateData(Money money){
 
-        con = EventListener.getDatabase().getConnect();
+        MoneySystemSub.update(money);
+
+        Connection con = EventListener.getDatabase().getConnect();
         if (con != null){
-            count++;
             new Thread(()->{
                 try {
                     PreparedStatement statement = con.prepareStatement("UPDATE `MoneyList` SET `Money`= ? WHERE `UserID` = ?");
@@ -91,7 +93,6 @@ public class MoneySystem {
                 }
 
             }).start();
-            count--;
         }
 
     }
@@ -103,30 +104,7 @@ public class MoneySystem {
     }
 
     public static List<Money> getMoneyList(){
-        int i = 0;
-        while (count > 0){
-            //System.out.println("count2 : " + count);
-            i++;
-        }
-        count++;
-
-        List<Money> moneyList = new ArrayList<>();
-        con = EventListener.getDatabase().getConnect();
-        if (con != null) {
-            try {
-                PreparedStatement statement = con.prepareStatement("SELECT * FROM MoneyList");
-                ResultSet set = statement.executeQuery();
-                while (set.next()){
-                    moneyList.add(new Money(set.getString("UserID").replaceAll(" ", ""), set.getInt("Money")));
-                }
-                set.close();
-                statement.close();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        count--;
-        return moneyList;
+        return MoneySystemSub.getMoneyList();
     }
 
     public static List<Money> getMoneyList(Guild guild){
@@ -141,9 +119,5 @@ public class MoneySystem {
         }
 
         return moneyResultList;
-    }
-
-    public static int getCount(){
-        return count;
     }
 }
