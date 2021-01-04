@@ -21,25 +21,25 @@ public class MoneySystemSub {
             tempList.addAll(moneyList);
         }
 
-        if (tempList.size() < 1){
-
-            Connection con = EventListener.getDatabase().getConnect();
-            if (con != null) {
-                try {
-                    PreparedStatement statement = con.prepareStatement("SELECT * FROM MoneyList");
-                    ResultSet set = statement.executeQuery();
-                    while (set.next()){
-                        tempList.add(new Money(set.getString("UserID").replaceAll(" ", ""), set.getInt("Money")));
-                    }
-                    set.close();
-                    statement.close();
-                } catch (Exception e){
-                    e.printStackTrace();
+        Connection con = EventListener.getDatabase().getConnect();
+        if (con != null) {
+            try {
+                PreparedStatement statement = con.prepareStatement("SELECT * FROM MoneyList");
+                ResultSet set = statement.executeQuery();
+                while (set.next()){
+                    tempList.add(new Money(set.getString("UserID").replaceAll(" ", ""), set.getInt("Money")));
                 }
+                set.close();
+                statement.close();
+            } catch (Exception e){
+                e.printStackTrace();
             }
-
         }
 
+        synchronized (moneyList){
+            moneyList.clear();
+            moneyList.addAll(tempList);
+        }
         return tempList;
     }
 
