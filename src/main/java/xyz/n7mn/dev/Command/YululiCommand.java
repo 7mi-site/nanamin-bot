@@ -34,7 +34,7 @@ public class YululiCommand extends Chat {
 
         if (getMessageText().toLowerCase().startsWith("n.gold") || (!getMessageText().toLowerCase().equals(".gold") && getMessageText().toLowerCase().equals("z.gold") && getMessageText().toLowerCase().endsWith(".gold"))) {
             List<ImageData> imageDataList = ImgSystem.getImageDataList("gold");
-            int i = new SecureRandom().nextInt(imageDataList.size());
+            int i = new SecureRandom().nextInt(imageDataList.size() - 1);
 
             builder.setTitle("こうたちゃんの金装備は神！");
             builder.setDescription(imageDataList.get(i).getDescription());
@@ -131,7 +131,7 @@ public class YululiCommand extends Chat {
 
         if (getMessageText().toLowerCase().equals("n.pan")){
             List<ImageData> imageDataList = ImgSystem.getImageDataList("pan");
-            int i = new SecureRandom().nextInt(imageDataList.size());
+            int i = new SecureRandom().nextInt(imageDataList.size() - 1);
 
             // builder.setTitle("");
             builder.setDescription(imageDataList.get(i).getDescription());
@@ -166,7 +166,7 @@ public class YululiCommand extends Chat {
 
         if (getMessageText().toLowerCase().equals("n.poti")){
             List<ImageData> imageDataList = ImgSystem.getImageDataList("poti");
-            int i = new SecureRandom().nextInt(imageDataList.size());
+            int i = new SecureRandom().nextInt(imageDataList.size() - 1);
 
             builder.setTitle("poti_336","https://ja.namemc.com/profile/poti_336.1");
             builder.setDescription(imageDataList.get(i).getDescription());
@@ -179,7 +179,7 @@ public class YululiCommand extends Chat {
 
         if (getMessageText().toLowerCase().equals("n.kuretiki")){
             List<ImageData> imageDataList = ImgSystem.getImageDataList("kuretiki");
-            int i = new SecureRandom().nextInt(imageDataList.size());
+            int i = new SecureRandom().nextInt(imageDataList.size() - 1);
 
             builder.setTitle("vd23z12","https://ja.namemc.com/profile/vd23z12.1");
             builder.setDescription(imageDataList.get(i).getDescription());
@@ -193,7 +193,7 @@ public class YululiCommand extends Chat {
         if (getMessageText().toLowerCase().equals("n.ys")){
 
             List<ImageData> imageDataList = ImgSystem.getImageDataList("ys");
-            int i = new SecureRandom().nextInt(imageDataList.size());
+            int i = new SecureRandom().nextInt(imageDataList.size() - 1);
 
             builder.setTitle("Yululi Server");
             builder.setDescription(imageDataList.get(i).getDescription());
@@ -206,7 +206,7 @@ public class YululiCommand extends Chat {
 
         if (getMessageText().toLowerCase().equals("n.yululi2")){
             List<ImageData> imageDataList = ImgSystem.getImageDataList("yululi2");
-            int i = new SecureRandom().nextInt(imageDataList.size());
+            int i = new SecureRandom().nextInt(imageDataList.size() - 1);
 
             builder.setTitle("Yululi Server");
             builder.setDescription(imageDataList.get(i).getDescription());
@@ -218,7 +218,7 @@ public class YululiCommand extends Chat {
 
         if (getMessageText().toLowerCase().equals("n.fuck")){
             List<ImageData> imageDataList = ImgSystem.getImageDataList("fuck");
-            int i = new SecureRandom().nextInt(imageDataList.size());
+            int i = new SecureRandom().nextInt(imageDataList.size() - 1);
 
             builder.setTitle(imageDataList.get(i).getDescription());
             builder.setDescription(imageDataList.get(i).getImageURL());
