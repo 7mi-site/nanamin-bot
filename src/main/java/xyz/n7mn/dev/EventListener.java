@@ -104,7 +104,7 @@ public class EventListener extends ListenerAdapter {
 
         if (event.getMessage().getContentRaw().startsWith("<@!781323086624456735>")){
             if (event.isFromType(ChannelType.PRIVATE)){
-                event.getTextChannel().sendMessage("？").queue();
+                event.getPrivateChannel().sendMessage("？").queue();
             } else {
                 event.getMessage().reply("？").queue();
             }
