@@ -2,6 +2,7 @@ package xyz.n7mn.dev.Command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import xyz.n7mn.dev.Command.votecommand.Ban;
 import xyz.n7mn.dev.i.System;
 
 import java.awt.*;
@@ -203,6 +204,10 @@ public class CommandSystem {
 
         if (messageText.toLowerCase().startsWith("n.fuck")){
             system = new YululiCommand(textChannel, message);
+        }
+
+        if (messageText.toLowerCase().startsWith("n.ban")){
+            system = new Ban(textChannel, message);
         }
 
         Matcher matcher = Pattern.compile("(.*)あけおめ(.*)").matcher(messageText);
