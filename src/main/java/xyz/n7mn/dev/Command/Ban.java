@@ -1,4 +1,4 @@
-package xyz.n7mn.dev.Command.votecommand;
+package xyz.n7mn.dev.Command;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;

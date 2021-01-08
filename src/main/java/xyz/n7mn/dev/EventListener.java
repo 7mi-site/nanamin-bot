@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.Command.CommandSystem;
 import xyz.n7mn.dev.Command.Help;
+import xyz.n7mn.dev.Command.Ping;
 import xyz.n7mn.dev.Command.money.Money;
 import xyz.n7mn.dev.Command.money.MoneySystem;
 import xyz.n7mn.dev.Command.music.GuildMusicManager;
@@ -98,6 +99,16 @@ public class EventListener extends ListenerAdapter {
         }
 
         if (event.getAuthor().isBot()){
+            return;
+        }
+
+        if (event.getMessage().getContentRaw().startsWith("<@!781323086624456735>")){
+            if (event.isFromType(ChannelType.PRIVATE)){
+                event.getTextChannel().sendMessage("？").queue();
+            } else {
+                event.getMessage().reply("？").queue();
+            }
+
             return;
         }
 

@@ -2,7 +2,6 @@ package xyz.n7mn.dev.Command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import xyz.n7mn.dev.Command.votecommand.Ban;
 import xyz.n7mn.dev.i.System;
 
 import java.awt.*;
@@ -208,6 +207,10 @@ public class CommandSystem {
 
         if (messageText.toLowerCase().startsWith("n.ban")){
             system = new Ban(textChannel, message);
+        }
+
+        if (messageText.toLowerCase().startsWith("n.oha") || messageText.toLowerCase().startsWith("n.oya") || messageText.toLowerCase().startsWith("n.おは") || messageText.toLowerCase().startsWith("n.おや") || messageText.toLowerCase().equals("n.aisatu") || messageText.toLowerCase().equals("n.あいさつ")){
+            system = new Aisatu(textChannel, message);
         }
 
         Matcher matcher = Pattern.compile("(.*)あけおめ(.*)").matcher(messageText);

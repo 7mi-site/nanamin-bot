@@ -34,6 +34,11 @@ public class EarthquakeListener {
 
             @Override
             public void run() {
+
+                if (jda.getSelfUser().getId().equals("785322639295905792")){
+                    return;
+                }
+
                 new Thread(()->{
                     long lastEventID = earthquake.getLastEventID();
                     if (lastEventID != -1){
