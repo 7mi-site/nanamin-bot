@@ -213,6 +213,10 @@ public class CommandSystem {
             system = new Aisatu(textChannel, message);
         }
 
+        if (messageText.toLowerCase().equals("n.lost") || messageText.toLowerCase().equals("n.hoopless") || messageText.toLowerCase().equals("n.acrylicstyle") || messageText.toLowerCase().equals("n.acrylic_style")) {
+            system = new YululiCommand(textChannel, message);
+        }
+
         Matcher matcher = Pattern.compile("(.*)あけおめ(.*)").matcher(messageText);
         Matcher matcher2 = Pattern.compile("(.*)誕生日(.*)").matcher(messageText);
         Matcher matcher3 = Pattern.compile("(.*)Happy(.*)New(.*)Year(.*)").matcher(messageText);

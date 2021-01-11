@@ -226,5 +226,12 @@ public class YululiCommand extends Chat {
             getTextChannel().sendMessage(builder.build()).queue();
         }
 
+        if (getMessageText().toLowerCase().equals("n.lost") || getMessageText().toLowerCase().equals("n.hoopless") || getMessageText().toLowerCase().equals("n.acrylicstyle") || getMessageText().toLowerCase().equals("n.acrylic_style")){
+            String s = getGuild().getEmotesByName("Acrylic_Style", true).get(0).getAsMention();
+            getTextChannel().sendMessage(s + "\n" + "\uD83D\uDD25").queue(message -> {
+                        message.addReaction("\uD83D\uDCAF").queue();
+                    });
+        }
+
     }
 }

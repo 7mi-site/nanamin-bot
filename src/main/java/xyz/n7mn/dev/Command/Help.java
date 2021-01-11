@@ -54,7 +54,8 @@ public class Help extends Chat {
             "`n.dice` -- さいころを振る\n" +
             "`n.random <文字列1> <文字列2> <...> <文字列n>` -- 指定された文字列の中から一つを表示する\n" +
             "`n.burn` -- :fire:\n" +
-            "`n.burst` -- どっかーん";
+            "`n.burst` -- どっかーん\n" +
+            "`n.aisatu` または `n.あいさつ` -- あいさつ";
 
     private static final String musicText1 = "" +
             "`n.play` --- 音楽再生\n" +
@@ -121,7 +122,8 @@ public class Help extends Chat {
             "`n.kuretiki` -- クレチキ\n" +
             "`n.ys` -- ゆるり鯖全体\n" +
             "`n.fuck` -- thinking\n" +
-            "`n.ban` -- ？\n";
+            "`n.ban` -- ？" +
+            "`n.lost` -- :thinking:\n";
 
 
     private static void init(){
@@ -250,6 +252,9 @@ public class Help extends Chat {
                 "途中結果をDMに送りますっ\n]" +
                 "書式 `n.voteCheck <メッセージURL>`"
         ));
+
+        helpData.add(new HelpData(1018, "n.aisatu",""+"" +
+                "あいさつを送りますっ！"));
 
         helpData.add(new HelpData(1100, "n.money","" +
                 "現在の所持金を表示したり他の人に送金できたりしますっ\n" +
