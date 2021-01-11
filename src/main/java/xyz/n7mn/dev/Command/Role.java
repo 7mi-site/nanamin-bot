@@ -1,6 +1,7 @@
 package xyz.n7mn.dev.Command;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -97,6 +98,16 @@ public class Role extends Chat {
             sb.append("入室日時 : `");
             sb.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(joinTime));
             sb.append("\n`");
+            sb.append("オンラインステータス: ");
+            sb.append(member.getOnlineStatus().name());
+            sb.append("\n");
+            sb.append("アクティビティ: \n");
+            for (Activity a : member.getActivities()){
+                sb.append("`");
+                sb.append(a.getName());
+                sb.append("`");
+                sb.append("\n");
+            }
             sb.append("ロール：\n");
             for (net.dv8tion.jda.api.entities.Role role : roles){
                 sb.append("`");
@@ -169,7 +180,7 @@ public class Role extends Chat {
                         return;
                     }
 
-                    getGuild().addRoleToMember(member, setRole).queue();
+                    getGuild().removeRoleFromMember(member, setRole).queue();
                     getMessage().reply(member.getUser().getName() + "さんからロール「"+setRole.getName()+"」を削除しました！").queue();
                 } catch (Exception e){
                     getMessage().reply("ロール「"+setRole.getName()+"」は存在しないロールです！").queue();
