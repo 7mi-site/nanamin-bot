@@ -86,9 +86,7 @@ public class MoneySystemSub {
             if (money1.getUserID().equals(money.getUserID())){
                 synchronized (moneyList){
                     moneyList.remove(i);
-                    moneyList.add(money);
                 }
-                return;
             }
             i++;
         }
