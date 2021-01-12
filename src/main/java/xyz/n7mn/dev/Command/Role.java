@@ -1,10 +1,8 @@
 package xyz.n7mn.dev.Command;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import xyz.n7mn.dev.i.Chat;
 import xyz.n7mn.dev.i.HelpData;
 
@@ -34,7 +32,7 @@ public class Role extends Chat {
                 if (member == null){
                     for (Member m : getGuild().getMembers()){
                         if (m.getNickname() != null){
-                            if (m.getNickname().contains(split[1])){
+                            if (m.getNickname().startsWith(split[1])){
                                 member = m;
                                 break;
                             }
@@ -50,7 +48,7 @@ public class Role extends Chat {
             } catch (Exception e){
                 for (Member m : getGuild().getMembers()){
                     if (m.getNickname() != null){
-                        if (m.getNickname().contains(split[1])){
+                        if (m.getNickname().startsWith(split[1])){
                             member = m;
                             break;
                         }
@@ -72,51 +70,41 @@ public class Role extends Chat {
         if (split.length == 2){
             // 確認
 
-            StringBuffer sb = new StringBuffer();
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(member.getColor());
+            builder.setThumbnail(member.getUser().getAvatarUrl());
 
-            sb.append("----- `");
-            if (member.getNickname() != null){
-                sb.append(member.getNickname());
-                sb.append(" (");
-                sb.append(member.getUser().getAsTag());
-                sb.append(")`さんの情報 -----\n");
+            String name = member.getNickname();
+            if (name == null){
+                name = member.getUser().getName();
+            }
+
+            builder.setTitle(member.getUser().getAsTag()+"さんの情報");
+            builder.addField("表示名", name, false);
+            builder.addField("ユーザーID", member.getId(), false);
+            if (member.hasTimeJoined()){
+                builder.addField("サーバー入室日", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date.from(member.getTimeJoined().toInstant())), false);
             } else {
-                sb.append(member.getUser().getAsTag());
-                sb.append("`さんの情報 -----\n");
+                builder.addField("サーバー入室日", "不明", false);
+            }
+            if (member.getTimeBoosted() != null){
+                builder.addField("サーバーブースト日", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date.from(member.getTimeBoosted().toInstant())), false);
+            }
+            List<net.dv8tion.jda.api.entities.Role> roleList = member.getRoles();
+
+            StringBuffer buffer = new StringBuffer("以下の "+roleList.size()+"個 ついています。\n\n");
+            for (net.dv8tion.jda.api.entities.Role role : roleList){
+                buffer.append("```");
+                buffer.append(role.getName());
+                buffer.append("```");
             }
 
-            Date joinTime = Date.from(member.getTimeJoined().toInstant());
-            boolean isBot = member.getUser().isBot();
-            List<net.dv8tion.jda.api.entities.Role> roles = member.getRoles();
+            builder.addField("ロール", buffer.toString(), false);
 
-            sb.append("botかどうか : `");
-            sb.append(isBot);
-            sb.append("`\n");
-            sb.append("ユーザーID : `");
-            sb.append(member.getUser().getId());
-            sb.append("`\n");
-            sb.append("入室日時 : `");
-            sb.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(joinTime));
-            sb.append("\n`");
-            sb.append("オンラインステータス: ");
-            sb.append(member.getOnlineStatus().name());
-            sb.append("\n");
-            sb.append("アクティビティ: \n");
-            for (Activity a : member.getActivities()){
-                sb.append("`");
-                sb.append(a.getName());
-                sb.append("`");
-                sb.append("\n");
-            }
-            sb.append("ロール：\n");
-            for (net.dv8tion.jda.api.entities.Role role : roles){
-                sb.append("`");
-                sb.append(role.getName());
-                sb.append("`\n");
-            }
 
-            getMessage().reply(sb.toString()).queue(message1 -> {
-                message1.addReaction("✅").queue();
+
+            getMessage().reply(builder.build()).queue(message -> {
+                message.addReaction("✅").queue();
             });
         }
 
