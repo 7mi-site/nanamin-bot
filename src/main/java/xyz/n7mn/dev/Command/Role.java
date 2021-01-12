@@ -24,6 +24,10 @@ public class Role extends Chat {
     public void run() {
         String[] split = getMessageText().split(" ", -1);
 
+        if (split[0].toLowerCase().equals("n.ui")){
+            split = new String[]{"n.role",getUser().getId()};
+        }
+
         Member member = null;
         if (split.length == 2 || split.length == 3){
             try {

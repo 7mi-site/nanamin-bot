@@ -60,7 +60,7 @@ public class CommandSystem {
             system = new Burst(textChannel, message);
         }
 
-        if (messageText.toLowerCase().startsWith("n.role")){
+        if (messageText.toLowerCase().startsWith("n.role") || messageText.toLowerCase().equals("n.ui")){
             system = new Role(textChannel, message);
         }
 

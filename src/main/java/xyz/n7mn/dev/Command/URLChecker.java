@@ -39,7 +39,7 @@ public class URLChecker extends Chat {
 
         boolean vote = false;
         try {
-            vote = new VoteSystem().isVote(textChannel.retrieveMessageById(url[6]).complete());
+            vote = VoteSystem.isVote(textChannel.retrieveMessageById(url[6]).complete());
         } catch (Exception e){
             // e.printStackTrace();
         }
