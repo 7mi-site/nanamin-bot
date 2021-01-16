@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.requests.RestAction;
 import xyz.n7mn.dev.i.Chat;
 import xyz.n7mn.dev.i.HelpData;
 
+import java.util.List;
+
 public class Msg extends Chat {
 
     public Msg(TextChannel textChannel, Message message) {
@@ -51,6 +53,12 @@ public class Msg extends Chat {
                         EmbedBuilder builder = new EmbedBuilder();
                         builder.addField("内容", contentRaw, true);
                         MessageEmbed build;
+
+                        List<Message.Attachment> attachments = message1.getAttachments();
+                        for (Message.Attachment attachment : attachments){
+                            builder.addField("添付ファイル", attachment.getUrl(), false);
+                        }
+
                         if (contentRaw.length() > 0){
                             build = builder.build();
                         } else {
@@ -62,7 +70,8 @@ public class Msg extends Chat {
                                         "投稿したチャンネル : " + message1.getChannel().getName() + "\n" +
                                         "文字数 : " + contentRaw.length() + "\n" +
                                         "編集済みかどうか : " + edited + "\n" +
-                                        "投稿者 : " + author.getAsTag() + "\n"
+                                        "投稿者 : " + author.getAsTag() + "\n" +
+                                        "添付ファイルの数 : " + attachments.size() + "\n"
                         ).embed(build).queue();
                     } catch (Exception e){
                         getMessage().reply("メッセージが存在しませんっ！").queue();
@@ -91,6 +100,12 @@ public class Msg extends Chat {
 
             EmbedBuilder builder = new EmbedBuilder();
             builder.addField("内容", contentRaw, true);
+
+            List<Message.Attachment> attachments = message.getAttachments();
+            for (Message.Attachment attachment : attachments){
+                builder.addField("添付ファイル", attachment.getUrl(), false);
+            }
+
             MessageEmbed build = builder.build();
 
             getMessage().reply(
@@ -98,7 +113,8 @@ public class Msg extends Chat {
                             "投稿したチャンネル : (DM)\n" +
                             "文字数 : " + contentRaw.length() + "\n" +
                             "編集済みかどうか : " + edited + "\n" +
-                            "投稿者 : " + author.getAsTag() + "\n"
+                            "投稿者 : " + author.getAsTag() + "\n" +
+                            "添付ファイルの数 : " + attachments.size() + "\n"
             ).embed(build).queue();
         });
 

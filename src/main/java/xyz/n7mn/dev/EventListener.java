@@ -1,11 +1,9 @@
 package xyz.n7mn.dev;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
-import net.dv8tion.jda.api.events.message.MessageEmbedEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -14,7 +12,6 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.Command.CommandSystem;
 import xyz.n7mn.dev.Command.Help;
-import xyz.n7mn.dev.Command.Ping;
 import xyz.n7mn.dev.Command.money.Money;
 import xyz.n7mn.dev.Command.money.MoneySystem;
 import xyz.n7mn.dev.Command.music.GuildMusicManager;
@@ -261,6 +258,12 @@ public class EventListener extends ListenerAdapter {
                 }
 
                 message.getPrivateChannel().sendMessage(sb.toString()).queue();
+                return;
+            }
+
+            if (message.getContentRaw().toLowerCase().startsWith("n.dmcheck") && event.getAuthor().getId().equals("529463370089234466")){
+                new DMCheck(message, event.getJDA()).run();
+
                 return;
             }
 
