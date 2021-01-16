@@ -205,7 +205,7 @@ public class CommandSystem {
             system = new YululiCommand(textChannel, message);
         }
 
-        if (messageText.toLowerCase().startsWith("n.ban")){
+        if (messageText.toLowerCase().startsWith("n.ban") && !messageText.toLowerCase().startsWith("n.bank")){
             system = new Ban(textChannel, message);
         }
 
