@@ -261,13 +261,6 @@ public class EventListener extends ListenerAdapter {
                 return;
             }
 
-            if (message.getContentRaw().toLowerCase().startsWith("n.dmcheck") && event.getAuthor().getId().equals("529463370089234466")){
-                new DMCheck(message, event.getJDA()).run();
-
-                return;
-            }
-
-
 
             message.getPrivateChannel().sendMessage(
                     "ふぬ？なにもおきないですよ？\n" +
