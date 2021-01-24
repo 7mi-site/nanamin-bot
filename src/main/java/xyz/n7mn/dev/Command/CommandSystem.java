@@ -2,7 +2,7 @@ package xyz.n7mn.dev.Command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import xyz.n7mn.dev.i.System;
+import xyz.n7mn.dev.i.SystemRun;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -17,7 +17,7 @@ public class CommandSystem {
 
     public static void run(TextChannel textChannel, Message message){
 
-        System system = null;
+        SystemRun system = null;
         String messageText = message.getContentRaw();
 
         if (messageText.startsWith("https://discord.com")){

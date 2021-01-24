@@ -2,7 +2,7 @@ package xyz.n7mn.dev.i;
 
 import net.dv8tion.jda.api.entities.*;
 
-public abstract class Game implements System {
+public abstract class Game implements SystemRun {
 
     private Guild guild;
     private TextChannel textChannel;

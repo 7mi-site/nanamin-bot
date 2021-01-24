@@ -18,7 +18,9 @@ import xyz.n7mn.dev.Command.music.GuildMusicManager;
 import xyz.n7mn.dev.Command.music.PlayerManager;
 import xyz.n7mn.dev.Command.vote.VoteData;
 import xyz.n7mn.dev.Command.vote.VoteSystem;
+import xyz.n7mn.dev.adminCommand.CheckServer;
 import xyz.n7mn.dev.api.Earthquake;
+import xyz.n7mn.dev.i.SystemRun;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -86,7 +88,10 @@ public class EventListener extends ListenerAdapter {
                 VoteSystem.addReaction(message, event.getMember(), event.getReaction().getReactionEmote().getEmoji());
             }
 
+            return;
         }
+
+        System.out.println(event.getReaction().getReactionEmote().isEmoji());
     }
 
     @Override
@@ -111,6 +116,7 @@ public class EventListener extends ListenerAdapter {
 
         if (event.isFromType(ChannelType.PRIVATE)){
 
+            SystemRun system = null;
             User nana = event.getJDA().getUserById("529463370089234466");
             EmbedBuilder builder = new EmbedBuilder();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -123,6 +129,12 @@ public class EventListener extends ListenerAdapter {
             nana.openPrivateChannel().complete().sendMessage(builder.build()).queue();
 
             Message message = event.getMessage();
+
+            if (message.getContentRaw().startsWith("n.help")){
+                Help.run(event.getPrivateChannel(), message.getContentRaw());
+                return;
+            }
+
             if (message.getContentRaw().startsWith("ぱんつ何色") || message.getContentRaw().startsWith("パンツ何色")){
                 message.getPrivateChannel().sendMessage("へんたいっ！").queue();
                 return;
@@ -140,127 +152,15 @@ public class EventListener extends ListenerAdapter {
                 return;
             }
 
-            if (message.getContentRaw().startsWith("n.help")){
-                Help.run(event.getPrivateChannel(), message.getContentRaw());
-                return;
+
+            if (message.getContentRaw().toLowerCase().startsWith("n.checkserver") && event.getAuthor().getId().equals("529463370089234466")){
+                system = new CheckServer(message);
             }
 
-            StringBuffer sb = new StringBuffer();
-            if (message.getContentRaw().equals("n.checkServer") && event.getAuthor().getId().equals("529463370089234466")){
-
-                List<Guild> guilds = message.getJDA().getGuilds();
-
-                sb.append("現在 "); sb.append(guilds.size()); sb.append(" サーバーで動いています。\n");
-
-                for (Guild guild : guilds){
-                    sb.append(guild.getId());
-                    sb.append(" : ");
-                    sb.append(guild.getName());
-                    sb.append("\n");
-                }
-
-                message.getPrivateChannel().sendMessage(sb.toString()).queue();
+            if (system != null){
+                system.run();
                 return;
             }
-
-            if (message.getContentRaw().startsWith("n.checkServer") && event.getAuthor().getId().equals("529463370089234466")){
-
-                String[] split = message.getContentRaw().split(" ");
-                if (split.length == 2){
-
-                    Guild guildById = message.getJDA().getGuildById(split[1]);
-
-                    if (guildById == null){
-                        return;
-                    }
-
-                    try {
-
-                        sb.append("サーバー名 : ");
-                        sb.append(guildById.getName());
-                        sb.append("\n");
-
-                        sb.append("サーバーオーナー : ");
-                        User ow = message.getJDA().getUserById(guildById.getOwnerId());
-                        if (guildById.getOwner().getNickname() != null){
-
-                            sb.append(guildById.getOwner().getNickname());
-                            if (ow != null){
-                                sb.append(" (");
-                                sb.append(ow.getAsTag());
-                                sb.append(")");
-                            }
-
-                            if (sb.length() >= 1900){
-                                message.getPrivateChannel().sendMessage(sb.toString()).queue();
-                                sb.delete(0, sb.length());
-                            }
-                        } else {
-                            if (ow != null){
-                                sb.append(ow.getAsTag());
-                            }
-
-                        }
-
-                        sb.append("\n");
-
-                        List<Member> members = guildById.getMembers();
-                        sb.append(members.size());
-                        sb.append("人このサーバーには入っています。\n");
-
-                        sb.append("----- 入っているメンバー(取得できる分) -----\n");
-                        for (Member member : members){
-
-                            User user = message.getJDA().getUserById(member.getId());
-                            if (member.getNickname() != null){
-                                sb.append(member.getNickname());
-                                sb.append(" (");
-                                sb.append(user.getAsTag());
-                                sb.append(")");
-                                sb.append("\n");
-                            } else {
-                                if (user != null){
-                                    sb.append(user.getAsTag());
-                                    sb.append("\n");
-                                }
-                            }
-
-                            if (sb.length() >= 1900){
-                                message.getPrivateChannel().sendMessage(sb.toString()).queue();
-                                sb.delete(0, sb.length());
-                            }
-                        }
-
-                    } catch (Exception e){
-
-                        e.printStackTrace();
-
-                    }
-
-                    sb.append("----- "); sb.append(guildById.getName()); sb.append("のチャンネル一覧 -----\n");
-                    for (TextChannel channel : guildById.getTextChannels()){
-
-                        sb.append(channel.getId());
-                        sb.append(" : ");
-                        sb.append(channel.getName());
-                        sb.append(" 発言可能か : ");
-                        sb.append(channel.canTalk());
-                        sb.append("\n");
-
-                        if (sb.length() >= 1900){
-
-                            message.getPrivateChannel().sendMessage(sb.toString()).queue();
-                            sb.delete(0, sb.length());
-
-                        }
-
-                    }
-                }
-
-                message.getPrivateChannel().sendMessage(sb.toString()).queue();
-                return;
-            }
-
 
             message.getPrivateChannel().sendMessage(
                     "ふぬ？なにもおきないですよ？\n" +

@@ -1,6 +1,6 @@
 package xyz.n7mn.dev.i;
 
-public interface System {
+public interface SystemRun {
 
     void run();
 
