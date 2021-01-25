@@ -91,7 +91,17 @@ public class EventListener extends ListenerAdapter {
             return;
         }
 
-        System.out.println(event.getReaction().getReactionEmote().isEmoji());
+        if (event.getReaction().getReactionEmote().isEmoji()){
+            if (event.getReactionEmote().getEmoji().equals("\u274C")){
+                Message message1 = event.retrieveMessage().complete();
+
+                if (message1.getEmbeds().size() > 0 && message1.getEmbeds().get(0) != null && message1.getEmbeds().get(0).getTitle() != null && message1.getEmbeds().get(0).getTitle().endsWith("さんの情報")){
+                    if (message1.getAuthor().getId().equals(event.getJDA().getSelfUser().getId())){
+                        message1.delete().queue();
+                    }
+                }
+            }
+        }
     }
 
     @Override

@@ -108,7 +108,8 @@ public class Role extends Chat {
 
 
             getMessage().reply(builder.build()).queue(message -> {
-                message.addReaction("✅").queue();
+                message.addReaction("\u2705").queue();
+                message.addReaction("\u274C").queue();
             });
         }
 
