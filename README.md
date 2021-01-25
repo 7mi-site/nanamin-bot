@@ -1,4 +1,13 @@
-# nanamin-bot
+# nanamin-bot (ななみちゃんbot)
 DiscordBot
-
 https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot
+
+## 使用しているもの
+### ライブラリ
+- [JDA](https://github.com/DV8FromTheWorld/JDA)
+- [LavaPlayer](https://github.com/sedmelluq/lavaplayer)
+- [Gson](https://github.com/google/gson)
+- [Minecraft Status Query](https://github.com/rmmccann/Minecraft-Status-Query) (※Ver 1.4.6以降)
+### API
+- [地震情報API](https://narikakun.net/technology/earthquake-api/)
+
