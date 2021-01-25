@@ -40,6 +40,10 @@ public class Role extends Chat {
                                 member = m;
                                 break;
                             }
+                            if (m.getUser().getAsTag().startsWith(split[1])){
+                                member = m;
+                                break;
+                            }
                         } else {
                             if (m.getUser().getAsTag().startsWith(split[1])){
                                 member = m;
@@ -53,6 +57,10 @@ public class Role extends Chat {
                 for (Member m : getGuild().getMembers()){
                     if (m.getNickname() != null){
                         if (m.getNickname().startsWith(split[1])){
+                            member = m;
+                            break;
+                        }
+                        if (m.getUser().getAsTag().startsWith(split[1])){
                             member = m;
                             break;
                         }
