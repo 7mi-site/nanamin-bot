@@ -84,6 +84,10 @@ public class CommandSystem {
             system = new MusicVolume(textChannel, message);
         }
 
+        if (messageText.toLowerCase().equals("n.repeat")){
+            system = new MusicRepeat(textChannel, message);
+        }
+
         if (messageText.toLowerCase().equals("n.game")){
             system = new Game(textChannel, message);
         }

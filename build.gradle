@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile     'net.dv8tion:JDA:4.2.0_225'
+    compile     'net.dv8tion:JDA:4.2.0_227'
     compile     'com.jagrosh:jda-utilities:3.0.4'
     compile     'club.minnced:opus-java-api:1.0.4'
     compile     'club.minnced:opus-java-natives:1.0.4'
