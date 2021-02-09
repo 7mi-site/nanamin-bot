@@ -81,17 +81,19 @@ public class MusicPlay extends Chat {
 
         getMessage().delete().queue();
         //Guild guild = event.getJDA().getGuildById(event.getGuild().getId());
-        audioManager.openAudioConnection(voiceChannel);
+        try {
+            audioManager.openAudioConnection(voiceChannel);
 
-        PlayerManager Playermanager = PlayerManager.getINSTANCE();
-        Playermanager.loadAndPlay(getTextChannel(), split[1]);
+            PlayerManager Playermanager = PlayerManager.getINSTANCE();
+            Playermanager.loadAndPlay(getTextChannel(), split[1]);
 
-
-
-        if (split.length == 3){
-            Playermanager.getGuildMusicManager(getGuild()).player.setVolume(Integer.parseInt(split[2]));
-        } else {
-            Playermanager.getGuildMusicManager(getGuild());
+            if (split.length == 3){
+                Playermanager.getGuildMusicManager(getGuild()).player.setVolume(Integer.parseInt(split[2]));
+            } else {
+                Playermanager.getGuildMusicManager(getGuild());
+            }
+        } catch (Exception e){
+            getMessage().reply("エラーが発生しましたっ！\nボイスチャンネルに入れないかもです...").queue();
         }
 
     }

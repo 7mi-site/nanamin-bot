@@ -19,13 +19,17 @@ public class MusicRepeat extends Chat {
 
     @Override
     public void run() {
+        System.out.println("あ");
         AudioManager audioManager = getGuild().getAudioManager();
 
         if (audioManager.isConnected()){
 
             PlayerManager Playermanager = PlayerManager.getINSTANCE();
             Playermanager.Repeat(getTextChannel());
+            return;
 
         }
+
+        getMessage().reply("現在再生していません！").queue();
     }
 }
