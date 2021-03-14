@@ -124,7 +124,7 @@ public class PlayerManager {
             @Override
             public void loadFailed(FriendlyException e) {
                 //ロード時にエラー発生
-                channel.sendMessage("エラーが発生したよっ").queue();
+                channel.sendMessage("エラーが発生したよっ\nエラー内容：" + e.getMessage()).queue();
             }
 
         });

@@ -19,7 +19,7 @@ public class MusicRepeat extends Chat {
 
     @Override
     public void run() {
-        System.out.println("あ");
+        // System.out.println("あ");
         AudioManager audioManager = getGuild().getAudioManager();
 
         if (audioManager.isConnected()){

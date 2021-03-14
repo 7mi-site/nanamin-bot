@@ -4,6 +4,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -20,6 +22,7 @@ import xyz.n7mn.dev.Command.music.GuildMusicManager;
 import xyz.n7mn.dev.Command.music.PlayerManager;
 import xyz.n7mn.dev.Command.vote.VoteData;
 import xyz.n7mn.dev.Command.vote.VoteSystem;
+import xyz.n7mn.dev.Listener.ServerLogListener;
 import xyz.n7mn.dev.adminCommand.CheckServer;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.i.SystemRun;
@@ -46,6 +49,16 @@ public class EventListener extends ListenerAdapter {
                 audioManager.closeAudioConnection();
             }
         }
+    }
+
+    @Override
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        new ServerLogListener().join(event);
+    }
+
+    @Override
+    public void onGuildLeave(@NotNull GuildLeaveEvent event) {
+        new ServerLogListener().leave(event);
     }
 
     @Override

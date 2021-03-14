@@ -2,11 +2,7 @@ package xyz.n7mn.dev;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
-import xyz.n7mn.dev.Command.money.MoneySystem;
+import net.dv8tion.jda.api.entities.*;
 import xyz.n7mn.dev.api.Earthquake;
 import xyz.n7mn.dev.api.data.EarthquakeResult;
 import xyz.n7mn.dev.api.data.eq.intensity.Area;
@@ -14,6 +10,8 @@ import xyz.n7mn.dev.api.data.eq.intensity.City;
 import xyz.n7mn.dev.api.data.eq.intensity.Pref;
 
 import java.awt.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -99,6 +97,8 @@ public class EarthquakeListener {
 
                         }
 
+                        MessageEmbed builder2 = builder.build();
+
                         builder.addField("各地の震度","",false);
                         for (Pref pref : data.getBody().getIntensity().getObservation().getPref()){
                             StringBuffer sb = new StringBuffer();
@@ -121,6 +121,53 @@ public class EarthquakeListener {
                             }
                             builder.addField(pref.getName(), sb.toString(), true);
                         }
+
+                        boolean isMoreMode = false;
+                        if (builder.length() > 6000){
+                            StringBuffer list = new StringBuffer();
+                            for (Pref pref : data.getBody().getIntensity().getObservation().getPref()){
+                                StringBuffer sb = new StringBuffer();
+                                for (Area area : pref.getArea()){
+                                    sb.append(" ");
+                                    sb.append(area.getName());
+                                    sb.append(" (");
+                                    sb.append("最大震度 ");
+                                    sb.append(area.getMaxInt());
+                                    sb.append(")\n");
+
+                                    if (InfoKind.equals("地震情報")){
+                                        for (City city :area.getCity()){
+                                            sb.append("  ");
+                                            sb.append(city.getName());
+                                            sb.append(" 震度 ");
+                                            sb.append(city.getMaxInt());
+                                            sb.append("\n");
+                                        }
+                                    }
+                                }
+                                // builder.addField(pref.getName(), sb.toString(), true);
+                                list.append("--- ");
+                                list.append(pref.getName());
+                                list.append("(最大震度 ");
+                                list.append(pref.getMaxInt());
+                                list.append(")");
+                                list.append(" ---\n");
+                            }
+
+                            try {
+                                File fileOut = new File("./jisin.txt");
+                                PrintWriter p_writer = new PrintWriter
+                                        (new BufferedWriter(new OutputStreamWriter
+                                                (new FileOutputStream(fileOut), StandardCharsets.UTF_8)));
+                                p_writer.print(list.toString());
+                                p_writer.close();
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                            isMoreMode = true;
+                        }
+
                         System.out.println("地震情報組み立て完了");
                         if (debugMode){
                             builder.setFooter(sdf.format(new Date()) + "に送信しました。");
@@ -136,6 +183,7 @@ public class EarthquakeListener {
                             List<TextChannel> channels = guild.getTextChannels();
                             for (TextChannel channel : channels){
                                 if (channel.getName().equals("nanami_setting")){
+                                    boolean finalIsMoreMode = isMoreMode;
                                     channel.getHistoryAfter(1, 100).queue(messageHistory -> {
                                         List<Message> retrievedHistory = messageHistory.getRetrievedHistory();
                                         for (Message message : retrievedHistory){
@@ -146,7 +194,13 @@ public class EarthquakeListener {
                                                 if (textChannelById != null){
                                                     if (textChannelById.canTalk()){
                                                         builder.setFooter(sdf.format(new Date()) + "に送信しました。");
-                                                        textChannelById.sendMessage(builder.build()).queue();
+                                                        if (!finalIsMoreMode){
+                                                            textChannelById.sendMessage(builder.build()).queue();
+                                                        } else {
+                                                            textChannelById.sendMessage("※ 広範囲の地震のため\n  詳細な地震情報はテキストファイルになっております。").embed(builder2).queue();
+                                                            textChannelById.sendFile(new File("./jisin.txt")).queue();
+                                                        }
+
                                                         System.out.println("送信完了 : " + textChannelById.getName());
                                                         break;
                                                     }
