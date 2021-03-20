@@ -153,6 +153,7 @@ public class EarthquakeListener {
                                 list.append(")");
                                 list.append(" ---\n");
                                 list.append(sb.toString());
+                                list.append("\n");
                             }
 
                             try {
