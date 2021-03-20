@@ -152,6 +152,7 @@ public class EarthquakeListener {
                                 list.append(pref.getMaxInt());
                                 list.append(")");
                                 list.append(" ---\n");
+                                list.append(sb.toString());
                             }
 
                             try {
