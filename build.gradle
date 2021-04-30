@@ -7,24 +7,24 @@ version '1.5'
 
 repositories {
     mavenCentral()
-    jcenter()
-
     maven {
-        name = 'bintray-jcenter'
-        url  = 'https://jcenter.bintray.com'
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
     }
+
+    jcenter()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile     'net.dv8tion:JDA:4.2.0_227'
-    compile     'com.jagrosh:jda-utilities:3.0.4'
-    compile     'club.minnced:opus-java-api:1.0.4'
-    compile     'club.minnced:opus-java-natives:1.0.4'
+    compile     'net.dv8tion:JDA:4.2.1_262'
+    compile     'com.jagrosh:jda-utilities:3.0.5'
+    compile     'club.minnced:opus-java-api:1.1.0'
+    compile     'club.minnced:opus-java-natives:1.1.0'
     compile    ('club.minnced:opus-java:1.0.4@pom') {transitive = true}
-    compile     'com.sedmelluq:lavaplayer:1.3.66'
+    compile     'com.sedmelluq:lavaplayer:1.3.75'
     compile     'com.google.code.gson:gson:2.8.6'
-    compile     'mysql:mysql-connector-java:8.0.22'
+    compile     'mysql:mysql-connector-java:8.0.24'
 }
 
 jar {
