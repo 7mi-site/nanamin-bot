@@ -62,14 +62,16 @@ public class Help extends Chat {
             "`n.stop` --- 音楽停止\n" +
             "`n.repeat` --- 1曲リピートモード設定\n" +
             "`n.nowPlay` --- 曲の名前とリンクを表示\n" +
-            "`n.musicVolume` --- 音量調整";
+            "`n.musicVolume` --- 音量調整\n" +
+            "`n.musicSkip` --- 曲をスキップ";
 
     private static final String musicText2 = "" +
             "`n.play <URL> <音量>` --- 音楽を再生する (音量は省略可能)\n" +
             "`n.stop` --- 音楽再生をやめてボイスチャンネルから退出する\n" +
             "`n.repeat` --- 1曲リピートモードにする / 1曲リピートモードをやめる\n" +
             "`n.nowPlay` --- 今再生している曲の名前とリンクを表示する\n" +
-            "`n.musicVolume <音量>` --- 音量調整をする。";
+            "`n.musicVolume <音量>` --- 音量調整をする。\n" +
+            "`n.musicSkip` --- 曲をスキップする";
 
     private static final String gameText1 = "" +
             "`n.money` --- 現在の所持金\n" +
