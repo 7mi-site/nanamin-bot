@@ -81,6 +81,9 @@ public class VoteCheck {
                     }
 
                 }
+                set.close();
+                statement.close();
+                con.close();
 
 
             } catch (Exception e){

@@ -36,6 +36,7 @@ public class MoneySystem {
 
                 set.close();
                 statement.close();
+                con.close();
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -66,6 +67,7 @@ public class MoneySystem {
                     statement.setInt(2, 100);
                     statement.execute();
                     statement.close();
+                    con.close();
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -88,6 +90,7 @@ public class MoneySystem {
                     statement.setString(2, money.getUserID());
                     statement.execute();
                     statement.close();
+                    con.close();
                 } catch (Exception e){
                     e.printStackTrace();
                 }

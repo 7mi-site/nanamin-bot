@@ -24,6 +24,7 @@ public class VoteSystem {
                 statement.setString(2, message.getId());
                 statement.execute();
                 statement.close();
+                con.close();
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -46,6 +47,7 @@ public class VoteSystem {
                 statement2.setString(1, message.getId());
                 statement2.execute();
                 statement2.close();
+                con.close();
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -73,11 +75,13 @@ public class VoteSystem {
             if (set.next()){
                 set.close();
                 statement.close();
+                con.close();
                 VoteSystemSub.addMessageCache(message.getId());
                 return true;
             }
             set.close();
             statement.close();
+            con.close();
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -96,6 +100,7 @@ public class VoteSystem {
                 statement.setString(3, emoji);
                 statement.execute();
                 statement.close();
+                con.close();
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -115,6 +120,7 @@ public class VoteSystem {
             }
             set1.close();
             statement1.close();
+            con.close();
         } catch (Exception e){
             e.printStackTrace();
         }
