@@ -25,11 +25,18 @@ public class CheckServer extends DMInterface{
             builder.setTitle("動作サーバー一覧");
             builder.setDescription("現在 " + guilds.size() + "サーバーで動いてます。");
 
+            StringBuilder sb = new StringBuilder();
             for (Guild guild : guilds){
-                builder.addField(guild.getName(), "ID : "+guild.getId() + "\nオーナー : " + guild.getOwner().getUser().getName(), false);
+                sb.append("'''\n");
+                sb.append("ID : ");
+                sb.append(guild.getId());
+                sb.append("\n");
+                sb.append("サーバー名 : ");
+                sb.append(guild.getName());
+                sb.append("\n'''");
             }
 
-            getMessage().getPrivateChannel().sendMessage(builder.build()).queue();
+            getMessage().getPrivateChannel().sendMessage(sb.toString()).setEmbeds(builder.build()).queue();
             return;
         }
 
