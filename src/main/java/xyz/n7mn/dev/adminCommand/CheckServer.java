@@ -2,6 +2,7 @@ package xyz.n7mn.dev.adminCommand;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.utils.cache.SnowflakeCacheView;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -20,23 +21,26 @@ public class CheckServer extends DMInterface{
 
         if (split.length == 1 && getMessageText().toLowerCase().equals("n.checkserver")){
 
-            List<Guild> guilds = getJda().getGuilds();
+            SnowflakeCacheView<Guild> guildCache = getJda().getGuildCache();
 
-            builder.setTitle("動作サーバー一覧");
-            builder.setDescription("現在 " + guilds.size() + "サーバーで動いてます。");
-
+            int i = 0;
             StringBuilder sb = new StringBuilder();
-            for (Guild guild : guilds){
-                sb.append("'''\n");
+            for (Guild guild : guildCache) {
+                i++;
+                sb.append("```\n");
                 sb.append("ID : ");
                 sb.append(guild.getId());
                 sb.append("\n");
                 sb.append("サーバー名 : ");
                 sb.append(guild.getName());
-                sb.append("\n'''");
+                sb.append("\n```");
             }
+            builder.setTitle("動作サーバー一覧");
+            builder.setDescription("現在 " + i + "サーバーで動いてます。");
 
-            getMessage().getPrivateChannel().sendMessage(sb.toString()).setEmbeds(builder.build()).queue();
+            getMessage().getPrivateChannel().sendMessage(" ").setEmbeds(builder.build()).queue();
+            getMessage().getPrivateChannel().sendMessage(sb.toString()).queue();
+
             return;
         }
 
