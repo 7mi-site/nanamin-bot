@@ -7,11 +7,13 @@ version '1.5'
 
 repositories {
     mavenCentral()
-
+    
     maven {
         name 'm2-dv8tion'
         url 'https://m2.dv8tion.net/releases'
     }
+
+    jcenter()
 }
 
 dependencies {
@@ -23,7 +25,6 @@ dependencies {
     compile     'com.sedmelluq:lavaplayer:1.3.78'
     compile 'com.google.code.gson:gson:2.8.9'
     compile 'mysql:mysql-connector-java:8.0.27'
-
 }
 
 jar {
