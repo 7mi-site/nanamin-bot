@@ -1,5 +1,6 @@
 package xyz.n7mn.dev.Command;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -7,6 +8,8 @@ import xyz.n7mn.dev.Command.music.GuildMusicManager;
 import xyz.n7mn.dev.Command.music.PlayerManager;
 import xyz.n7mn.dev.i.Chat;
 import xyz.n7mn.dev.i.HelpData;
+
+import java.util.List;
 
 public class MusicVolume extends Chat {
     public MusicVolume(TextChannel textChannel, Message message) {
@@ -33,6 +36,21 @@ public class MusicVolume extends Chat {
 
         AudioManager audioManager = getGuild().getAudioManager();
         if (audioManager.isConnected()){
+
+            List<Member> list = audioManager.getConnectedChannel().getMembers();
+            boolean isFound = false;
+            for (Member member : list){
+                if (member.getId().equals(getMessage().getMember().getId())){
+                    isFound = true;
+                    break;
+                }
+            }
+
+            if (!isFound){
+                getMessage().reply("ボイスチャンネルに入ってくださいっ").queue();
+                return;
+            }
+
             PlayerManager Playermanager = PlayerManager.getINSTANCE();
             Playermanager.getGuildMusicManager(getGuild()).player.setVolume(Integer.parseInt(split[1]));
             getMessage().reply("音量を" + split[1] + "に変更しました！").queue();

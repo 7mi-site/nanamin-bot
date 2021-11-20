@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import xyz.n7mn.dev.Command.money.MoneySystem;
 
 public class NanamiMain {
 
