@@ -27,6 +27,7 @@ public class MoneySystemSub {
                 }
                 set.close();
                 statement.close();
+                con.close();
             } catch (Exception e){
                 e.printStackTrace();
             }

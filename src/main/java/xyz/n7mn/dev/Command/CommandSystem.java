@@ -221,6 +221,10 @@ public class CommandSystem {
             system = new YululiCommand(textChannel, message);
         }
 
+        if (messageText.toLowerCase().equals("n.skip") || messageText.toLowerCase().equals("n.musicskip")){
+            system = new MusicSkip(textChannel, message);
+        }
+
         Matcher matcher = Pattern.compile("(.*)あけおめ(.*)").matcher(messageText);
         Matcher matcher2 = Pattern.compile("(.*)誕生日(.*)").matcher(messageText);
         Matcher matcher3 = Pattern.compile("(.*)Happy(.*)New(.*)Year(.*)").matcher(messageText);

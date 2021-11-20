@@ -29,7 +29,8 @@ public class Music extends Chat {
                 "`n.stop` --- 音楽再生をやめてボイスチャンネルから退出する\n" +
                 "`n.repeat` --- 1曲リピートモードにする / 1曲リピートモードをやめる\n" +
                 "`n.nowPlay` --- 今再生している曲の名前とリンクを表示する\n" +
-                "`n.musicVolume <音量>` --- 音量調整をする。(`n.volume`でも可能ですっ)"
+                "`n.musicVolume <音量>` --- 音量調整をする。(`n.volume`でも可能ですっ)\n"+
+                "`n.musicSkip` --- 曲をスキップする。(`n.skip`でも可能ですっ)"
         );
         builder.setColor(Color.PINK);
 

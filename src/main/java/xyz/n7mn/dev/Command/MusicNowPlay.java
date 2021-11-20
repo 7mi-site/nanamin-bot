@@ -47,9 +47,7 @@ public class MusicNowPlay extends Chat {
                 }
 
                 MessageEmbed build = builder.setTitle(title, uri).setDescription(uri).build();
-
-
-                getMessage().reply("いま再生されている曲はこちらっ！").embed(build).queue();
+                getMessage().reply("いま再生されている曲はこちらっ！").setEmbeds(build).queue();
                 return;
             }
         }

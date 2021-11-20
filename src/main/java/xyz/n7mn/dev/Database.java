@@ -6,43 +6,26 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class Database {
 
-    private Connection con;
     private Gson gson = new Gson();
     private String[] json = gson.fromJson(fileRead("./mysql.json"), String[].class);
 
-    public Database(){
+    public Connection getConnect() {
+
+        Connection con;
 
         try {
             con = DriverManager.getConnection("jdbc:mysql://" + json[0] + ":"+json[1]+"/" + json[2] + json[3], json[4], json[5]);
             con.setAutoCommit(true);
-        } catch (Exception e){
-            con = null;
-            e.printStackTrace();
+            return con;
+        } catch (SQLException ex){
+            ex.printStackTrace();
         }
 
-    }
-
-    public Connection getConnect() {
-        try {
-            if (!con.isClosed()){
-                return con;
-            } else {
-                con = DriverManager.getConnection("jdbc:mysql://" + json[0] + ":"+json[1]+"/" + json[2] + json[3], json[4], json[5]);
-                con.setAutoCommit(true);
-                return con;
-            }
-        } catch (Exception e){
-            try {
-                con = DriverManager.getConnection("jdbc:mysql://" + json[0] + ":"+json[1]+"/" + json[2] + json[3], json[4], json[5]);
-                con.setAutoCommit(true);
-                return con;
-            } catch (Exception e1){
-                return null;
-            }
-        }
+        return null;
     }
 
 

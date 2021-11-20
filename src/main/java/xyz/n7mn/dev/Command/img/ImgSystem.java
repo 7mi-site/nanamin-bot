@@ -41,6 +41,8 @@ public class ImgSystem {
                 set.close();
                 preparedStatement.close();
 
+                con.close();
+
             } catch (Exception e){
                 e.printStackTrace();
             }
