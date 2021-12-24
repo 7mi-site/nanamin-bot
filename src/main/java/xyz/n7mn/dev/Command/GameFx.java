@@ -8,7 +8,6 @@ import xyz.n7mn.dev.Command.money.MoneySystem;
 import xyz.n7mn.dev.i.Game;
 
 import java.security.SecureRandom;
-import java.util.List;
 
 public class GameFx extends Game {
     public GameFx(TextChannel textChannel, Message message) {
@@ -59,7 +58,7 @@ public class GameFx extends Game {
             return;
         }
 
-        int nowMoney = money.getMoney();
+        long nowMoney = money.getMoney();
 
         StringBuffer sb = new StringBuffer();
         int b = 1;
@@ -145,16 +144,16 @@ public class GameFx extends Game {
         sb.append("獲得しました！)");
 
         boolean f = false;
-        if (((long) nowMoney) + mo >= Integer.MAX_VALUE){
+        if (nowMoney + mo >= Long.MAX_VALUE){
             sb.append("\n(所持金が保有上限を超えたため、一部は他の方への借金地獄対策のための資金とさせていただきましたっ)");
             f = true;
         }
 
         if (f){
-            nowMoney = Integer.MAX_VALUE;
+            nowMoney = Long.MAX_VALUE;
         } else {
-            if ((long) nowMoney + mo <= Integer.MIN_VALUE){
-                nowMoney = Integer.MIN_VALUE;
+            if (nowMoney + mo <= Long.MIN_VALUE){
+                nowMoney = Long.MIN_VALUE;
             } else {
                 nowMoney = nowMoney + ((int) mo);
             }

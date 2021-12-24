@@ -50,7 +50,7 @@ public class GameYoso extends Game {
                 return;
             }
 
-            int nowMoney = money.getMoney();
+            long nowMoney = money.getMoney();
 
             int i = new SecureRandom().nextInt(9);
             try {
@@ -67,7 +67,7 @@ public class GameYoso extends Game {
                     if (tempInt > Integer.MAX_VALUE){
                         MoneySystem.updateData(new Money(money.getUserID(), Integer.MAX_VALUE));
                     } else {
-                        MoneySystem.updateData(new Money(money.getUserID(), (int) tempInt));
+                        MoneySystem.updateData(new Money(money.getUserID(), tempInt));
                     }
 
                     getMessage().reply("あたりっ！！\n予想数字：" + textSplit[2]+"\n"+"結果：" + i + "\n("+(Integer.parseInt(textSplit[1]) * 10)+MoneySystem.getCurrency()+"獲得しました。)").queue();

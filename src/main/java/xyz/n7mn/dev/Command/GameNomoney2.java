@@ -36,10 +36,10 @@ public class GameNomoney2 extends Game {
         }
 
         double d = new SecureRandom().nextInt(100) * 0.01;
-        int i = (int)(Math.abs(data.getMoney()) * d);
+        long i = (long) (Math.abs(data.getMoney()) * d);
 
 
-        long m = (long)data.getMoney() + i;
+        long m = data.getMoney() + i;
         if (m < Integer.MIN_VALUE){
             m = Integer.MIN_VALUE;
         } else if (m > Integer.MAX_VALUE) {

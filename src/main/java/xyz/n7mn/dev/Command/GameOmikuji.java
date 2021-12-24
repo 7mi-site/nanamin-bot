@@ -29,11 +29,8 @@ public class GameOmikuji extends xyz.n7mn.dev.i.Game {
         SecureRandom secureRandom = new SecureRandom();
         int i = secureRandom.nextInt(omikujiData.size() - 1);
 
-        long tempInt = (long) money.getMoney() + (long) omikujiData.get(i).getCoins();
-        if (tempInt > Integer.MAX_VALUE){
-            tempInt = Integer.MAX_VALUE;
-        }
-        MoneySystem.updateData(new Money(money.getUserID(), (int) tempInt));
+        long tempInt = money.getMoney() + omikujiData.get(i).getCoins();
+        MoneySystem.updateData(new Money(money.getUserID(), tempInt));
         getMessage().reply(omikujiData.get(i).getResultComment() + "\nあなたの運勢は "+omikujiData.get(i).getResultText()+" でした！\n(獲得コインは"+omikujiData.get(i).getCoins()+"です。)").queue();
     }
 }

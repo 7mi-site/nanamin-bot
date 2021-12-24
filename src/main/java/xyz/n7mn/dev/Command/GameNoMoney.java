@@ -24,7 +24,7 @@ public class GameNoMoney extends xyz.n7mn.dev.i.Game {
         }
 
         StringBuffer sb = new StringBuffer();
-        int nowMoney = money.getMoney();
+        long nowMoney = money.getMoney();
 
         sb.append("借金地獄のあなたへ贈り物だよっ！\n");
         int mo = 10000;

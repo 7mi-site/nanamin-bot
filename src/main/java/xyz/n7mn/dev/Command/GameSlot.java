@@ -66,12 +66,12 @@ public class GameSlot extends Game {
             flag = true;
         }
 
-        long tempInt = (money.getMoney() + (long) plus);
+        long tempInt = (money.getMoney() + plus);
         if (tempInt > Integer.MAX_VALUE){
             tempInt = Integer.MAX_VALUE;
         }
 
-        MoneySystem.updateData(new Money(money.getUserID(), (int) tempInt));
+        MoneySystem.updateData(new Money(money.getUserID(), tempInt));
 
         if (flag){
             getMessage().reply("あたり！ "+ (plus / but) + "倍！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`").queue();
