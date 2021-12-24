@@ -23,7 +23,7 @@ public class MoneySystemSub {
                 PreparedStatement statement = con.prepareStatement("SELECT * FROM MoneyList");
                 ResultSet set = statement.executeQuery();
                 while (set.next()){
-                    tempList.add(new Money(set.getString("UserID").replaceAll(" ", ""), set.getInt("Money")));
+                    tempList.add(new Money(set.getString("UserID").replaceAll(" ", ""), set.getLong("Money")));
                 }
                 set.close();
                 statement.close();

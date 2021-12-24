@@ -28,7 +28,7 @@ public class MoneySystem {
                 ResultSet set = statement.executeQuery();
 
                 if (set.next()){
-                    Money money = new Money(set.getString("UserID").replaceAll(" ", ""), set.getInt("Money"));
+                    Money money = new Money(set.getString("UserID").replaceAll(" ", ""), set.getLong("Money"));
                     set.close();
                     statement.close();
                     return money;
@@ -64,7 +64,7 @@ public class MoneySystem {
 
                     PreparedStatement statement = con.prepareStatement("INSERT INTO `MoneyList`(`UserID`, `Money`) VALUES (?, ?)");
                     statement.setString(1, discordUserID);
-                    statement.setInt(2, 100);
+                    statement.setLong(2, 100);
                     statement.execute();
                     statement.close();
                     con.close();
@@ -86,7 +86,7 @@ public class MoneySystem {
             new Thread(()->{
                 try {
                     PreparedStatement statement = con.prepareStatement("UPDATE `MoneyList` SET `Money`= ? WHERE `UserID` = ?");
-                    statement.setInt(1, money.getMoney());
+                    statement.setLong(1, money.getMoney());
                     statement.setString(2, money.getUserID());
                     statement.execute();
                     statement.close();

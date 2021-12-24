@@ -2,9 +2,9 @@ package xyz.n7mn.dev.Command.money;
 
 public class Money {
     private final String UserID;
-    private final int Money;
+    private final long Money;
 
-    public Money(String userID, int money){
+    public Money(String userID, long money){
         this.UserID = userID;
         this.Money = money;
     }
@@ -13,7 +13,7 @@ public class Money {
         return UserID;
     }
 
-    public int getMoney() {
+    public long getMoney() {
         return Money;
     }
 }

@@ -22,6 +22,7 @@ public class GameRank extends Game {
         StringBuffer sb = new StringBuffer();
 
         List<Money> moneyList = MoneySystem.getMoneyList(getGuild());
+        System.out.println(moneyList.size());
         moneyList.sort(new MoneyComparator());
 
         String sendUserID = getMessage().getMember().getId();
@@ -36,6 +37,7 @@ public class GameRank extends Game {
         builder.setTitle(MoneySystem.getCurrency() + " 所持数ランキング");
         builder.setDescription(getGuild().getName() + "でのランキングです！");
         builder.setColor(Color.ORANGE);
+        System.out.println(moneyList.size());
         for (Money money : moneyList){
 
             Member member = getMessage().getGuild().getMemberById(money.getUserID());
