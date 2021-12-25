@@ -1,5 +1,6 @@
 package xyz.n7mn.dev.Command;
 
+import com.mysql.cj.log.Log;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -35,15 +36,9 @@ public class GameFx extends Game {
             return;
         }
 
-        int useMoney = -1;
+        long useMoney = -1;
         try {
-            if (Long.parseLong(textSplit[1]) <= Integer.MAX_VALUE){
-                useMoney = Integer.parseInt(textSplit[1]);
-            } else if (Long.parseLong(textSplit[1]) < Integer.MIN_VALUE) {
-                useMoney = Integer.MIN_VALUE;
-            } else if (Long.parseLong(textSplit[1]) > Integer.MAX_VALUE){
-                useMoney = Integer.MAX_VALUE;
-            }
+            useMoney = Long.parseLong(textSplit[1]);
         } catch (Exception e){
             // e.printStackTrace();
         }
@@ -101,8 +96,8 @@ public class GameFx extends Game {
             sb.append("元値 320倍もーど！\n");
             b = 320;
         }
-        long mo = ((long) useMoney) * b;
-        long mo2 = ((long) useMoney) * b;
+        long mo = useMoney * b;
+        long mo2 = useMoney * b;
         sb.append(mo);
         sb.append(" ");
         sb.append(MoneySystem.getCurrency());
@@ -143,20 +138,8 @@ public class GameFx extends Game {
         sb.append(MoneySystem.getCurrency());
         sb.append("獲得しました！)");
 
-        boolean f = false;
-        if (nowMoney + mo >= Long.MAX_VALUE){
+        if (nowMoney == Long.MAX_VALUE){
             sb.append("\n(所持金が保有上限を超えたため、一部は他の方への借金地獄対策のための資金とさせていただきましたっ)");
-            f = true;
-        }
-
-        if (f){
-            nowMoney = Long.MAX_VALUE;
-        } else {
-            if (nowMoney + mo <= Long.MIN_VALUE){
-                nowMoney = Long.MIN_VALUE;
-            } else {
-                nowMoney = nowMoney + ((int) mo);
-            }
         }
 
         MoneySystem.updateData(new Money(money.getUserID(), nowMoney));

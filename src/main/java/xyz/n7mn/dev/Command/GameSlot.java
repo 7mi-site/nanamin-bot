@@ -67,10 +67,6 @@ public class GameSlot extends Game {
         }
 
         long tempInt = (money.getMoney() + plus);
-        if (tempInt > Integer.MAX_VALUE){
-            tempInt = Integer.MAX_VALUE;
-        }
-
         MoneySystem.updateData(new Money(money.getUserID(), tempInt));
 
         if (flag){

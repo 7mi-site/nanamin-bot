@@ -64,12 +64,7 @@ public class GameYoso extends Game {
                 if (i == targetInt){
                     long tempInt = nowMoney + (Integer.parseInt(textSplit[1]) * 10L);
 
-                    if (tempInt > Integer.MAX_VALUE){
-                        MoneySystem.updateData(new Money(money.getUserID(), Integer.MAX_VALUE));
-                    } else {
-                        MoneySystem.updateData(new Money(money.getUserID(), tempInt));
-                    }
-
+                    MoneySystem.updateData(new Money(money.getUserID(), tempInt));
                     getMessage().reply("あたりっ！！\n予想数字：" + textSplit[2]+"\n"+"結果：" + i + "\n("+(Integer.parseInt(textSplit[1]) * 10)+MoneySystem.getCurrency()+"獲得しました。)").queue();
                     return;
                 } else {
