@@ -6,7 +6,6 @@ import xyz.n7mn.dev.Command.money.Money;
 import xyz.n7mn.dev.Command.money.MoneySystem;
 import xyz.n7mn.dev.i.Game;
 
-import java.math.BigDecimal;
 import java.security.SecureRandom;
 
 public class GameNomoney2 extends Game {
@@ -19,7 +18,7 @@ public class GameNomoney2 extends Game {
         String text = getMessage().getContentRaw();
         String[] textSplit = text.split(" ", -1);
 
-        if (textSplit.length == 1 && !text.toLowerCase().equals("n.nomoney2")){
+        if (textSplit.length == 1 && !text.equalsIgnoreCase("n.nomoney2")){
             return;
         }
 

@@ -34,7 +34,7 @@ public class Ping extends Chat {
                     builder.addField("n.pingが送信された日時", sdf.format(fromDate),false);
                     builder.addField("ななみちゃんが送信した日時", sdf.format(toDate), false);
                     builder.addField("n.pingが送信されてから応答するまでの時間", (toDate.getTime() - fromDate.getTime()) + "ms", false);
-                    message.editMessage("応答したよっ").embed(builder.build()).queue();
+                    message.editMessage("応答したよっ").setEmbeds(builder.build()).queue();
 
                 }
         );

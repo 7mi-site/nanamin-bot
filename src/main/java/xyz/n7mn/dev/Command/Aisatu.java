@@ -44,7 +44,7 @@ public class Aisatu extends Chat {
             builder.setImage("https://nana-bot.n7mn.xyz/irasutoya/" + ohaList[i]);
             builder.setFooter("素材元：いらすとや");
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
             return;
         }
 
@@ -56,7 +56,7 @@ public class Aisatu extends Chat {
             builder.setImage("https://nana-bot.n7mn.xyz/irasutoya/" + oyaList[i]);
             builder.setFooter("素材元：いらすとや");
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
             return;
         }
 
@@ -90,7 +90,7 @@ public class Aisatu extends Chat {
 
         getMessage().delete().queue();
 
-        getTextChannel().sendMessage(msg).embed(builder.build()).queue(message -> {
+        getTextChannel().sendMessage(msg).setEmbeds(builder.build()).queue(message -> {
             message.addReaction(emoji).queue();
         });
 

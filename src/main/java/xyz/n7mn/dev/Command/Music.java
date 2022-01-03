@@ -34,6 +34,6 @@ public class Music extends Chat {
         );
         builder.setColor(Color.PINK);
 
-        getMessage().reply("音楽機能でできることはこちらっ！").embed(builder.build()).queue();
+        getMessage().reply("音楽機能でできることはこちらっ！").setEmbeds(builder.build()).queue();
     }
 }

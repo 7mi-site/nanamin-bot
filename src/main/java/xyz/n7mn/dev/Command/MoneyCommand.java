@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import xyz.n7mn.dev.Command.money.Money;
 import xyz.n7mn.dev.Command.money.MoneySystem;
+import xyz.n7mn.dev.Command.money.MoneyUtil;
 import xyz.n7mn.dev.i.Game;
 
 import java.util.List;
@@ -75,8 +76,8 @@ public class MoneyCommand extends Game {
                         MoneySystem.createData(targetMember.getId());
                     }
 
-                    long temp = targetMoney.getMoney() + Long.parseLong(split[3]);
-                    if (!(temp < Long.MAX_VALUE)){
+                    long temp = MoneyUtil.add(targetMoney.getMoney(), Long.parseLong(split[3]), true);
+                    if (temp == Long.MAX_VALUE){
                         getMessage().reply("相手は上限に達していますっ！！").queue();
                         return;
                     }

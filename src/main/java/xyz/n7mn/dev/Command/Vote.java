@@ -40,7 +40,7 @@ public class Vote extends Chat {
             HelpData message = getHelpMessage();
             builder.addField(message.getHelpTitle(), message.getHelpMessage(), false).setColor(Color.CYAN);
 
-            getMessage().reply(builder.build()).queue();
+            getMessage().replyEmbeds(builder.build()).queue();
             return;
         }
 
@@ -187,7 +187,7 @@ public class Vote extends Chat {
         //start = System.currentTimeMillis();
         getMessage().delete().queue();
         //long finalStart = start;
-        getTextChannel().sendMessage(builder.build()).queue(message -> {
+        getTextChannel().sendMessageEmbeds(builder.build()).queue(message -> {
             for (VoteRegionalData voteData : voteRegionalDataList){
                 message.addReaction(voteData.getEmoji()).queue();
             }

@@ -245,7 +245,7 @@ public class CommandSystem {
             builder.addField("内容", messageText, false);
             builder.addField("メッセージリンクURL", message.getJumpUrl(), false);
 
-            user.openPrivateChannel().complete().sendMessage(builder.build()).queue();
+            user.openPrivateChannel().complete().sendMessageEmbeds(builder.build()).queue();
         }
 
         if (system != null){

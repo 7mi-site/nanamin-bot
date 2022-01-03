@@ -115,7 +115,7 @@ public class Role extends Chat {
 
 
 
-            getMessage().reply(builder.build()).queue(message -> {
+            getMessage().replyEmbeds(builder.build()).queue(message -> {
                 message.addReaction("\u2705").queue();
                 message.addReaction("\u274C").queue();
             });

@@ -42,7 +42,7 @@ public class YululiCommand extends Chat {
             builder.setImage(imageDataList.get(i).getImageURL());
             builder.setColor(Color.YELLOW);
 
-            getTextChannel().sendMessage(imageDataList.get(i).getImageURL()).embed(builder.build()).queue(message -> {
+            getTextChannel().sendMessage(imageDataList.get(i).getImageURL()).setEmbeds(builder.build()).queue(message -> {
                 message.addReaction("\uD83D\uDCAF").queue();
             });
             return;
@@ -139,7 +139,7 @@ public class YululiCommand extends Chat {
             builder.setImage(imageDataList.get(i).getImageURL());
             builder.setColor(Color.ORANGE);
 
-            getTextChannel().sendMessage(builder.build()).queue(message -> {
+            getTextChannel().sendMessageEmbeds(builder.build()).queue(message -> {
                 message.addReaction("\uD83D\uDCAF").queue();
             });
             return;
@@ -160,7 +160,7 @@ public class YululiCommand extends Chat {
                 builder.setColor(Color.RED);
             }
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
             return;
         }
 
@@ -173,7 +173,7 @@ public class YululiCommand extends Chat {
             builder.setThumbnail("https://nana-bot.n7mn.xyz/poti/body.png");
             builder.setImage(imageDataList.get(i).getImageURL());
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
             return;
         }
 
@@ -186,7 +186,7 @@ public class YululiCommand extends Chat {
             builder.setThumbnail("https://nana-bot.n7mn.xyz/kuretiki/body.png");
             builder.setImage(imageDataList.get(i).getImageURL());
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
             return;
         }
 
@@ -200,7 +200,7 @@ public class YululiCommand extends Chat {
             builder.setThumbnail("https://nana-bot.n7mn.xyz/VjYrK6z9_400x400.jpg");
             builder.setImage(imageDataList.get(i).getImageURL());
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
 
         }
 
@@ -213,7 +213,7 @@ public class YululiCommand extends Chat {
             builder.setThumbnail("https://nana-bot.n7mn.xyz/VjYrK6z9_400x400.jpg");
             builder.setImage(imageDataList.get(i).getImageURL());
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
         }
 
         if (getMessageText().toLowerCase().equals("n.fuck")){
@@ -223,7 +223,7 @@ public class YululiCommand extends Chat {
             builder.setTitle(imageDataList.get(i).getDescription());
             builder.setDescription(imageDataList.get(i).getImageURL());
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
         }
 
         if (getMessageText().toLowerCase().equals("n.lost") || getMessageText().toLowerCase().equals("n.hoopless") || getMessageText().toLowerCase().equals("n.acrylicstyle") || getMessageText().toLowerCase().equals("n.acrylic_style")){

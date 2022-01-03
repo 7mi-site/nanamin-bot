@@ -66,12 +66,11 @@ public class GameYoso extends Game {
 
                     MoneySystem.updateData(new Money(money.getUserID(), tempInt));
                     getMessage().reply("あたりっ！！\n予想数字：" + textSplit[2]+"\n"+"結果：" + i + "\n("+(Integer.parseInt(textSplit[1]) * 10)+MoneySystem.getCurrency()+"獲得しました。)").queue();
-                    return;
                 } else {
                     MoneySystem.updateData(new Money(money.getUserID(),  nowMoney - Integer.parseInt(textSplit[1])));
                     getMessage().reply("はずれです...\n予想数字：" + textSplit[2]+"\n"+"結果：" + i + "").queue();
-                    return;
                 }
+                return;
 
             } catch (Exception e) {
                 // e.printStackTrace();

@@ -16,6 +16,6 @@ public class Game extends xyz.n7mn.dev.i.Game {
         builder.setTitle(Help.getHelpData(9).getHelpTitle());
         builder.setDescription(Help.getHelpData(9).getHelpMessage());
 
-        getMessage().reply(builder.build()).queue();
+        getMessage().replyEmbeds(builder.build()).queue();
     }
 }

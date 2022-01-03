@@ -2,12 +2,10 @@ package xyz.n7mn.dev;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
-import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -34,7 +32,7 @@ import java.util.List;
 
 public class EventListener extends ListenerAdapter {
     private static Database database = null;
-    private Earthquake earthquake = new Earthquake();
+    private final Earthquake earthquake = new Earthquake();
 
     @Override
     public void onGenericGuildVoice(@NotNull GenericGuildVoiceEvent event) {
@@ -91,14 +89,14 @@ public class EventListener extends ListenerAdapter {
                         builder.setTitle("えらー",message.getJumpUrl());
                         builder.setDescription("投票済みの選択肢ですっ！");
                         builder.setColor(Color.RED);
-                        privateChannel.sendMessage(builder.build()).queue();
+                        privateChannel.sendMessageEmbeds(builder.build()).queue();
                         return;
                     }
                 }
                 builder.setTitle("投票完了っ",message.getJumpUrl());
                 builder.setDescription(event.getReactionEmote().getEmoji() + "に投票しました！");
                 builder.setColor(Color.GREEN);
-                privateChannel.sendMessage(builder.build()).queue();
+                privateChannel.sendMessageEmbeds(builder.build()).queue();
 
                 VoteSystem.addReaction(message, event.getMember(), event.getReaction().getReactionEmote().getEmoji());
             }
@@ -151,7 +149,7 @@ public class EventListener extends ListenerAdapter {
             builder.addField("内容", event.getMessage().getContentRaw(), false);
             builder.addField("メッセージリンクURL", event.getMessage().getJumpUrl(), false);
 
-            nana.openPrivateChannel().complete().sendMessage(builder.build()).queue();
+            nana.openPrivateChannel().complete().sendMessageEmbeds(builder.build()).queue();
 
             Message message = event.getMessage();
 

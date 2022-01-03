@@ -72,7 +72,7 @@ public class Msg extends Chat {
                                         "編集済みかどうか : " + edited + "\n" +
                                         "投稿者 : " + author.getAsTag() + "\n" +
                                         "添付ファイルの数 : " + attachments.size() + "\n"
-                        ).embed(build).queue();
+                        ).setEmbeds(build).queue();
                     } catch (Exception e){
                         getMessage().reply("メッセージが存在しませんっ！").queue();
                     }
@@ -115,7 +115,7 @@ public class Msg extends Chat {
                             "編集済みかどうか : " + edited + "\n" +
                             "投稿者 : " + author.getAsTag() + "\n" +
                             "添付ファイルの数 : " + attachments.size() + "\n"
-            ).embed(build).queue();
+            ).setEmbeds(build).queue();
         });
 
     }

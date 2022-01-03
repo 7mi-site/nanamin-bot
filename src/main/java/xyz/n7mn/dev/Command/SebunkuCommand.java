@@ -47,7 +47,7 @@ public class SebunkuCommand extends Chat {
                 builder.setThumbnail("https://nana-bot.n7mn.xyz/sebunku/body.png");
                 builder.setImage(sebunku.get(i).getImageURL());
                 builder.setColor(Color.PINK);
-                getTextChannel().sendMessage(builder.build()).queue();
+                getTextChannel().sendMessageEmbeds(builder.build()).queue();
                 return;
             }
 

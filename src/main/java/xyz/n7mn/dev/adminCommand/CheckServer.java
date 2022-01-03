@@ -138,10 +138,10 @@ public class CheckServer extends DMInterface{
             }
             builder4.addField((in + 1) + "ページ目", buffer3.toString(), false);
 
-            getMessage().getPrivateChannel().sendMessage(builder.build()).queue();
-            getMessage().getPrivateChannel().sendMessage(builder2.build()).queue();
-            getMessage().getPrivateChannel().sendMessage(builder3.build()).queue();
-            getMessage().getPrivateChannel().sendMessage(builder4.build()).queue();
+            getMessage().getPrivateChannel().sendMessageEmbeds(builder.build()).queue();
+            getMessage().getPrivateChannel().sendMessageEmbeds(builder2.build()).queue();
+            getMessage().getPrivateChannel().sendMessageEmbeds(builder3.build()).queue();
+            getMessage().getPrivateChannel().sendMessageEmbeds(builder4.build()).queue();
         }
     }
 }

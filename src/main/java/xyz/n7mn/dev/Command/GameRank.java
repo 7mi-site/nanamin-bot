@@ -70,6 +70,6 @@ public class GameRank extends Game {
         }
 
         builder.addField("あなたの順位",sendRank + " 位 ("+moneyList.get(sendC).getMoney()+"コイン)", false);
-        getMessage().reply(builder.build()).queue();
+        getMessage().replyEmbeds(builder.build()).queue();
     }
 }

@@ -174,7 +174,7 @@ public class EarthquakeListener {
                         if (debugMode){
                             builder.setFooter(sdf.format(new Date()) + "に送信しました。");
                             User user = jda.getUserById("529463370089234466");
-                            user.openPrivateChannel().complete().sendMessage(builder.build()).queue();
+                            user.openPrivateChannel().complete().sendMessageEmbeds(builder.build()).queue();
                             System.out.println("デバッグ送信完了");
                             return;
                         }
@@ -197,9 +197,9 @@ public class EarthquakeListener {
                                                     if (textChannelById.canTalk()){
                                                         builder.setFooter(sdf.format(new Date()) + "に送信しました。");
                                                         if (!finalIsMoreMode){
-                                                            textChannelById.sendMessage(builder.build()).queue();
+                                                            textChannelById.sendMessageEmbeds(builder.build()).queue();
                                                         } else {
-                                                            textChannelById.sendMessage("※ 広範囲の地震のため\n  詳細な地震情報はテキストファイルになっております。").embed(builder2).queue();
+                                                            textChannelById.sendMessage("※ 広範囲の地震のため\n  詳細な地震情報はテキストファイルになっております。").setEmbeds(builder2).queue();
                                                             textChannelById.sendFile(new File("./jisin.txt")).queue();
                                                         }
 

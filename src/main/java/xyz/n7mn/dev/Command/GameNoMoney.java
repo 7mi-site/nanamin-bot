@@ -1,6 +1,5 @@
 package xyz.n7mn.dev.Command;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import xyz.n7mn.dev.Command.money.Money;

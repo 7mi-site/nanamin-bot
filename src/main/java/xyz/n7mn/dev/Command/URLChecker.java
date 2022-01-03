@@ -51,7 +51,7 @@ public class URLChecker extends Chat {
             builder.setColor(Color.ORANGE);
             getMessage().addReaction("\uD83D\uDCBE").queue();
 
-            getTextChannel().sendMessage(builder.build()).queue();
+            getTextChannel().sendMessageEmbeds(builder.build()).queue();
         }
 
     }

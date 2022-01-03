@@ -3,6 +3,7 @@ package xyz.n7mn.dev.Command;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
+import xyz.n7mn.dev.Command.music.GuildMusicManager;
 import xyz.n7mn.dev.Command.music.PlayerManager;
 import xyz.n7mn.dev.i.Chat;
 import xyz.n7mn.dev.i.HelpData;
@@ -24,12 +25,15 @@ public class MusicRepeat extends Chat {
 
         if (audioManager.isConnected()){
 
-            PlayerManager Playermanager = PlayerManager.getINSTANCE();
-            Playermanager.Repeat(getTextChannel());
-            return;
+            GuildMusicManager guildMusicManager = PlayerManager.getINSTANCE().getGuildMusicManager(getGuild());
 
+            boolean repeat = !guildMusicManager.scheduler.repeat;
+
+            getMessage().reply(repeat ? "1曲ループモードになりましたっ！" : "1曲ループモードをやめましたっ！").queue();
+
+            guildMusicManager.scheduler.repeat = repeat;
+        } else {
+            getMessage().reply("現在再生していません！").queue();
         }
-
-        getMessage().reply("現在再生していません！").queue();
     }
 }

@@ -390,7 +390,7 @@ public class Help extends Chat {
             builder.addField(extHelp.getHelpTitle(), extHelp.getHelpMessage(), false);
 
             PrivateChannel sendUserDM = getUser().openPrivateChannel().complete();
-            sendUserDM.sendMessage(builder.build()).queue();
+            sendUserDM.sendMessageEmbeds(builder.build()).queue();
             getMessage().reply("ななみちゃんbotのヘルプをDMにお送りいたしましたっ！\n(もっと詳細なヘルプが欲しい場合は`n.vote`、`n.game`、`n.quiz`、`n.help <コマンド名(n.除く)>`のどれかを実行してくださいっ！！)").queue();
         } else {
             String[] text = getMessageText().split(" ", -1);
@@ -404,7 +404,7 @@ public class Help extends Chat {
                     builder.setDescription(text[1] + "の詳細ヘルプを表示しますっ");
                     builder.addField(help.getHelpTitle(), help.getHelpMessage(), false);
                     PrivateChannel sendUserDM = getUser().openPrivateChannel().complete();
-                    sendUserDM.sendMessage(builder.build()).queue();
+                    sendUserDM.sendMessageEmbeds(builder.build()).queue();
                     getMessage().reply("ななみちゃんbotのコマンド詳細ヘルプをDMにお送りいたしましたっ！").queue();
                     return;
                 }
@@ -450,7 +450,7 @@ public class Help extends Chat {
 
             HelpData extHelp = getHelpData(2000);
             builder.addField(extHelp.getHelpTitle(), extHelp.getHelpMessage(), false);
-            channel.sendMessage(builder.build()).queue();
+            channel.sendMessageEmbeds(builder.build()).queue();
         } else {
             String[] textSplit = text.split(" ", -1);
             if (textSplit.length != 2){
@@ -466,7 +466,7 @@ public class Help extends Chat {
                         builder.setDescription(textSplit[1] + "の詳細ヘルプを表示しますっ");
                     }
                     builder.addField(help.getHelpTitle(), help.getHelpMessage(), false);
-                    channel.sendMessage(builder.build()).queue();
+                    channel.sendMessageEmbeds(builder.build()).queue();
                     return;
                 }
             }

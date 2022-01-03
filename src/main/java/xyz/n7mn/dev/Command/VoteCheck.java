@@ -86,7 +86,7 @@ public class VoteCheck extends Chat {
                 builder.setDescription(sb.toString());
 
                 PrivateChannel sendUserDM = getUser().openPrivateChannel().complete();
-                sendUserDM.sendMessage(builder.build()).queue();
+                sendUserDM.sendMessageEmbeds(builder.build()).queue();
                 getMessage().reply("途中結果をお送りしましたっ").queue();
             });
         } catch (Exception e){

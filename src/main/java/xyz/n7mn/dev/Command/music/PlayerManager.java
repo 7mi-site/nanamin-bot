@@ -17,8 +17,6 @@ public class PlayerManager {
     private static PlayerManager INSTANCE;
     private final AudioPlayerManager playerManager;
     private final Map<Long,GuildMusicManager> musicManagers;
-    private Timer timer = new Timer();
-    private List<String> repeatGuildIdList = Collections.synchronizedList(new ArrayList<>());
 
     private PlayerManager() {
         this.musicManagers = new HashMap<>();
@@ -40,58 +38,6 @@ public class PlayerManager {
         guild.getAudioManager().setSendingHandler(musicManager.getSendHandler());
 
         return musicManager;
-
-    }
-
-
-    public void Repeat(TextChannel channel){
-        boolean rep = false;
-
-        for (String guildId : repeatGuildIdList){
-            if (guildId.equals(channel.getGuild().getId())){
-                rep = true;
-                repeatGuildIdList.remove(guildId);
-                break;
-            }
-        }
-
-        if (rep){
-            channel.sendMessage("1曲ループモードをやめましたっ！").queue();
-        } else {
-            channel.sendMessage("1曲ループモードになりましたっ！").queue();
-            repeatGuildIdList.add(channel.getGuild().getId());
-        }
-
-        GuildMusicManager musicManager = getGuildMusicManager(channel.getGuild());
-        AudioPlayer player = musicManager.player;
-
-        long time = player.getPlayingTrack().getInfo().length - player.getPlayingTrack().getPosition();
-
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                boolean flag = false;
-                for (String repeat : repeatGuildIdList){
-                    if (repeat.equals(channel.getGuild().getId())){
-                        flag = true;
-                        break;
-                    }
-
-                }
-
-                if (!flag){
-                    this.cancel();
-                    return;
-                }
-                musicManager.scheduler.queue(player.getPlayingTrack().makeClone());
-            }
-        };
-
-        if (!rep){
-            timer.schedule(task, time, player.getPlayingTrack().getInfo().length);
-        } else {
-            timer.cancel();
-        }
 
     }
 

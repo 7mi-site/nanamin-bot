@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import xyz.n7mn.dev.Command.money.Money;
 import xyz.n7mn.dev.Command.money.MoneySystem;
+import xyz.n7mn.dev.Command.money.MoneyUtil;
 import xyz.n7mn.dev.i.Game;
 
 import java.security.SecureRandom;
@@ -66,8 +67,8 @@ public class GameSlot extends Game {
             flag = true;
         }
 
-        long tempInt = (money.getMoney() + plus);
-        MoneySystem.updateData(new Money(money.getUserID(), tempInt));
+        long tempLong = MoneyUtil.add(money.getMoney(), plus, true);
+        MoneySystem.updateData(new Money(money.getUserID(), tempLong));
 
         if (flag){
             getMessage().reply("あたり！ "+ (plus / but) + "倍！\nスロット結果 ： `"+a.get(slot1)+" "+b.get(slot2)+" "+c.get(slot3)+"`").queue();

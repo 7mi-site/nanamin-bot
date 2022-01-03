@@ -14,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
+    public boolean repeat = false;
 
     /**
      * @param player The audio player this scheduler uses
@@ -46,12 +47,23 @@ public class TrackScheduler extends AudioEventAdapter {
         player.startTrack(queue.poll(), false);
     }
 
+    public void nextTrack(AudioTrack audioTrack) {
+        player.startTrack(audioTrack.makeClone(), false);
+    }
+
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         // Only start the next track if the end reason is suitable for it (FINISHED or LOAD_FAILED)
-        if (endReason.mayStartNext) {
-            nextTrack();
+        if (endReason == AudioTrackEndReason.FINISHED && repeat) {
+            nextTrack(track);
         }
 
+        if (endReason.mayStartNext) {
+            if (repeat) {
+                nextTrack(track);
+            } else {
+                nextTrack();
+            }
+        }
     }
 }

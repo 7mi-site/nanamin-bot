@@ -76,12 +76,12 @@ public class CheckCommand extends Chat {
                         }
                     }
                     builder.setFooter("テストに "+(System.currentTimeMillis() - startTime)+"msかかったらしいですっ....？");
-                    message.editMessage(builder.build()).queue();
+                    message.editMessageEmbeds(builder.build()).queue();
                 });
             } else {
                 builder.addField("ななみちゃん設定チャンネル","なし", false);
                 builder.setFooter("テストに "+(System.currentTimeMillis() - startTime)+"msかかったらしいですっ....？");
-                message.editMessage(builder.build()).queue();
+                message.editMessageEmbeds(builder.build()).queue();
             }
         });
     }

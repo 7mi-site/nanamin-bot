@@ -12,7 +12,7 @@ import xyz.n7mn.dev.i.HelpData;
 
 public class VoteStop extends Chat {
 
-    private EmbedBuilder builder = new EmbedBuilder();
+    private final EmbedBuilder builder = new EmbedBuilder();
 
     public VoteStop(TextChannel textChannel, Message message) {
         super(textChannel, message);
@@ -28,7 +28,7 @@ public class VoteStop extends Chat {
 
         String[] textSplit = getMessageText().split(" ", -1);
 
-        if (textSplit.length == 1 && !getMessageText().toLowerCase().equals("n.stopvote")){
+        if (textSplit.length == 1 && !getMessageText().equalsIgnoreCase("n.stopvote")){
             return;
         }
 

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class NanamiFunction {
 
-    private static String ver = "1.4.7-fix1";
+    private static String ver = "1.4.7-fix2";
 
     public static String getVersion(){
         return ver;
@@ -231,7 +231,7 @@ public class NanamiFunction {
             }
 
             builder.setColor(Color.GREEN);
-            message1.editMessage(sb.toString()).embed(builder.build()).queue(message2 -> {
+            message1.editMessage(sb.toString()).setEmbeds(builder.build()).queue(message2 -> {
                 message2.addReaction("\u2705").queue();
             });
 

@@ -27,8 +27,7 @@ public class Random extends Chat {
         SecureRandom secureRandom = new SecureRandom();
 
         String[] split = getMessageText().split(" ", -1);
-        List<String> wordList = new ArrayList<>();
-        wordList.addAll(Arrays.asList(split).subList(1, split.length));
+        List<String> wordList = new ArrayList<>(Arrays.asList(split).subList(1, split.length));
 
         shuffle(wordList);
 
