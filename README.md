@@ -1,8 +1,11 @@
 # nanamin-bot (ななみちゃんbot)
-DiscordBot
+DiscordBot<br>
 https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot
 
 ビルドは「gradle build」でlibフォルダ直下にjarできます。(多分)
+
+派生のひむひむちゃんbot:<br>
+https://github.com/KoutaChan/himuhimu-bot 
 
 ## 使用しているもの
 ### ライブラリ
