@@ -198,6 +198,11 @@ public class EventListener extends ListenerAdapter {
             return;
         }
 
+
+        //if (!event.getGuild().getId().equals("781148066761670666")){
+        //    return;
+        //}
+
         new Thread(()->{
             Money data = MoneySystem.getData(event.getAuthor().getId());
             if (data == null){

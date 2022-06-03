@@ -122,7 +122,7 @@ public class YululiCommand extends Chat {
             Member me = members.get(secureRandom.nextInt(members.size() - 1));
 
             if (me.getNickname() != null){
-                getTextChannel().sendMessage(me.getNickname()+"さんが馬鹿に選ばれましたっ！").queue();
+                getTextChannel().sendMessage(me.getNickname().replaceAll("@","`@`")+"さんが馬鹿に選ばれましたっ！").queue();
             } else {
                 getTextChannel().sendMessage(me.getUser().getName()+"さんが馬鹿に選ばれましたっ！").queue();
             }

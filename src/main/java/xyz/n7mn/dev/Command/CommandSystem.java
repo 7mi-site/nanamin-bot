@@ -185,9 +185,9 @@ public class CommandSystem {
             system = new SebunkuCommand(textChannel, message);
         }
 
-        if (messageText.toLowerCase().startsWith("n.send")){
-            system = new DMSend(textChannel, message);
-        }
+        //if (messageText.toLowerCase().startsWith("n.send")){
+        //    system = new DMSend(textChannel, message);
+        //}
 
         if (messageText.toLowerCase().startsWith("n.msg")){
             system = new Msg(textChannel, message);

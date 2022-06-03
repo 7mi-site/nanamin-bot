@@ -45,6 +45,6 @@ public abstract class Chat implements SystemRun {
     }
 
     protected String getMessageText() {
-        return messageText;
+        return messageText.replaceAll("@","`@`");
     }
 }
