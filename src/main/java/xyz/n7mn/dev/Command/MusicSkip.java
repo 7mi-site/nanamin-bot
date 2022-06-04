@@ -38,7 +38,7 @@ public class MusicSkip extends Chat {
 
             getMessage().delete().queue();
 
-            getTextChannel().sendMessage("「"+oldTitle+"」 ( "+oldUrl+" )をスキップして「"+track2.getInfo().title+"」( "+track2.getInfo().uri+" )を再生しました！").queue();
+            getTextChannel().sendMessage("「"+oldTitle.replaceAll("@","`@`")+"」 ( "+oldUrl+" )をスキップして「"+track2.getInfo().title.replaceAll("@","`@`")+"」( "+track2.getInfo().uri+" )を再生しました！").queue();
         }
     }
 }

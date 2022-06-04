@@ -87,9 +87,9 @@ public class MoneyCommand extends Game {
                     MoneySystem.updateData(money2);
 
                     if (targetMember.getNickname() != null){
-                        getMessage().reply(targetMember.getNickname() + "さんに "+split[3] + " "+ MoneySystem.getCurrency()+"を送金しましたっ").queue();
+                        getMessage().reply(targetMember.getNickname().replaceAll("@","`@`") + "さんに "+split[3] + " "+ MoneySystem.getCurrency()+"を送金しましたっ").queue();
                     } else {
-                        getMessage().reply(targetMember.getUser().getName() + "さんに "+split[3] + " "+ MoneySystem.getCurrency()+"を送金しましたっ").queue();
+                        getMessage().reply(targetMember.getUser().getName().replaceAll("@","`@`") + "さんに "+split[3] + " "+ MoneySystem.getCurrency()+"を送金しましたっ").queue();
                     }
                 } else {
                     getMessage().reply("その人 実は存在しないらしい。").queue();
