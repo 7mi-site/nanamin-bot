@@ -101,14 +101,14 @@ public class PlayerManager {
         playerManager.loadItemOrdered(musicManager, trackURL, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                channel.sendMessage("再生する音楽を追加したよっ\n「" + track.getInfo().title+"」").queue();
+                channel.sendMessage("再生する音楽を追加したよっ\n「" + track.getInfo().title.replaceAll("@","`@`")+"」").queue();
                 play(musicManager,track);
                 // System.out.println(musicManager.player.getPlayingTrack().getInfo().length);
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                channel.sendMessage("再生するリストを追加したよっ\n「" + playlist.getName()+"」").queue();
+                channel.sendMessage("再生するリストを追加したよっ\n「" + playlist.getName().replaceAll("@","`@`")+"」").queue();
                 for (AudioTrack track : playlist.getTracks()){
                     play(musicManager, track);
                 }
