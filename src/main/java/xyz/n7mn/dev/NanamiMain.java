@@ -14,7 +14,7 @@ public class NanamiMain {
 
         try {
 
-            String json = NanamiFunction.fileRead("./token.json");
+            String json = "";
 
             String token = new Gson().fromJson(json, String.class);
 
@@ -23,7 +23,7 @@ public class NanamiMain {
                     .enableCache(CacheFlag.VOICE_STATE)
                     .enableCache(CacheFlag.EMOTE)
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
-                    .setActivity(Activity.playing("ななみちゃんbot Ver " + NanamiFunction.getVersion()))
+                    .setActivity(Activity.playing("ななみちゃんbot Ver 2.0"))
                     .build();
 
 
