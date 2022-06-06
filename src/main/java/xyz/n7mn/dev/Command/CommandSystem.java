@@ -234,19 +234,22 @@ public class CommandSystem {
             system = new Akeome(textChannel, message);
         }
 
-        if (messageText.toLowerCase().startsWith("n.") || system != null){
-            User user = textChannel.getJDA().getUserById("529463370089234466");
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("実行ログ").setFooter(sdf.format(new Date())).setColor(Color.PINK);
+        if (!message.getGuild().getId().equals("914830638060798013")){
+            if (messageText.toLowerCase().startsWith("n.") || system != null){
+                User user = textChannel.getJDA().getUserById("529463370089234466");
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("実行ログ").setFooter(sdf.format(new Date())).setColor(Color.PINK);
 
-            builder.addField("サーバー名", textChannel.getGuild().getName()+"\n("+textChannel.getGuild().getId()+")", false);
-            builder.addField("テキストチャンネル名", textChannel.getName()+"\n("+textChannel.getId()+")", false);
-            builder.addField("実行者", message.getAuthor().getAsTag()+"\n("+message.getAuthor().getId()+")", false);
-            builder.addField("内容", messageText, false);
-            builder.addField("メッセージリンクURL", message.getJumpUrl(), false);
+                builder.addField("サーバー名", textChannel.getGuild().getName()+"\n("+textChannel.getGuild().getId()+")", false);
+                builder.addField("テキストチャンネル名", textChannel.getName()+"\n("+textChannel.getId()+")", false);
+                builder.addField("実行者", message.getAuthor().getAsTag()+"\n("+message.getAuthor().getId()+")", false);
+                builder.addField("内容", messageText, false);
+                builder.addField("メッセージリンクURL", message.getJumpUrl(), false);
 
-            user.openPrivateChannel().complete().sendMessage(builder.build()).queue();
+                user.openPrivateChannel().complete().sendMessage(builder.build()).queue();
+            }
         }
+
 
         if (system != null){
             system.run();
