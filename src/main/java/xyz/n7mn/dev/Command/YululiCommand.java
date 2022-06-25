@@ -38,7 +38,7 @@ public class YululiCommand extends Chat {
 
             builder.setTitle("こうたちゃんの金装備は神！");
             builder.setDescription(imageDataList.get(i).getDescription());
-            builder.setThumbnail("https://nana-bot.n7mn.xyz/kouta/body.png");
+            builder.setThumbnail("https://n.7mi.site/nana-bot/kouta/body.png");
             builder.setImage(imageDataList.get(i).getImageURL());
             builder.setColor(Color.YELLOW);
 
@@ -135,7 +135,7 @@ public class YululiCommand extends Chat {
 
             // builder.setTitle("");
             builder.setDescription(imageDataList.get(i).getDescription());
-            builder.setThumbnail("https://nana-bot.n7mn.xyz/pan/food_francepan.png");
+            builder.setThumbnail("https://n.7mi.site/nana-bot/pan/food_francepan.png");
             builder.setImage(imageDataList.get(i).getImageURL());
             builder.setColor(Color.ORANGE);
 
@@ -150,7 +150,7 @@ public class YululiCommand extends Chat {
             List<String> urlList = new ArrayList<>(Arrays.asList(url));
             shuffle(urlList);
 
-            builder.setThumbnail("https://nana-bot.n7mn.xyz/VjYrK6z9_400x400.jpg");
+            builder.setThumbnail("https://n.7mi.site/nana-bot/VjYrK6z9_400x400.jpg");
             int i = new SecureRandom().nextInt(urlList.size() - 1);
             builder.setTitle("Yululi-ゆるり-", urlList.get(i));
             builder.setDescription(urlList.get(i));
@@ -170,7 +170,7 @@ public class YululiCommand extends Chat {
 
             builder.setTitle("poti_336","https://ja.namemc.com/profile/poti_336.1");
             builder.setDescription(imageDataList.get(i).getDescription());
-            builder.setThumbnail("https://nana-bot.n7mn.xyz/poti/body.png");
+            builder.setThumbnail("https://n.7mi.site/nana-bot/poti/body.png");
             builder.setImage(imageDataList.get(i).getImageURL());
 
             getTextChannel().sendMessage(builder.build()).queue();
@@ -183,7 +183,7 @@ public class YululiCommand extends Chat {
 
             builder.setTitle("vd23z12","https://ja.namemc.com/profile/vd23z12.1");
             builder.setDescription(imageDataList.get(i).getDescription());
-            builder.setThumbnail("https://nana-bot.n7mn.xyz/kuretiki/body.png");
+            builder.setThumbnail("https://n.7mi.site/nana-bot/kuretiki/body.png");
             builder.setImage(imageDataList.get(i).getImageURL());
 
             getTextChannel().sendMessage(builder.build()).queue();
@@ -197,7 +197,7 @@ public class YululiCommand extends Chat {
 
             builder.setTitle("Yululi Server");
             builder.setDescription(imageDataList.get(i).getDescription());
-            builder.setThumbnail("https://nana-bot.n7mn.xyz/VjYrK6z9_400x400.jpg");
+            builder.setThumbnail("https://n.7mi.site/nana-bot/VjYrK6z9_400x400.jpg");
             builder.setImage(imageDataList.get(i).getImageURL());
 
             getTextChannel().sendMessage(builder.build()).queue();
@@ -210,7 +210,7 @@ public class YululiCommand extends Chat {
 
             builder.setTitle("Yululi Server");
             builder.setDescription(imageDataList.get(i).getDescription());
-            builder.setThumbnail("https://nana-bot.n7mn.xyz/VjYrK6z9_400x400.jpg");
+            builder.setThumbnail("https://n.7mi.site/nana-bot/VjYrK6z9_400x400.jpg");
             builder.setImage(imageDataList.get(i).getImageURL());
 
             getTextChannel().sendMessage(builder.build()).queue();

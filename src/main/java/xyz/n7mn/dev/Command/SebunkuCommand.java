@@ -44,7 +44,7 @@ public class SebunkuCommand extends Chat {
 
             if (!sebunku.get(i).getImageURL().startsWith("https://youtu.be")){
                 builder.setTitle("sebunku");
-                builder.setThumbnail("https://nana-bot.n7mn.xyz/sebunku/body.png");
+                builder.setThumbnail("https://n.7mi.site/nana-bot/sebunku/body.png");
                 builder.setImage(sebunku.get(i).getImageURL());
                 builder.setColor(Color.PINK);
                 getTextChannel().sendMessage(builder.build()).queue();
