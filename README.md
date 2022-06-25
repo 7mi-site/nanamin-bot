@@ -11,11 +11,11 @@ https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permission
 - [ひむひむちゃんbot](https://github.com/KoutaChan/himuhimu-bot)
 <br>新規導入するなら「ひむひむちゃんbot」をおすすめします。
 
-## 使用しているもの
+## 使用しているもの / する予定のもの
 ### ライブラリ
 - [JDA](https://github.com/DV8FromTheWorld/JDA)
 - [LavaPlayer](https://github.com/sedmelluq/lavaplayer)
 - [eo-yaml](https://github.com/decorators-squad/eo-yaml)
+- [gson](https://github.com/google/gson)
 ### API
-- [地震情報API](https://narikakun.net/technology/earthquake-api/)
 - [気象庁防災情報XMLフォーマット](https://xml.kishou.go.jp/)
