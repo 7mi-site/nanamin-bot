@@ -41,7 +41,7 @@ public class Aisatu extends Chat {
             int i = new SecureRandom().nextInt(ohaList.length - 1);
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setImage("https://nana-bot.n7mn.xyz/irasutoya/" + ohaList[i]);
+            builder.setImage("https://n.7mi.site/nana-bot/irasutoya/" + ohaList[i]);
             builder.setFooter("素材元：いらすとや");
 
             getTextChannel().sendMessage(builder.build()).queue();
@@ -53,7 +53,7 @@ public class Aisatu extends Chat {
             int i = new SecureRandom().nextInt(oyaList.length - 1);
 
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setImage("https://nana-bot.n7mn.xyz/irasutoya/" + oyaList[i]);
+            builder.setImage("https://n.7mi.site/nana-bot/irasutoya/" + oyaList[i]);
             builder.setFooter("素材元：いらすとや");
 
             getTextChannel().sendMessage(builder.build()).queue();
@@ -85,7 +85,7 @@ public class Aisatu extends Chat {
         }
 
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setImage("https://nana-bot.n7mn.xyz/irasutoya/" + img);
+        builder.setImage("https://n.7mi.site/nana-bot/irasutoya/" + img);
         builder.setFooter("素材元：いらすとや");
 
         getMessage().delete().queue();

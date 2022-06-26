@@ -31,7 +31,7 @@ public class ImgSystem {
                 while (set.next()){
 
                     ImageData data = new ImageData(
-                            "https://nana-bot.n7mn.xyz/"+set.getString("Command").replaceAll("gold","kouta").replaceAll("yululi2","yululi")+"/"+set.getString("FileName"),
+                            "https://n.7mi.site/nana-bot/"+set.getString("Command").replaceAll("gold","kouta").replaceAll("yululi2","yululi")+"/"+set.getString("FileName"),
                             set.getString("Comment")
                     );
 
