@@ -1,6 +1,7 @@
 # nanamin-bot (ななみちゃんbot)
 DiscordBot<br>
-https://discord.com/api/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot
+[1号機](https://discord.com/oauth2/authorize?client_id=781323086624456735&permissions=8&scope=bot)
+[2号機](https://discord.com/oauth2/authorize?client_id=1045943132837122068&permissions=8&scope=bot)
 
 ビルドは「gradle build」でlibフォルダ直下にjarできます。(多分)
 
