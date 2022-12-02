@@ -71,7 +71,7 @@ public class NanamiMain {
                     .setActivity(Activity.playing("ななみちゃんbot v"+ ver.get()))
                     .build();
 
-            System.out.println(build.getSelfUser().getAsTag());
+            //System.out.println(build.getSelfUser().getAsTag());
 
 
 

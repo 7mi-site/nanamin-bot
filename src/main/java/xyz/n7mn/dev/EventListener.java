@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.GatewayPingEvent;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -17,12 +18,19 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.api.ver;
 
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class EventListener extends ListenerAdapter {
@@ -151,7 +159,127 @@ public class EventListener extends ListenerAdapter {
         JDA jda = event.getJDA();
 
         Message message = event.getMessage();
-        System.out.println(message.getType());
+        MessageChannelUnion channel = event.getChannel();
+
+        if (message.getMember() != null){
+            if (message.getMember().getUser().getId().equals(jda.getSelfUser().getId())){
+                return;
+            }
+        } else {
+            if (event.getAuthor().getId().equals(jda.getSelfUser().getId())){
+                return;
+            }
+        }
+
+        if (channel.getType() == ChannelType.PRIVATE){
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(Color.PINK);
+            builder.setTitle("ななみちゃんbot");
+            builder.setDescription("" +
+                    "Ver "+ver.get()+"\n" +
+                    "サポート(質問・バグ報告・要望)サーバー : https://discord.gg/FnjCMzP7d4\n" +
+                    "ソースコード : https://github.com/n7mn-xyz/nanamin-bot"
+            );
+
+            channel.sendMessage("なにも起きませんです。送らないでくださいです。\n").addEmbeds(builder.build()).queue();
+
+            // ログ記録
+            if (!new File("./log").exists()){
+                new File("./log").mkdir();
+            }
+
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
+
+            if (!new File("./log/"+sdf.format(date)).exists()){
+                new File("./log/log"+sdf.format(date)).mkdir();
+            }
+
+            File file = new File("./log/log" + sdf.format(date) + "/" + event.getAuthor().getId() + "-" + message.getId() + "-private.txt");
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(message.getJumpUrl()); sb.append("\r\n");
+            sb.append(event.getAuthor().getAsTag()); sb.append("\r\n");
+            sb.append(event.getAuthor().getId()); sb.append("\r\n");
+            sb.append(message.getContentRaw()); sb.append("\r\n");
+            List<Message.Attachment> list = message.getAttachments();
+
+            if (list.size() > 0){
+                sb.append("--- 添付ファイル ---\r\n");
+            }
+            for (Message.Attachment attachment : list){
+                sb.append(attachment.getFileName());
+                sb.append(" ");
+                sb.append(attachment.getUrl());
+                sb.append("\r\n");
+            }
+
+            try {
+                PrintWriter writer = new PrintWriter(file);
+                writer.print(sb);
+                writer.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            return;
+        }
+
+        // 旧コマンド呼ばれたら誘導する
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(Color.RED);
+        builder.setTitle("ななみちゃんbot 実行エラー");
+        builder.setDescription("そのコマンドはもう古いですっ！\n/helpを使って新しいコマンドを探して打ってね！！");
+        if (
+                message.getContentRaw().startsWith("n.vote") || message.getContentRaw().startsWith("n.role") || message.getContentRaw().equals("n.ui")
+                || message.getContentRaw().equals("n.nullpo") || message.getContentRaw().equals("n.dice") || message.getContentRaw().equals("n.burn") || message.getContentRaw().equals("n.burst") || message.getContentRaw().equals("n.aisatu") || message.getContentRaw().equals("n.あいさつ") || message.getContentRaw().startsWith("n.random")
+                || message.getContentRaw().startsWith("n.play") || message.getContentRaw().equals("n.stop") || message.getContentRaw().equals("n.repeat") || message.getContentRaw().equals("n.nowPlay") || message.getContentRaw().toLowerCase().equals("n.nowplay") || message.getContentRaw().startsWith("n.musicVolume")
+                || message.getContentRaw().startsWith("n.volume") || message.getContentRaw().equals("n.musicSkip") || message.getContentRaw().equals("n.skip")
+                || message.getContentRaw().equals("n.game") || message.getContentRaw().startsWith("n.money") || message.getContentRaw().equals("n.bank") || message.getContentRaw().equals("n.slot")
+                || message.getContentRaw().equals("n.rank") || message.getContentRaw().equals("n.yosogame") || message.getContentRaw().equals("n.fx") || message.getContentRaw().equals("n.omikuji") || message.getContentRaw().equals("n.nomoney") || message.getContentRaw().equals("n.nomoney2")
+        ){
+            message.replyEmbeds(builder.build()).queue();
+
+            new Thread(()->{
+                // ログ記録
+                if (!new File("./log").exists()){
+                    new File("./log").mkdir();
+                }
+
+                Date date = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
+
+                if (!new File("./log/"+sdf.format(date)).exists()){
+                    new File("./log/log"+sdf.format(date)).mkdir();
+                }
+
+                File file = new File("./log/log" + sdf.format(date) + "/" + event.getMember().getId() + "-" + event.getMessageId() + "-messageCommand.txt");
+
+                StringBuffer sb = new StringBuffer();
+
+                sb.append(event.getMember().getUser().getAsTag()); sb.append("\r\n");
+                sb.append(event.getMember().getUser().getId()); sb.append("\r\n");
+                sb.append(event.getJumpUrl()); sb.append("\r\n");
+                List<Message.Attachment> list = message.getAttachments();
+                if (list.size() > 0){
+                    sb.append("--- 添付ファイル ---\r\n");
+                }
+                for (Message.Attachment attachment : list){
+                    sb.append(attachment.getFileName());
+                    sb.append(" ");
+                    sb.append(attachment.getUrl());
+                    sb.append("\r\n");
+                }
+
+                try {
+                    PrintWriter writer = new PrintWriter(file);
+                    writer.print(sb);
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
 
     }
 
@@ -161,9 +289,47 @@ public class EventListener extends ListenerAdapter {
 
         MessageChannelUnion channel = event.getChannel();
         Member member = event.getMember();
+        JDA jda = event.getJDA();
+
+        new Thread(()->{
+            // ログ記録
+            if (!new File("./log").exists()){
+                new File("./log").mkdir();
+            }
+
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
+
+            if (!new File("./log/"+sdf.format(date)).exists()){
+                new File("./log/log"+sdf.format(date)).mkdir();
+            }
+
+            File file = new File("./log/log" + sdf.format(date) + "/" + member.getId() + "-" + event.getId() + "-command.txt");
+
+            StringBuffer sb = new StringBuffer();
+
+            sb.append(member.getUser().getAsTag()); sb.append("\r\n");
+            sb.append(member.getUser().getId()); sb.append("\r\n");
+            sb.append(event.getFullCommandName()); sb.append("\r\n");
+            for (OptionMapping option : event.getOptions()){
+                sb.append(option.getName());
+                sb.append(" : ");
+                sb.append(option.getAsString());
+                sb.append("\r\n");
+            }
+
+            try {
+                PrintWriter writer = new PrintWriter(file);
+                writer.print(sb);
+                writer.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }).start();
 
         if (event.getFullCommandName().equals("nanami-version")){
             EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(Color.PINK);
             builder.setTitle("ななみちゃんbot");
             builder.setDescription("" +
                     "Ver "+ver.get()+"\n" +
@@ -176,6 +342,40 @@ public class EventListener extends ListenerAdapter {
             return;
         }
 
+        if (event.getFullCommandName().equals("help")){
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setColor(Color.PINK);
+            builder.setTitle("ななみちゃんbot ヘルプ");
+            builder.setDescription("" +
+                    "質問や要望、バグ報告は https://discord.gg/FnjCMzP7d4 までお願いします。\n" +
+                    (ver.get().matches(".*dev.*") ? "**開発中のため実装されていない機能がある可能性があります！！**" : "")
+            );
+
+            builder.addField("/help", "いまあなたが見ているやつですっ！！", false);
+            builder.addField("/vote", "投票機能\n\n例\n/vote 朝ごはん食べる？ 2024-12-01 00:00:00 食べる 食べない なにそれ？ ご飯を食べられない人だっているんですよ！！！ それってあなたの感想ですよね？", false);
+            builder.addField("/game", "ミニゲーム機能\n\n実装し直し中です。しばらく待っててね！", false);
+            builder.addField("/music", "音楽再生機能\nニコ動は再生できませんっ\nお仲間のひむひむちゃんbotを使ってねっ！\nhttps://github.com/KoutaChan/himuhimu-bot", false);
+            builder.addField("/nanami-version", "バージョン情報を出す。\nバグ報告に役にたつのでそのときはお願いしますっ", false);
+            builder.addField("/nanami-setting", "ななみちゃんbotの設定ができるコマンドです。 \n昔のnanami_settingチャンネルの代わりですっ", false);
+
+            OptionMapping option = event.getOption("送信方式");
+            if (option.getAsString().equals("d")){
+                jda.getUserById(member.getId()).openPrivateChannel().queue((s->{
+                    s.sendMessageEmbeds(builder.build()).queue();
+                    event.reply("ヘルプをDMに送信しましたっ！").setEphemeral(true).queue();
+                }));
+
+                return;
+            }
+
+            if (option.getAsString().equals("m") || option.getAsString().equals("a")){
+                event.replyEmbeds(builder.build()).setEphemeral(option.getAsString().equals("m")).queue();
+                return;
+            }
+
+            return;
+        }
 
     }
 }
