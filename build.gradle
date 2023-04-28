@@ -27,6 +27,7 @@ dependencies {
     implementation 'com.amihaiemil.web:eo-yaml:7.0.6'
     implementation 'com.mysql:mysql-connector-j:8.0.33'
     implementation 'com.google.code.gson:gson:2.10.1'
+
 }
 
 test {

@@ -1,39 +1,43 @@
-package xyz.n7mn.dev.command;
+package xyz.n7mn.dev.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
+import xyz.n7mn.dev.command.music.AudioPlayerSendHandler;
+import xyz.n7mn.dev.command.music.TrackScheduler;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Locale;
 
 public class MusicBot {
 
-    private final SlashCommandInteractionEvent event;
-    private final OptionMapping URL;
-    private final OptionMapping Volume;
     private final EmbedBuilder builder = new EmbedBuilder();
+    private final List<MusicQueue> musicQueueList;
+    private final AudioPlayerManager playerManager;
+    private final AudioPlayer player;
 
-    public MusicBot(SlashCommandInteractionEvent event, OptionMapping option1, OptionMapping option2) {
+    public MusicBot(List<MusicQueue> musicQueueList) {
+        this.musicQueueList = musicQueueList;
 
-        this.event = event;
-        this.URL = option1;
-        this.Volume = option2;
-
+        playerManager = new DefaultAudioPlayerManager();
+        AudioSourceManagers.registerRemoteSources(playerManager);
+        player = playerManager.createPlayer();
     }
 
-    public void run(){
+    public void run(SlashCommandInteractionEvent event, OptionMapping option1, OptionMapping option2){
+        OptionMapping URL = option1;
+        OptionMapping Volume = option2;
+
         String VideoURL = null;
         if (!URL.getAsString().startsWith("http")){
 
@@ -68,12 +72,13 @@ public class MusicBot {
 
         AudioChannelUnion channel = event.getMember().getVoiceState().getChannel();
 
-        AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(playerManager);
-        AudioPlayer player = playerManager.createPlayer();
-        player.setVolume(volume);
-        TrackScheduler trackScheduler = new TrackScheduler(player, event.getChannel());
+
+
+
+        TrackScheduler trackScheduler = new TrackScheduler(player, event.getGuild(), event, musicQueueList);
         player.addListener(trackScheduler);
+
+        player.setVolume(volume);
 
         if (channel.getType().isAudio()){
             AudioManager manager = event.getGuild().getAudioManager();
@@ -89,13 +94,26 @@ public class MusicBot {
             playerManager.loadItem(VideoURL, new AudioLoadResultHandler() {
                 @Override
                 public void trackLoaded(AudioTrack track) {
-                    trackScheduler.queue(track);
+                    trackScheduler.play(track);
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("ななみちゃんbot 音楽再生機能");
+                    builder.setColor(Color.PINK);
+                    builder.setDescription(track.getInfo().title + "を追加しました！");
+
+                    event.replyEmbeds(builder.build()).setEphemeral(false).queue();
                 }
 
                 @Override
                 public void playlistLoaded(AudioPlaylist playlist) {
+
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("ななみちゃんbot 音楽再生機能");
+                    builder.setColor(Color.PINK);
+                    builder.setDescription(playlist.getName() + "を追加しました！\n("+playlist.getTracks().size()+"曲)");
+                    event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+
                     for (AudioTrack track : playlist.getTracks()) {
-                        trackScheduler.queue(track);
+                        trackScheduler.play(track);
                     }
                 }
 

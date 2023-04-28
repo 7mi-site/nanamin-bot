@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
-import net.dv8tion.jda.api.events.GatewayPingEvent;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
@@ -17,7 +16,6 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -25,17 +23,21 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.api.ver;
-import xyz.n7mn.dev.command.MusicBot;
+import xyz.n7mn.dev.music.MusicBot;
+import xyz.n7mn.dev.music.MusicQueue;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class EventListener extends ListenerAdapter {
+
+    private final MusicBot musicCommand;
 
     private SlashCommandData vote = Commands.slash("vote", "投票する");
     private SlashCommandData music = Commands.slash("music", "音楽/動画 再生");
@@ -43,6 +45,12 @@ public class EventListener extends ListenerAdapter {
     private SlashCommandData ver_c = Commands.slash("nanami-version", "バージョン情報");
     private SlashCommandData setting = Commands.slash("nanami-setting", "ななみちゃんbot 設定画面");
     private SlashCommandData game = Commands.slash("game", "ミニゲーム");
+
+    private List<MusicQueue> musicQueueList = new ArrayList<>();
+
+    public EventListener() {
+        musicCommand = new MusicBot(musicQueueList);
+    }
 
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
@@ -255,7 +263,6 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event){
 
-
         MessageChannelUnion channel = event.getChannel();
         Member member = event.getMember();
         JDA jda = event.getJDA();
@@ -350,7 +357,7 @@ public class EventListener extends ListenerAdapter {
         if (event.getFullCommandName().equals("music")){
             OptionMapping option1 = event.getOption("url");
             OptionMapping option2 = event.getOption("音量");
-            new MusicBot(event, option1, option2).run();
+            musicCommand.run(event, option1, option2);
         }
 
     }

@@ -1,4 +1,4 @@
-package xyz.n7mn.dev.command;
+package xyz.n7mn.dev.command.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;

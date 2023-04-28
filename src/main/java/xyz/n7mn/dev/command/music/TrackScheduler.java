@@ -1,4 +1,4 @@
-package xyz.n7mn.dev.command;
+package xyz.n7mn.dev.command.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -6,18 +6,27 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import xyz.n7mn.dev.music.MusicQueue;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrackScheduler extends AudioEventAdapter {
 
     private final AudioPlayer player;
-    private final MessageChannelUnion channel;
+    private final SlashCommandInteractionEvent event;
+    private final List<MusicQueue> musicQueueList;
+    private final Guild guild;
 
-    public TrackScheduler(AudioPlayer player, MessageChannelUnion channel) {
+    public TrackScheduler(AudioPlayer player, Guild guild, SlashCommandInteractionEvent event, List<MusicQueue> musicQueueList) {
         this.player = player;
-        this.channel = channel;
+        this.guild = guild;
+        this.event = event;
+        this.musicQueueList = musicQueueList;
     }
 
     @Override
@@ -37,15 +46,15 @@ public class TrackScheduler extends AudioEventAdapter {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("ななみちゃんbot 音楽再生機能");
         builder.setColor(Color.PINK);
-        builder.setDescription(track.getInfo().title + "を再生します！\nURL : "+track.getInfo().uri);
+        builder.setDescription(track.getInfo().title + "を再生します！\nURL : "+track.getInfo().identifier);
 
-        channel.sendMessageEmbeds(builder.build()).queue();
+        event.getChannel().sendMessageEmbeds(builder.build()).queue();
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
-            // Start next track
+
         }
 
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
@@ -66,7 +75,19 @@ public class TrackScheduler extends AudioEventAdapter {
         // Audio track has been unable to provide us any audio, might want to just start a new track
     }
 
-    public void queue(AudioTrack track) {
-        player.playTrack(track);
+    public void play(AudioTrack track){
+
+        List<MusicQueue> list = new ArrayList<>();
+        for (MusicQueue q : musicQueueList){
+            if (guild.getId().equals(q.getGuildId())){
+                list.add(q);
+            }
+        }
+
+        if (list.size() == 0){
+            player.playTrack(track);
+        }
+
+        musicQueueList.add(new MusicQueue(guild.getId(), event.getMember().getId(), event.getMember().getAsMention(), event.getMember().getNickname(), track));
     }
 }
