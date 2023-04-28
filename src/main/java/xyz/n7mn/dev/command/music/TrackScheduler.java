@@ -42,18 +42,52 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         // A track started playing
-
+/*
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("ななみちゃんbot 音楽再生機能");
         builder.setColor(Color.PINK);
-        builder.setDescription(track.getInfo().title + "を再生します！\nURL : "+track.getInfo().identifier);
+        builder.setDescription(track.getInfo().title + "を再生します！\nURL : "+track.getInfo().uri);
 
         event.getChannel().sendMessageEmbeds(builder.build()).queue();
+
+ */
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
+
+            System.out.println("d 1-1");
+
+            List<MusicQueue> temp = new ArrayList<>();
+            for (MusicQueue m : musicQueueList){
+                if (event.getGuild().getId().equals(m.getGuildId())){
+                    temp.add(m);
+                }
+            }
+
+            int del = -1;
+            for (int i = 0; i < musicQueueList.size(); i++){
+                if (temp.get(i).getAudioTrack().getInfo().uri.equals(track.getInfo().uri)){
+                    del = i;
+                }
+            }
+            musicQueueList.remove(del);
+
+            for (int i = 0; i < temp.size(); i++){
+                System.out.println(temp.get(i).getAudioTrack().getInfo().uri + " / " + track.getInfo().uri);
+
+                if (temp.get(i).getAudioTrack().getInfo().uri.equals(track.getInfo().uri)){
+
+                    if ((i + 1) >= temp.size()){
+                        return;
+                    }
+
+                    this.player.playTrack(temp.get(i + 1).getAudioTrack());
+                    temp.clear();
+                    return;
+                }
+            }
 
         }
 
@@ -89,5 +123,7 @@ public class TrackScheduler extends AudioEventAdapter {
         }
 
         musicQueueList.add(new MusicQueue(guild.getId(), event.getMember().getId(), event.getMember().getAsMention(), event.getMember().getNickname(), track));
+        //System.out.println("全体残りキュー : "+musicQueueList.size() + " / 残りキュー : " + list.size());
+
     }
 }

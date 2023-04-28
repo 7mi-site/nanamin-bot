@@ -2,8 +2,11 @@ package xyz.n7mn.dev.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
+import java.util.UUID;
+
 public class MusicQueue {
 
+    private UUID QueueId;
     private String GuildId;
     private String AddDiscordId;
     private String AddDiscordUsername;
@@ -12,11 +15,16 @@ public class MusicQueue {
 
 
     public MusicQueue(String guildId, String addDiscordId, String addDiscordUsername, String addDiscordNickname, AudioTrack audioTrack){
+        this.QueueId = UUID.randomUUID();
         this.GuildId = guildId;
         this.AddDiscordId = addDiscordId;
         this.AddDiscordUsername = addDiscordUsername;
         this.AddDiscordNickname = addDiscordNickname;
         this.AudioTrack = audioTrack;
+    }
+
+    public UUID getQueueId() {
+        return QueueId;
     }
 
     public String getGuildId() {
