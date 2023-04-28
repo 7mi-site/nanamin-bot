@@ -30,7 +30,7 @@ public class NanamiMain {
                 YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
                 ConfigYml = builder.add(
                         "DiscordToken", "xxx"
-                ).add(
+                /*).add(
                         "MySQLServerAddress", "localhost"
                 ).add(
                         "MySQLServerPort", "3306"
@@ -41,7 +41,7 @@ public class NanamiMain {
                 ).add(
                         "MySQLServerUsername","a"
                 ).add(
-                        "MySQLServerPassword","a"
+                        "MySQLServerPassword","a" */
                 ).build();
 
                 try {

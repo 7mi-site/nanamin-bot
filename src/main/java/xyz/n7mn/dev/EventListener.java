@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -24,6 +25,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.api.ver;
+import xyz.n7mn.dev.command.MusicBot;
 
 import java.awt.*;
 import java.io.File;
@@ -35,6 +37,13 @@ import java.util.List;
 
 public class EventListener extends ListenerAdapter {
 
+    private SlashCommandData vote = Commands.slash("vote", "投票する");
+    private SlashCommandData music = Commands.slash("music", "音楽/動画 再生");
+    private SlashCommandData help = Commands.slash("help", "ヘルプ");
+    private SlashCommandData ver_c = Commands.slash("nanami-version", "バージョン情報");
+    private SlashCommandData setting = Commands.slash("nanami-setting", "ななみちゃんbot 設定画面");
+    private SlashCommandData game = Commands.slash("game", "ミニゲーム");
+
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         JDA jda = event.getJDA();
@@ -42,50 +51,14 @@ public class EventListener extends ListenerAdapter {
 
         jda.getPresence().setActivity(Activity.playing("ななみちゃんbot v"+ ver.get()+" 現在 "+guildList.size()+"サーバーに導入されているらしい。"));
 
-        // コマンド
-        SlashCommandData vote = Commands.slash("vote", "投票する");
-        vote.addOption(OptionType.STRING, "タイトル","例「なにを食べますか？」", true, false);
-        vote.addOption(OptionType.STRING, "投票終了日時","例 「2022-12-31 23:59:59」", true, false);
-        vote.addOption(OptionType.STRING, "選択肢1","投票の選択肢 例「きのこの山」", true, false);
-        vote.addOption(OptionType.STRING, "選択肢2","投票の選択肢 例「たけのこの里」", true, false);
-        vote.addOption(OptionType.STRING, "選択肢3","投票の選択肢 例「アルフォート」", false, false);
-        vote.addOption(OptionType.STRING, "選択肢4","投票の選択肢 例「食べない」", false, false);
-        vote.addOption(OptionType.STRING, "選択肢5","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢6","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢7","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢8","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢9","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢10","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢11","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢12","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢13","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢14","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢15","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢16","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢17","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢18","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢19","投票の選択肢", false, false);
-        vote.addOption(OptionType.STRING, "選択肢20","投票の選択肢", false, false);
-
-        SlashCommandData help = Commands.slash("help", "ヘルプ");
-        help.addOption(OptionType.STRING, "送信方式","DMに送りたい場合は「d」、自分だけのメッセージにしたい場合は「m」、みんなに共有する場合は「a」", true, false);
-
-        SlashCommandData ver = Commands.slash("nanami-version", "バージョン情報");
-
-        SlashCommandData setting = Commands.slash("nanami-setting", "ななみちゃんbot 設定画面");
-
-        SlashCommandData game = Commands.slash("game", "ミニゲーム");
-        game.addOption(OptionType.STRING, "ゲームの種類","種類についてはヘルプを見てね！", true, false);
-
         Guild guild = event.getGuild();
-        guild.updateCommands().addCommands(vote, help, ver, setting, game).queue();
+        guild.updateCommands().addCommands(vote, help, ver_c, setting, game).queue();
     }
 
     @Override
     public void onGuildLeave(@NotNull GuildLeaveEvent event) {
         JDA jda = event.getJDA();
         List<Guild> guildList = jda.getGuilds();
-
         jda.getPresence().setActivity(Activity.playing("ななみちゃんbot v"+ ver.get()+" 現在 "+guildList.size()+"サーバーに導入されているらしい。"));
     }
 
@@ -95,12 +68,7 @@ public class EventListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        super.onGuildMemberRemove(event);
-    }
 
-    @Override
-    public void onGatewayPing(GatewayPingEvent event) {
-        super.onGatewayPing(event);
     }
 
     @Override
@@ -112,7 +80,6 @@ public class EventListener extends ListenerAdapter {
             jda.getPresence().setActivity(Activity.playing("ななみちゃんbot v"+ ver.get()+" 現在 "+guildList.size()+"サーバーに導入されているらしい。"));
 
             // コマンド
-            SlashCommandData vote = Commands.slash("vote", "投票する");
             vote.addOption(OptionType.STRING, "タイトル","例「なにを食べますか？」", true, false);
             vote.addOption(OptionType.STRING, "投票終了日時","例 「2022-12-31 23:59:59」", true, false);
             vote.addOption(OptionType.STRING, "選択肢1","投票の選択肢 例「きのこの山」", true, false);
@@ -136,19 +103,21 @@ public class EventListener extends ListenerAdapter {
             vote.addOption(OptionType.STRING, "選択肢19","投票の選択肢", false, false);
             vote.addOption(OptionType.STRING, "選択肢20","投票の選択肢", false, false);
 
-            SlashCommandData help = Commands.slash("help", "ヘルプ");
-            help.addOption(OptionType.STRING, "送信方式","DMに送りたい場合は「d」、自分だけのメッセージにしたい場合は「m」、みんなに共有する場合は「a」", true, false);
+            help.addOption(OptionType.STRING, "送信方式","DMに送りたい場合は「d」、自分以外にも見えるようにする場合は「a」", false, false);
+            music.addOption(OptionType.STRING, "url","URL", true, false);
+            music.addOption(OptionType.STRING, "音量","0～100、デフォルトは20です！", false, false);
 
-            SlashCommandData ver = Commands.slash("nanami-version", "バージョン情報");
-
+/*
             SlashCommandData setting = Commands.slash("nanami-setting", "ななみちゃんbot 設定画面");
 
             SlashCommandData game = Commands.slash("game", "ミニゲーム");
             game.addOption(OptionType.STRING, "ゲームの種類","種類についてはヘルプを見てね！", true, false);
 
+ */
+
             for (Guild guild : guildList){
 
-                guild.updateCommands().addCommands(vote, help, ver, setting, game).queue();
+                guild.updateCommands().addCommands(vote, help, ver_c, music).queue();
 
             }
         }
@@ -349,18 +318,19 @@ public class EventListener extends ListenerAdapter {
             builder.setTitle("ななみちゃんbot ヘルプ");
             builder.setDescription("" +
                     "質問や要望、バグ報告は https://discord.gg/FnjCMzP7d4 までお願いします。\n" +
-                    (ver.get().matches(".*dev.*") ? "**開発中のため実装されていない機能がある可能性があります！！**" : "")
+                    (ver.get().matches(".*dev.*") ? "**このBotはベータ版です！予告なしで停止する場合があります！！*" : "")
             );
 
             builder.addField("/help", "いまあなたが見ているやつですっ！！", false);
-            builder.addField("/vote", "投票機能\n\n例\n/vote 朝ごはん食べる？ 2024-12-01 00:00:00 食べる 食べない なにそれ？ ご飯を食べられない人だっているんですよ！！！ それってあなたの感想ですよね？", false);
-            builder.addField("/game", "ミニゲーム機能\n\n実装し直し中です。しばらく待っててね！", false);
-            builder.addField("/music", "音楽再生機能\nニコ動は再生できませんっ\nお仲間のひむひむちゃんbotを使ってねっ！\nhttps://github.com/KoutaChan/himuhimu-bot", false);
+            // builder.addField("/vote", "投票機能\n\n例\n/vote 朝ごはん食べる？ 2024-12-01 00:00:00 食べる 食べない なにそれ？ ご飯を食べられない人だっているんですよ！！！ それってあなたの感想ですよね？", false);
+            // builder.addField("/game", "ミニゲーム機能\n\n実装し直し中です。しばらく待っててね！", false);
+            builder.addField("/music", "音楽再生機能", false);
             builder.addField("/nanami-version", "バージョン情報を出す。\nバグ報告に役にたつのでそのときはお願いしますっ", false);
-            builder.addField("/nanami-setting", "ななみちゃんbotの設定ができるコマンドです。 \n昔のnanami_settingチャンネルの代わりですっ", false);
+            //builder.addField("/nanami-setting", "ななみちゃんbotの設定ができるコマンドです。 \n昔のnanami_settingチャンネルの代わりですっ", false);
 
             OptionMapping option = event.getOption("送信方式");
-            if (option.getAsString().equals("d")){
+
+            if (option != null && option.getAsString().equals("d")){
                 jda.getUserById(member.getId()).openPrivateChannel().queue((s->{
                     s.sendMessageEmbeds(builder.build()).queue();
                     event.reply("ヘルプをDMに送信しましたっ！").setEphemeral(true).queue();
@@ -369,13 +339,21 @@ public class EventListener extends ListenerAdapter {
                 return;
             }
 
-            if (option.getAsString().equals("m") || option.getAsString().equals("a")){
-                event.replyEmbeds(builder.build()).setEphemeral(option.getAsString().equals("m")).queue();
+            if (option != null && option.getAsString().equals("a")){
+                event.replyEmbeds(builder.build()).setEphemeral(false).queue();
                 return;
             }
 
-            return;
+            event.replyEmbeds(builder.build()).setEphemeral(true).queue();
+        }
+
+        if (event.getFullCommandName().equals("music")){
+            OptionMapping option1 = event.getOption("url");
+            OptionMapping option2 = event.getOption("音量");
+            new MusicBot(event, option1, option2).run();
         }
 
     }
+
+
 }
