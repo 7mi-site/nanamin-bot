@@ -54,7 +54,7 @@ public class MusicBot {
         if (URL.getAsString().startsWith("stop")){
             AudioManager manager = event.getGuild().getAudioManager();
             if (manager.getConnectedChannel() != null){
-                manager.closeAudioConnection();
+
                 List<MusicQueue> list = new ArrayList<>();
                 list.addAll(musicQueueList);
 
@@ -72,6 +72,9 @@ public class MusicBot {
                 builder.setDescription("再生停止しました！");
 
                 event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+                manager.closeAudioConnection();
+
+                return;
             }
 
             builder.setColor(Color.RED);
@@ -105,6 +108,7 @@ public class MusicBot {
             return;
         }
 
+        // ここから音楽再生
         int volume = 20;
         if (Volume != null){
             try {
