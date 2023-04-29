@@ -83,6 +83,7 @@ public class MusicBot {
             return;
         }
 
+
         int volume = 20;
         if (Volume != null){
             try {
@@ -107,7 +108,9 @@ public class MusicBot {
         TrackScheduler trackScheduler = new TrackScheduler(player, event.getGuild(), event, musicQueueList);
         player.addListener(trackScheduler);
 
-        player.setVolume(volume);
+        if (player.getPlayingTrack() == null){
+            player.setVolume(volume);
+        }
 
         if (channel.getType().isAudio()){
             AudioManager manager = event.getGuild().getAudioManager();
