@@ -172,7 +172,7 @@ public class MusicBot {
                             NicoId = matcher2.group(1);
                         }
                         if (NicoId == null) {
-                            builder.setDescription(track.getInfo().title + "を追加しました！\nURL : https://nico.ms/"+NicoId);
+                            builder.setDescription(track.getInfo().title + "を追加しました！\nURL : "+track.getInfo().uri);
                         } else {
                             OkHttpClient client = new OkHttpClient();
                             Request request = new Request.Builder()
