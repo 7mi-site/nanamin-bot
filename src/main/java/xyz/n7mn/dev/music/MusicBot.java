@@ -4,19 +4,24 @@ import com.sedmelluq.discord.lavaplayer.player.*;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
-import com.sun.glass.ui.ClipboardAssistance;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import xyz.n7mn.dev.command.music.AudioPlayerSendHandler;
 import xyz.n7mn.dev.command.music.TrackScheduler;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MusicBot {
 
@@ -140,9 +145,8 @@ public class MusicBot {
         if (channel.getType().isAudio()){
             AudioManager manager = event.getGuild().getAudioManager();
 
-            if (VideoURL.toLowerCase(Locale.JAPANESE).equals("stop")){
-                manager.closeAudioConnection();
-                return;
+            if (VideoURL.startsWith("http://nico.ms/") || VideoURL.startsWith("https://nico.ms/") || VideoURL.startsWith("http://nicovideo.jp/") || VideoURL.startsWith("https://nicovideo.jp/") || VideoURL.startsWith("http://www.nicovideo.jp/") || VideoURL.startsWith("https://www.nicovideo.jp/")){
+                VideoURL = "https://nico.7mi.site/proxy/?"+VideoURL;
             }
 
             manager.openAudioConnection(channel.asVoiceChannel());
@@ -155,8 +159,38 @@ public class MusicBot {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("ななみちゃんbot 音楽再生機能");
                     builder.setColor(Color.PINK);
-                    builder.setDescription(track.getInfo().title + "を追加しました！");
 
+                    //System.out.println("URL : " + track.getIdentifier());
+                    Matcher matcher1 = Pattern.compile("(.*)nicovideo(.*)").matcher(track.getInfo().uri);
+                    if (!matcher1.find()){
+                        builder.setDescription(track.getInfo().title + "を追加しました！");
+                    } else {
+                        Matcher matcher2 = Pattern.compile("nicovideo-([a-z]{2}\\d+)_").matcher(track.getInfo().uri);
+
+                        String NicoId = null;
+                        if (matcher2.find()){
+                            NicoId = matcher2.group(1);
+                        }
+                        if (NicoId == null) {
+                            builder.setDescription(track.getInfo().title + "を追加しました！");
+                        } else {
+                            OkHttpClient client = new OkHttpClient();
+                            Request request = new Request.Builder()
+                                    .url("https://ext.nicovideo.jp/api/getthumbinfo/"+NicoId)
+                                    .build();
+
+                            try {
+                                Response response = client.newCall(request).execute();
+                                NicoVideoInfo videoInfo = NicoVideoInfo.newInstance(response.body().string());
+                                builder.setDescription(videoInfo.getTitle() + "を追加しました！");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+
+                    }
                     event.replyEmbeds(builder.build()).setEphemeral(false).queue();
                 }
 
