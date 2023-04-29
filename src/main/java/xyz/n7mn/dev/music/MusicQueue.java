@@ -59,7 +59,7 @@ public class MusicQueue {
         AddDiscordNickname = addDiscordNickname;
     }
 
-    public com.sedmelluq.discord.lavaplayer.track.AudioTrack getAudioTrack() {
+    public AudioTrack getAudioTrack() {
         return AudioTrack;
     }
 
