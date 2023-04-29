@@ -83,6 +83,27 @@ public class MusicBot {
             return;
         }
 
+        if (URL.getAsString().equals("volume")){
+            if (player.getPlayingTrack() != null){
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("ななみちゃんbot 音楽再生機能");
+                builder.setColor(Color.PINK);
+                builder.setDescription("現在音量 : " + player.getVolume());
+
+                event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+
+                return;
+            }
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("ななみちゃんbot 音楽再生機能");
+            builder.setColor(Color.PINK);
+            builder.setDescription("現在、再生していません。");
+
+            event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+
+            return;
+        }
 
         int volume = 20;
         if (Volume != null){
