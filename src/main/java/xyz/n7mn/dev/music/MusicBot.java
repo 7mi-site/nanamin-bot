@@ -163,7 +163,7 @@ public class MusicBot {
                     //System.out.println("URL : " + track.getIdentifier());
                     Matcher matcher1 = Pattern.compile("(.*)nicovideo(.*)").matcher(track.getInfo().uri);
                     if (!matcher1.find()){
-                        builder.setDescription(track.getInfo().title + "を追加しました！");
+                        builder.setDescription(track.getInfo().title + "を追加しました！\nURL : "+track.getInfo().uri);
                     } else {
                         Matcher matcher2 = Pattern.compile("nicovideo-([a-z]{2}\\d+)_").matcher(track.getInfo().uri);
 
@@ -172,7 +172,7 @@ public class MusicBot {
                             NicoId = matcher2.group(1);
                         }
                         if (NicoId == null) {
-                            builder.setDescription(track.getInfo().title + "を追加しました！");
+                            builder.setDescription(track.getInfo().title + "を追加しました！\nURL : https://nico.ms/"+NicoId);
                         } else {
                             OkHttpClient client = new OkHttpClient();
                             Request request = new Request.Builder()
@@ -182,7 +182,7 @@ public class MusicBot {
                             try {
                                 Response response = client.newCall(request).execute();
                                 NicoVideoInfo videoInfo = NicoVideoInfo.newInstance(response.body().string());
-                                builder.setDescription(videoInfo.getTitle() + "を追加しました！");
+                                builder.setDescription(videoInfo.getTitle() + "を追加しました！\nURL : https://nico.ms/"+NicoId);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
