@@ -1,12 +1,10 @@
 package xyz.n7mn.dev.music;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.*;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
+import com.sun.glass.ui.ClipboardAssistance;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -16,6 +14,7 @@ import xyz.n7mn.dev.command.music.AudioPlayerSendHandler;
 import xyz.n7mn.dev.command.music.TrackScheduler;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,7 +23,7 @@ public class MusicBot {
     private final EmbedBuilder builder = new EmbedBuilder();
     private final List<MusicQueue> musicQueueList;
     private final AudioPlayerManager playerManager;
-    private final AudioPlayer player;
+    private AudioPlayer player;
 
     public MusicBot(List<MusicQueue> musicQueueList) {
         this.musicQueueList = musicQueueList;
@@ -39,7 +38,8 @@ public class MusicBot {
         OptionMapping Volume = option2;
 
         String VideoURL = null;
-        if (!URL.getAsString().startsWith("http")){
+
+        if (!URL.getAsString().startsWith("stop") && !URL.getAsString().startsWith("volume") && !URL.getAsString().startsWith("nowplay") && !URL.getAsString().startsWith("skip") && !URL.getAsString().startsWith("http")){
 
             builder.setColor(Color.RED);
             builder.setTitle("ななみちゃんbot エラー");
@@ -49,6 +49,38 @@ public class MusicBot {
             return;
         } else {
             VideoURL = URL.getAsString();
+        }
+
+        if (URL.getAsString().startsWith("stop")){
+            AudioManager manager = event.getGuild().getAudioManager();
+            if (manager.getConnectedChannel() != null){
+                manager.closeAudioConnection();
+                List<MusicQueue> list = new ArrayList<>();
+                list.addAll(musicQueueList);
+
+                for (int i = 0; i < list.size(); i++){
+                    if (list.get(i).getGuildId().equals(event.getGuild().getId())){
+                        musicQueueList.remove(i);
+                    }
+                }
+
+                player = playerManager.createPlayer();
+
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("ななみちゃんbot 音楽再生機能");
+                builder.setColor(Color.PINK);
+                builder.setDescription("再生停止しました！");
+
+                event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+            }
+
+            builder.setColor(Color.RED);
+            builder.setTitle("ななみちゃんbot エラー");
+            builder.setDescription("・・・ボイスチャンネルに入っていませんよ？\n(入っているのにこのメッセージが出る場合は管理している人に切断をお願いしてねっ！)");
+
+            event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+
+            return;
         }
 
         int volume = 20;
@@ -71,9 +103,6 @@ public class MusicBot {
         }
 
         AudioChannelUnion channel = event.getMember().getVoiceState().getChannel();
-
-
-
 
         TrackScheduler trackScheduler = new TrackScheduler(player, event.getGuild(), event, musicQueueList);
         player.addListener(trackScheduler);
