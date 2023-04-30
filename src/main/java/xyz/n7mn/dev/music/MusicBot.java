@@ -36,11 +36,8 @@ public class MusicBot {
         player = playerManager.createPlayer();
     }
 
-    public void run(SlashCommandInteractionEvent event, OptionMapping option1, OptionMapping option2){
+    public void run(SlashCommandInteractionEvent event, OptionMapping URL, OptionMapping option){
         System.gc();
-
-        OptionMapping URL = option1;
-        OptionMapping Volume = option2;
 
         String VideoURL = null;
 
@@ -59,8 +56,7 @@ public class MusicBot {
         if (URL.getAsString().startsWith("stop")){
             AudioManager manager = event.getGuild().getAudioManager();
 
-            List<MusicQueue> list = new ArrayList<>();
-            list.addAll(musicQueueList);
+            List<MusicQueue> list = new ArrayList<>(musicQueueList);
 
             for (int i = 0; i < list.size(); i++){
                 if (list.get(i).getGuildId().equals(event.getGuild().getId())){
@@ -100,8 +96,8 @@ public class MusicBot {
                 builder.setTitle("ななみちゃんbot 音楽再生機能");
                 builder.setColor(Color.PINK);
 
-                if (Volume != null){
-                    player.setVolume(Volume.getAsInt());
+                if (option != null){
+                    player.setVolume(option.getAsInt());
                     builder.setDescription("音量を" + player.getVolume() + "に変更しました！");
                 } else {
                     builder.setDescription("現在音量 : " + player.getVolume());
@@ -123,11 +119,53 @@ public class MusicBot {
             return;
         }
 
+        if (URL.getAsString().equals("skip")){
+            List<MusicQueue> list = new ArrayList<>(musicQueueList);
+            List<MusicQueue> list2 = new ArrayList<>();
+
+            int i = 0;
+            for (MusicQueue queue : list){
+                if (queue.getGuildId().equals(event.getGuild().getId())){
+                    list2.add(queue);
+                }
+
+                if (player.getPlayingTrack() != null){
+                    if (queue.getAudioTrack().getInfo().uri.equals(player.getPlayingTrack().getInfo().uri)){
+                        musicQueueList.remove(i);
+                    }
+                }
+
+                i++;
+            }
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("ななみちゃんbot 音楽再生機能");
+            builder.setColor(Color.PINK);
+
+            if (player.getPlayingTrack() != null){
+                for (int x = 0; x < list2.size(); x++){
+                    if (list2.get(x).getAudioTrack().getInfo().uri.equals(player.getPlayingTrack().getInfo().uri)){
+                        if (x + 1 < list2.size()){
+                            builder.setDescription(
+                                    "「"+player.getPlayingTrack().getInfo().title+"」をスキップして\n" +
+                                    list2.get(x + 1).getAudioTrack().getInfo().title + "を再生します！"
+                            );
+
+                            player.playTrack(list2.get(x + 1).getAudioTrack());
+                        }
+                    }
+                }
+            }
+            list.clear();
+            list2.clear();
+            System.gc();
+            return;
+        }
+
         // ここから音楽再生
         int volume = 20;
-        if (Volume != null){
+        if (option != null){
             try {
-                volume = Math.max(Math.min(Volume.getAsInt(), 100), 0);
+                volume = Math.max(Math.min(option.getAsInt(), 100), 0);
             } catch (Exception e){
                 volume = 20;
             }
@@ -194,6 +232,7 @@ public class MusicBot {
                                 Response response = client.newCall(request).execute();
                                 NicoVideoInfo videoInfo = NicoVideoInfo.newInstance(response.body().string());
                                 builder.setDescription(videoInfo.getTitle() + "を追加しました！\nURL : https://nico.ms/"+NicoId);
+                                response.close();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

@@ -60,7 +60,7 @@ public class EventListener extends ListenerAdapter {
         jda.getPresence().setActivity(Activity.playing("ななみちゃんbot v"+ ver.get()+" 現在 "+guildList.size()+"サーバーに導入されているらしい。"));
 
         Guild guild = event.getGuild();
-        System.out.println("test1 : " + guild.getId() + " / " + guild.getName());
+        //System.out.println("test1 : " + guild.getId() + " / " + guild.getName());
         guild.updateCommands().addCommands(vote, help, ver_c, music).queue();
     }
 
