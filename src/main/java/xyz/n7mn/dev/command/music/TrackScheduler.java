@@ -57,7 +57,7 @@ public class TrackScheduler extends AudioEventAdapter {
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
 
-            System.out.println("d 1-1");
+            //System.out.println("d 1-1");
 
             List<MusicQueue> temp = new ArrayList<>();
             for (MusicQueue m : musicQueueList){
@@ -72,7 +72,7 @@ public class TrackScheduler extends AudioEventAdapter {
                     del = i;
                 }
             }
-            musicQueueList.remove(del);
+            //musicQueueList.remove(del);
 
             for (int i = 0; i < temp.size(); i++){
                 System.out.println(temp.get(i).getAudioTrack().getInfo().uri + " / " + track.getInfo().uri);
@@ -88,6 +88,9 @@ public class TrackScheduler extends AudioEventAdapter {
                     return;
                 }
             }
+
+            temp.clear();
+            System.gc();
 
         }
 
