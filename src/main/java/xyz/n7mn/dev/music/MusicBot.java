@@ -16,10 +16,8 @@ import xyz.n7mn.dev.command.music.AudioPlayerSendHandler;
 import xyz.n7mn.dev.command.music.TrackScheduler;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +37,8 @@ public class MusicBot {
     }
 
     public void run(SlashCommandInteractionEvent event, OptionMapping option1, OptionMapping option2){
+        System.gc();
+
         OptionMapping URL = option1;
         OptionMapping Volume = option2;
 
@@ -79,6 +79,7 @@ public class MusicBot {
                 event.replyEmbeds(builder.build()).setEphemeral(false).queue();
                 manager.closeAudioConnection();
 
+                System.gc();
                 return;
             }
 
@@ -88,6 +89,7 @@ public class MusicBot {
 
             event.replyEmbeds(builder.build()).setEphemeral(false).queue();
 
+            System.gc();
             return;
         }
 
@@ -100,6 +102,7 @@ public class MusicBot {
 
                 event.replyEmbeds(builder.build()).setEphemeral(false).queue();
 
+                System.gc();
                 return;
             }
 
@@ -110,6 +113,7 @@ public class MusicBot {
 
             event.replyEmbeds(builder.build()).setEphemeral(false).queue();
 
+            System.gc();
             return;
         }
 
@@ -130,6 +134,7 @@ public class MusicBot {
             builder.setDescription("・・・ボイスチャンネルに入っていませんね？\n(入っているのにこのメッセージが出る場合は見えないチャンネルの可能性があります。管理している人に設定をお願いしてねっ！)");
 
             event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+            System.gc();
             return;
         }
 
@@ -219,5 +224,7 @@ public class MusicBot {
                 }
             });
         }
+
+        System.gc();
     }
 }
