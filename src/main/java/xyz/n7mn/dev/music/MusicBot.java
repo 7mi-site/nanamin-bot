@@ -127,7 +127,7 @@ public class MusicBot {
         int volume = 20;
         if (Volume != null){
             try {
-                volume = Volume.getAsInt();
+                volume = Math.max(Math.min(Volume.getAsInt(), 100), 0);
             } catch (Exception e){
                 volume = 20;
             }
