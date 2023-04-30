@@ -58,18 +58,18 @@ public class MusicBot {
 
         if (URL.getAsString().startsWith("stop")){
             AudioManager manager = event.getGuild().getAudioManager();
-            if (manager.getConnectedChannel() != null){
 
-                List<MusicQueue> list = new ArrayList<>();
-                list.addAll(musicQueueList);
+            List<MusicQueue> list = new ArrayList<>();
+            list.addAll(musicQueueList);
 
-                for (int i = 0; i < list.size(); i++){
-                    if (list.get(i).getGuildId().equals(event.getGuild().getId())){
-                        musicQueueList.remove(i);
-                    }
+            for (int i = 0; i < list.size(); i++){
+                if (list.get(i).getGuildId().equals(event.getGuild().getId())){
+                    musicQueueList.remove(i);
                 }
+            }
+            player = playerManager.createPlayer();
 
-                player = playerManager.createPlayer();
+            if (manager.getConnectedChannel() != null) {
 
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("ななみちゃんbot 音楽再生機能");
