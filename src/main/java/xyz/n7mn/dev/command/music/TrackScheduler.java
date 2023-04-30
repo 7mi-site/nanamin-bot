@@ -72,10 +72,12 @@ public class TrackScheduler extends AudioEventAdapter {
                     del = i;
                 }
             }
-            //musicQueueList.remove(del);
+            if (del != -1){
+                musicQueueList.remove(del);
+            }
 
             for (int i = 0; i < temp.size(); i++){
-                System.out.println(temp.get(i).getAudioTrack().getInfo().uri + " / " + track.getInfo().uri);
+                //System.out.println(temp.get(i).getAudioTrack().getInfo().uri + " / " + track.getInfo().uri);
 
                 if (temp.get(i).getAudioTrack().getInfo().uri.equals(track.getInfo().uri)){
 

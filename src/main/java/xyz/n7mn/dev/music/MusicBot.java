@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static xyz.n7mn.dev.command.music.MusicBotFunction.getTitle;
+import static xyz.n7mn.dev.command.music.MusicBotFunction.getURL;
+
 public class MusicBot {
 
     private final EmbedBuilder builder = new EmbedBuilder();
@@ -146,14 +149,26 @@ public class MusicBot {
                     if (list2.get(x).getAudioTrack().getInfo().uri.equals(player.getPlayingTrack().getInfo().uri)){
                         if (x + 1 < list2.size()){
                             builder.setDescription(
-                                    "「"+player.getPlayingTrack().getInfo().title+"」をスキップして\n" +
-                                    list2.get(x + 1).getAudioTrack().getInfo().title + "を再生します！"
+                                    "「"+getTitle(player.getPlayingTrack())+"」をスキップして\n" +
+                                    getTitle(list2.get(x + 1).getAudioTrack()) + "を再生します！"
                             );
 
                             player.playTrack(list2.get(x + 1).getAudioTrack());
+                            event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+
+                            list.clear();
+                            list2.clear();
+                            System.gc();
+                            return;
                         }
                     }
                 }
+                player = playerManager.createPlayer();
+                builder.setDescription("スキップするものがありません！");
+                event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+            } else {
+                builder.setDescription("再生していません！");
+                event.replyEmbeds(builder.build()).setEphemeral(false).queue();
             }
             list.clear();
             list2.clear();
@@ -210,37 +225,7 @@ public class MusicBot {
                     builder.setColor(Color.PINK);
 
                     //System.out.println("URL : " + track.getIdentifier());
-                    Matcher matcher1 = Pattern.compile("(.*)nicovideo(.*)").matcher(track.getInfo().uri);
-                    if (!matcher1.find()){
-                        builder.setDescription(track.getInfo().title + "を追加しました！\nURL : "+track.getInfo().uri);
-                    } else {
-                        Matcher matcher2 = Pattern.compile("nicovideo-([a-z]{2}\\d+)_").matcher(track.getInfo().uri);
-
-                        String NicoId = null;
-                        if (matcher2.find()){
-                            NicoId = matcher2.group(1);
-                        }
-                        if (NicoId == null) {
-                            builder.setDescription(track.getInfo().title + "を追加しました！\nURL : "+track.getInfo().uri);
-                        } else {
-                            OkHttpClient client = new OkHttpClient();
-                            Request request = new Request.Builder()
-                                    .url("https://ext.nicovideo.jp/api/getthumbinfo/"+NicoId)
-                                    .build();
-
-                            try {
-                                Response response = client.newCall(request).execute();
-                                NicoVideoInfo videoInfo = NicoVideoInfo.newInstance(response.body().string());
-                                builder.setDescription(videoInfo.getTitle() + "を追加しました！\nURL : https://nico.ms/"+NicoId);
-                                response.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }
-
-                    }
+                    builder.setDescription(getTitle(track) + "を追加しました！\nURL : "+getURL(track));
                     event.replyEmbeds(builder.build()).setEphemeral(false).queue();
                 }
 
@@ -272,4 +257,5 @@ public class MusicBot {
 
         System.gc();
     }
+
 }
