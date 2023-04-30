@@ -95,11 +95,17 @@ public class MusicBot {
 
         if (URL.getAsString().equals("volume")){
             if (player.getPlayingTrack() != null){
+
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("ななみちゃんbot 音楽再生機能");
                 builder.setColor(Color.PINK);
-                builder.setDescription("現在音量 : " + player.getVolume());
 
+                if (Volume != null){
+                    player.setVolume(Volume.getAsInt());
+                    builder.setDescription("音量を" + player.getVolume() + "に変更しました！");
+                } else {
+                    builder.setDescription("現在音量 : " + player.getVolume());
+                }
                 event.replyEmbeds(builder.build()).setEphemeral(false).queue();
 
                 System.gc();
