@@ -72,4 +72,34 @@ public class MusicBotFunction {
 
         return track.getInfo().uri;
     }
+
+    public static String getLengthStr(long length){
+
+        long length1 = length / 1000;
+        String str = "";
+
+        long hour = -1;
+        long minute = -1;
+        long sec = 0;
+
+
+        if (length1 >= 3600){
+            hour = length1 / 3600;
+            minute = (length1 - (hour * 3600L)) / 60L;
+            sec = length1 - (hour * 3600L) - (minute * 60);
+        }
+
+        if (length1 >= 60){
+            minute = length1 / 60L;
+            sec = length1 - (minute * 60);
+        }
+
+        if (length >= 1000){
+            str = (hour >= 0 ? hour + ":" : "") + (minute >= 0 ? minute + ":" : "") + sec;
+        } else {
+            str = "0."+length;
+        }
+        return str;
+
+    }
 }

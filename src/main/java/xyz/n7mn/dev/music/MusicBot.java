@@ -9,20 +9,14 @@ import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import xyz.n7mn.dev.command.music.AudioPlayerSendHandler;
 import xyz.n7mn.dev.command.music.TrackScheduler;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static xyz.n7mn.dev.command.music.MusicBotFunction.getTitle;
-import static xyz.n7mn.dev.command.music.MusicBotFunction.getURL;
+import static xyz.n7mn.dev.command.music.MusicBotFunction.*;
 
 public class MusicBot {
 
@@ -172,6 +166,41 @@ public class MusicBot {
             }
             list.clear();
             list2.clear();
+            System.gc();
+            return;
+        }
+
+        if (URL.getAsString().equals("nowplay")){
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("ななみちゃんbot 音楽再生機能");
+            builder.setColor(Color.PINK);
+
+            if (player.getPlayingTrack() != null){
+
+                //double par = (double) (player.getPlayingTrack().getPosition() / player.getPlayingTrack().getInfo().length);
+                //int n = (int)par * 10;
+
+                //String bar = "";
+                //for (int i = 0; i < n; i++){
+                //    bar = bar + "■";
+                //}
+                //for (int i = 0; i < (10 - n); i++){
+                //    bar = bar + "□";
+                //}
+
+                builder.setDescription(
+                        "現在再生されている曲:\n" +
+                        "タイトル : "+getTitle(player.getPlayingTrack())+"\n" +
+                        "URL : " + getURL(player.getPlayingTrack())+"\n" +
+                        "再生時間 : " + getLengthStr(player.getPlayingTrack().getInfo().length) + "\n" //+
+                        //"現在位置 : "+bar+"("+getLengthStr(player.getPlayingTrack().getPosition())+" / "+getLengthStr(player.getPlayingTrack().getInfo().length)+","+(par * 100)+"%)"
+                );
+
+            } else {
+                builder.setDescription("現在再生していません！");
+            }
+
+            event.replyEmbeds(builder.build()).setEphemeral(false).queue();
             System.gc();
             return;
         }
