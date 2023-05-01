@@ -100,7 +100,7 @@ public class MusicBot {
         }
 
         if (URL.getAsString().equals("stop")){
-            System.out.println("d1");
+            //System.out.println("d1");
             AudioManager manager = event.getGuild().getAudioManager();
 
             List<MusicQueue> list = new ArrayList<>();
@@ -110,11 +110,11 @@ public class MusicBot {
 
             for (int i = 0; i < list.size(); i++){
                 if (list.get(i).getGuildId().equals(event.getGuild().getId())){
-                    System.out.println("d1-1 : "+ i);
+                    //System.out.println("d1-1 : "+ i);
                     musicQueueList.remove(list.get(i));
                 }
             }
-            System.out.println("d2");
+            //System.out.println("d2");
             player = playerManager.createPlayer();
 
             if (manager.getConnectedChannel() != null) {
