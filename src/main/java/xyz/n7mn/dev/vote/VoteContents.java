@@ -12,21 +12,24 @@ public class VoteContents {
     private String Title;
     private String[] Vote;
     private Date EndDate;
+    private String VoteType = "default";
     private boolean EndFlag = false;
 
-    public VoteContents(String messageChannelId, String title, String[] vote, String endDate) throws ParseException {
+    public VoteContents(String messageChannelId, String title, String[] vote, String endDate, String voteType) throws ParseException {
         this.MessageChannelId = messageChannelId;
         this.Title = title;
         this.Vote = vote;
+        this.VoteType = voteType;
 
         EndDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endDate);
     }
 
-    public VoteContents(String messageId, String title, String[] vote, Date endDate){
+    public VoteContents(String messageId, String title, String[] vote, Date endDate, String voteType){
         this.MessageChannelId = messageId;
         this.Title = title;
         this.Vote = vote;
         this.EndDate = endDate;
+        this.VoteType = voteType;
     }
 
     public UUID getVoteID() {
@@ -63,6 +66,14 @@ public class VoteContents {
 
     public void setEndDate(Date endDate) {
         EndDate = endDate;
+    }
+
+    public String getVoteType() {
+        return VoteType;
+    }
+
+    public void setVoteType(String voteType) {
+        VoteType = voteType;
     }
 
     public boolean isEndFlag() {

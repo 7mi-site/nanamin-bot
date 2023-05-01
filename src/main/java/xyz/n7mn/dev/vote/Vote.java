@@ -63,6 +63,14 @@ public class Vote {
             e.printStackTrace();
             System.gc();
         }
+
+        new Thread(()->{
+
+            while (true){
+
+            }
+
+        }).start();
     }
 
     public void run(){
