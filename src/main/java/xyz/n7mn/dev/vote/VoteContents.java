@@ -12,6 +12,7 @@ public class VoteContents {
     private String Title;
     private String[] Vote;
     private Date EndDate;
+    private boolean EndFlag = false;
 
     public VoteContents(String messageChannelId, String title, String[] vote, String endDate) throws ParseException {
         this.MessageChannelId = messageChannelId;
@@ -62,5 +63,13 @@ public class VoteContents {
 
     public void setEndDate(Date endDate) {
         EndDate = endDate;
+    }
+
+    public boolean isEndFlag() {
+        return EndFlag;
+    }
+
+    public void setEndFlag(boolean endFlag) {
+        EndFlag = endFlag;
     }
 }
