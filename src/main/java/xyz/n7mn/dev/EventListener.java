@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.n7mn.dev.api.ver;
 import xyz.n7mn.dev.music.MusicBot;
 import xyz.n7mn.dev.music.MusicQueue;
+import xyz.n7mn.dev.vote.Vote;
 
 import java.awt.*;
 import java.io.File;
@@ -90,7 +91,7 @@ public class EventListener extends ListenerAdapter {
 
             // コマンド
             vote.addOption(OptionType.STRING, "タイトル","例「なにを食べますか？」", true, false);
-            vote.addOption(OptionType.STRING, "投票終了日時","例 「2022-12-31 23:59:59」", true, false);
+            vote.addOption(OptionType.STRING, "投票終了日時","例 「2022-12-31 23:59:59」、手動で終了させたい場合は「なし」と入力してください", true, false);
             vote.addOption(OptionType.STRING, "選択肢1","投票の選択肢 例「きのこの山」", true, false);
             vote.addOption(OptionType.STRING, "選択肢2","投票の選択肢 例「たけのこの里」", true, false);
             vote.addOption(OptionType.STRING, "選択肢3","投票の選択肢 例「アルフォート」", false, false);
@@ -359,8 +360,13 @@ public class EventListener extends ListenerAdapter {
             OptionMapping option1 = event.getOption("url");
             OptionMapping option2 = event.getOption("音量");
             musicCommand.run(event, option1, option2);
+
+            return;
         }
 
+        if (event.getFullCommandName().equals("vote")){
+            new Vote(event).run();
+        }
     }
 
 
