@@ -127,7 +127,7 @@ public class TrackScheduler extends AudioEventAdapter {
             player.playTrack(track);
         }
 
-        musicQueueList.add(new MusicQueue(guild.getId(), event.getMember().getId(), event.getMember().getAsMention(), event.getMember().getNickname(), track));
+        musicQueueList.add(new MusicQueue(guild.getId(), event.getMember().getUser().getId(), event.getMember().getUser().getAsTag(), event.getMember().getNickname(), track));
         //System.out.println("全体残りキュー : "+musicQueueList.size() + " / 残りキュー : " + list.size());
 
     }

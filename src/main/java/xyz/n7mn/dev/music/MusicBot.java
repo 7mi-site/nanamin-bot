@@ -36,9 +36,13 @@ public class MusicBot {
     public void run(SlashCommandInteractionEvent event, OptionMapping URL, OptionMapping option){
         System.gc();
 
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle("ななみちゃんbot 音楽再生機能");
+        builder.setColor(Color.PINK);
+
         String VideoURL = null;
 
-        if (!URL.getAsString().startsWith("stop") && !URL.getAsString().startsWith("volume") && !URL.getAsString().startsWith("nowplay") && !URL.getAsString().startsWith("skip") && !URL.getAsString().startsWith("http")){
+        if (!URL.getAsString().startsWith("stop") && !URL.getAsString().startsWith("volume") && !URL.getAsString().startsWith("nowplay") && !URL.getAsString().startsWith("skip") && !URL.getAsString().startsWith("queue") && !URL.getAsString().startsWith("http")){
 
             builder.setColor(Color.RED);
             builder.setTitle("ななみちゃんbot エラー");
@@ -63,10 +67,6 @@ public class MusicBot {
             player = playerManager.createPlayer();
 
             if (manager.getConnectedChannel() != null) {
-
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("ななみちゃんbot 音楽再生機能");
-                builder.setColor(Color.PINK);
                 builder.setDescription("再生停止しました！");
 
                 event.replyEmbeds(builder.build()).setEphemeral(false).queue();
@@ -88,11 +88,6 @@ public class MusicBot {
 
         if (URL.getAsString().equals("volume")){
             if (player.getPlayingTrack() != null){
-
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("ななみちゃんbot 音楽再生機能");
-                builder.setColor(Color.PINK);
-
                 if (option != null){
                     player.setVolume(option.getAsInt());
                     builder.setDescription("音量を" + player.getVolume() + "に変更しました！");
@@ -105,9 +100,6 @@ public class MusicBot {
                 return;
             }
 
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("ななみちゃんbot 音楽再生機能");
-            builder.setColor(Color.PINK);
             builder.setDescription("現在、再生していません。");
 
             event.replyEmbeds(builder.build()).setEphemeral(false).queue();
@@ -134,9 +126,6 @@ public class MusicBot {
 
                 i++;
             }
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("ななみちゃんbot 音楽再生機能");
-            builder.setColor(Color.PINK);
 
             if (player.getPlayingTrack() != null){
                 for (int x = 0; x < list2.size(); x++){
@@ -171,9 +160,6 @@ public class MusicBot {
         }
 
         if (URL.getAsString().equals("nowplay")){
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("ななみちゃんbot 音楽再生機能");
-            builder.setColor(Color.PINK);
 
             if (player.getPlayingTrack() != null){
 
@@ -204,6 +190,26 @@ public class MusicBot {
             System.gc();
             return;
         }
+
+        if (URL.getAsString().equals("queue")){
+            System.gc();
+            List<MusicQueue> queue = new ArrayList();
+            for (MusicQueue q : musicQueueList){
+                if (q.getGuildId().equals(event.getGuild().getId())){
+                    queue.add(q);
+                }
+            }
+
+            builder.setDescription("現在追加されている曲は "+queue.size()+" 件です！"+(queue.size() > 10 ? "\n再生されている曲から10件表示します！" : ""));
+            for (int i = 0; i < Math.min(10, queue.size()); i++){
+                builder.addField(getTitle(queue.get(i).getAudioTrack()),"追加した人 : " + ( queue.get(i).getAddDiscordNickname() != null ? queue.get(i).getAddDiscordNickname() : queue.get(i).getAddDiscordUsername() ) + "\n音楽URL : " + getURL(queue.get(i).getAudioTrack()) + "\n時間 : " + getLengthStr(queue.get(i).getAudioTrack().getInfo().length) ,true);
+            }
+
+            event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+
+            return;
+        }
+
 
         // ここから音楽再生
         int volume = 20;
