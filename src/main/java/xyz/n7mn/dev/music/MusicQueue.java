@@ -12,15 +12,17 @@ public class MusicQueue {
     private String AddDiscordUsername;
     private String AddDiscordNickname;
     private AudioTrack AudioTrack;
+    private boolean isNicovideo;
 
 
-    public MusicQueue(String guildId, String addDiscordId, String addDiscordUsername, String addDiscordNickname, AudioTrack audioTrack){
+    public MusicQueue(String guildId, String addDiscordId, String addDiscordUsername, String addDiscordNickname, AudioTrack audioTrack, boolean isNicovideo){
         this.QueueId = UUID.randomUUID();
         this.GuildId = guildId;
         this.AddDiscordId = addDiscordId;
         this.AddDiscordUsername = addDiscordUsername;
         this.AddDiscordNickname = addDiscordNickname;
         this.AudioTrack = audioTrack;
+        this.isNicovideo = isNicovideo;
     }
 
     public UUID getQueueId() {
@@ -67,4 +69,11 @@ public class MusicQueue {
         AudioTrack = audioTrack;
     }
 
+    public boolean isNicovideo() {
+        return isNicovideo;
+    }
+
+    public void setNicovideo(boolean nicovideo) {
+        isNicovideo = nicovideo;
+    }
 }

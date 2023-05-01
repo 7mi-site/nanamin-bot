@@ -5,15 +5,14 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import xyz.n7mn.dev.music.MusicQueue;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class TrackScheduler extends AudioEventAdapter {
 
@@ -21,12 +20,14 @@ public class TrackScheduler extends AudioEventAdapter {
     private final SlashCommandInteractionEvent event;
     private final List<MusicQueue> musicQueueList;
     private final Guild guild;
+    private final Map<String, String> nicoVideoHeartBeatList;
 
-    public TrackScheduler(AudioPlayer player, Guild guild, SlashCommandInteractionEvent event, List<MusicQueue> musicQueueList) {
+    public TrackScheduler(AudioPlayer player, Guild guild, SlashCommandInteractionEvent event, List<MusicQueue> musicQueueList, Map<String, String> nicoVideoHeartBeatList) {
         this.player = player;
         this.guild = guild;
         this.event = event;
         this.musicQueueList = musicQueueList;
+        this.nicoVideoHeartBeatList = nicoVideoHeartBeatList;
     }
 
     @Override
@@ -72,7 +73,13 @@ public class TrackScheduler extends AudioEventAdapter {
                     del = i;
                 }
             }
+
             if (del != -1){
+
+                if (musicQueueList.get(del).isNicovideo()){
+                    nicoVideoHeartBeatList.remove(musicQueueList.get(del).getAudioTrack().getInfo().uri);
+                }
+
                 musicQueueList.remove(del);
             }
 
@@ -127,7 +134,7 @@ public class TrackScheduler extends AudioEventAdapter {
             player.playTrack(track);
         }
 
-        musicQueueList.add(new MusicQueue(guild.getId(), event.getMember().getUser().getId(), event.getMember().getUser().getAsTag(), event.getMember().getNickname(), track));
+        musicQueueList.add(new MusicQueue(guild.getId(), event.getMember().getUser().getId(), event.getMember().getUser().getAsTag(), event.getMember().getNickname(), track, Pattern.compile("(.*)nicovideo(.*)").matcher(track.getInfo().uri).find()));
         //System.out.println("全体残りキュー : "+musicQueueList.size() + " / 残りキュー : " + list.size());
 
     }
