@@ -5,11 +5,13 @@ import com.amihaiemil.eoyaml.YamlMapping;
 import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
+import redis.clients.jedis.resps.ScanResult;
 
 import java.awt.*;
 import java.io.File;
@@ -17,16 +19,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Vote {
 
     private JedisPool jedisPool;
-    private final SlashCommandInteractionEvent event;
     private YamlMapping ConfigYml = null;
     private EmbedBuilder builder = new EmbedBuilder();
 
-    public Vote(SlashCommandInteractionEvent event){
-        this.event = event;
+    public Vote(JDA jda){
 
         File config = new File("./config-vote.yml");
         try {
@@ -65,15 +68,64 @@ public class Vote {
         }
 
         new Thread(()->{
-
-            while (true){
-
+            if (ConfigYml == null){
+                return;
             }
+
+            Timer timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+                    Jedis jedis = pool.getResource();
+                    jedis.auth(ConfigYml.string("RedisPass"));
+
+                    //System.out.println("----");
+
+                    for (String key : jedis.keys("nanamibot:vote:contents:*")) {
+                        String[] temp = key.split(":");
+                        String voteId = temp[temp.length - 1];
+
+                        VoteContents contents = new Gson().fromJson(jedis.get("nanamibot:vote:data:" + voteId), VoteContents.class);
+                        if (new Date().getTime() >= contents.getEndDate().getTime()){
+                            String MessageId = jedis.get(key);
+
+                            builder.setTitle("ななみちゃんbot 投票機能");
+                            builder.setColor(Color.PINK);
+                            builder.clearFields();
+                            builder.setDescription("「"+contents.getTitle()+"」の投票が投票終了しました！\n結果は以下のとおりです！");
+
+                            jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).getHistoryAfter(MessageId, 1).queue(messageHistory -> {
+                                if (messageHistory.getMessageById(MessageId).getReactions() != null && messageHistory.getMessageById(MessageId).getReactions().size() > 0){
+                                    messageHistory.getMessageById(MessageId).clearReactions().queue();
+                                }
+
+                            });
+                            jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).sendMessageEmbeds(builder.build()).queue();
+
+                            jedis.del("nanamibot:vote:data:" + voteId);
+                        }
+                    }
+
+                    //System.out.println("----");
+                    jedis.close();
+                    pool.close();
+                    System.gc();
+
+                    try {
+                        Thread.sleep(1000L);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            timer.scheduleAtFixedRate(timerTask, 0L, 1000L);
 
         }).start();
     }
 
-    public void run(){
+    public void run(SlashCommandInteractionEvent event){
         builder.setTitle("ななみちゃんbot 投票機能");
         builder.setColor(Color.PINK);
         builder.clearFields();
@@ -115,7 +167,7 @@ public class Vote {
              };
 
 
-            contents = new VoteContents(event.getMessageChannel().getId(), event.getOption("タイトル").getAsString(), vote, event.getOption("投票終了日時").getAsString().replaceAll("なし","9999-12-31 23:59:59"));
+            contents = new VoteContents(event.getGuild().getId(), event.getMessageChannel().getId(), event.getOption("タイトル").getAsString(), vote, event.getOption("投票終了日時").getAsString().replaceAll("なし","9999-12-31 23:59:59"), "default");
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -128,7 +180,7 @@ public class Vote {
             return;
         }
 
-        jedis.set("nanamibot.vote:data:"+contents.getVoteID().toString(), new Gson().toJson(contents));
+        jedis.set("nanamibot:vote:data:"+contents.getVoteID().toString(), new Gson().toJson(contents));
         jedis.close();
 
         jedisPool.close();
@@ -146,12 +198,14 @@ public class Vote {
             i++;
         }
 
+        event.replyEmbeds(new EmbedBuilder().setColor(Color.PINK).setTitle("ななみちゃんbot 投票機能").setDescription("投票を開始しましたっ\n終了させる場合は/vote-stopでできます！").build()).setEphemeral(true).queue();
+
         event.getMessageChannel().sendMessageEmbeds(builder.build()).queue(message -> {
             new Thread(()->{
                 jedisPool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
                 Jedis jedis1 = jedisPool.getResource();
                 jedis1.auth(ConfigYml.string("RedisPass"));
-                jedis1.set("nanamibot.vote:contents:"+message.getId(), contents.getVoteID().toString());
+                jedis1.set("nanamibot:vote:contents:"+contents.getVoteID().toString(), message.getId());
                 jedis1.close();
                 jedisPool.close();
             }).start();

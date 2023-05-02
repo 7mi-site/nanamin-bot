@@ -39,6 +39,7 @@ import java.util.List;
 public class EventListener extends ListenerAdapter {
 
     private final MusicBot musicCommand;
+    private Vote voteSys = null;
 
     private SlashCommandData vote = Commands.slash("vote", "投票する");
     private SlashCommandData music = Commands.slash("music", "音楽/動画 再生");
@@ -85,6 +86,7 @@ public class EventListener extends ListenerAdapter {
     public void onGenericEvent(GenericEvent event) {
         if (event instanceof ReadyEvent){
             JDA jda = event.getJDA();
+            voteSys = new Vote(jda);
 
             List<Guild> guildList = jda.getGuilds();
             jda.getPresence().setActivity(Activity.playing("ななみちゃんbot v"+ ver.get()+" 現在 "+guildList.size()+"サーバーに導入されているらしい。"));
@@ -365,7 +367,7 @@ public class EventListener extends ListenerAdapter {
         }
 
         if (event.getFullCommandName().equals("vote")){
-            new Vote(event).run();
+            voteSys.run(event);
         }
     }
 

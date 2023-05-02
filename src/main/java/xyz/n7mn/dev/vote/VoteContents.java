@@ -8,6 +8,7 @@ import java.util.UUID;
 public class VoteContents {
 
     private UUID VoteID = UUID.randomUUID();
+    private String GuildId;
     private String MessageChannelId;
     private String Title;
     private String[] Vote;
@@ -15,7 +16,8 @@ public class VoteContents {
     private String VoteType = "default";
     private boolean EndFlag = false;
 
-    public VoteContents(String messageChannelId, String title, String[] vote, String endDate, String voteType) throws ParseException {
+    public VoteContents(String guildId, String messageChannelId, String title, String[] vote, String endDate, String voteType) throws ParseException {
+        this.GuildId = guildId;
         this.MessageChannelId = messageChannelId;
         this.Title = title;
         this.Vote = vote;
@@ -24,7 +26,29 @@ public class VoteContents {
         EndDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endDate);
     }
 
-    public VoteContents(String messageId, String title, String[] vote, Date endDate, String voteType){
+    public VoteContents(String guildId, String messageId, String title, String[] vote, Date endDate, String voteType){
+        this.GuildId = guildId;
+        this.MessageChannelId = messageId;
+        this.Title = title;
+        this.Vote = vote;
+        this.EndDate = endDate;
+        this.VoteType = voteType;
+    }
+
+    public VoteContents(UUID voteID, String guildId, String messageChannelId, String title, String[] vote, String endDate, String voteType) throws ParseException {
+        this.VoteID = voteID;
+        this.GuildId = guildId;
+        this.MessageChannelId = messageChannelId;
+        this.Title = title;
+        this.Vote = vote;
+        this.VoteType = voteType;
+
+        EndDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endDate);
+    }
+
+    public VoteContents(UUID voteID, String guildId, String messageId, String title, String[] vote, Date endDate, String voteType){
+        this.VoteID = voteID;
+        this.GuildId = guildId;
         this.MessageChannelId = messageId;
         this.Title = title;
         this.Vote = vote;
@@ -34,6 +58,15 @@ public class VoteContents {
 
     public UUID getVoteID() {
         return VoteID;
+    }
+
+    public String getGuildId() {
+        return GuildId;
+
+    }
+
+    public void setGuildId(String guildId) {
+        GuildId = guildId;
     }
 
     public String getMessageChannelId() {
