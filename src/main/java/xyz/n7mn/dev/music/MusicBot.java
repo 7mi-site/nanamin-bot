@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,33 +47,30 @@ public class MusicBot {
         new Thread(()->{
             OkHttpClient client = new OkHttpClient();
 
-            while (true){
+            Timer timer = new Timer();
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    nicoVideoHeartBeatList.forEach((id, token) -> {
+                        String[] split = token.split("::");
 
-                nicoVideoHeartBeatList.forEach((id, token) -> {
-                    String[] split = token.split("::");
-
-                    RequestBody body = RequestBody.create(split[1], MediaType.get("application/json; charset=utf-8"));
-                    Request request = new Request.Builder()
-                            .url("https://api.dmc.nico/api/sessions/"+split[0]+"?_format=json&_method=PUT")
-                            .post(body)
-                            .build();
-                    try {
-                        Response response = client.newCall(request).execute();
-                        response.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        //System.out.println("[Debug] 鯖へPost失敗 "+ sdf.format(new Date()));
-                    }
-                    System.gc();
-                });
-
-                try {
-                    Thread.sleep(40000L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                        RequestBody body = RequestBody.create(split[1], MediaType.get("application/json; charset=utf-8"));
+                        Request request = new Request.Builder()
+                                .url("https://api.dmc.nico/api/sessions/"+split[0]+"?_format=json&_method=PUT")
+                                .post(body)
+                                .build();
+                        try {
+                            Response response = client.newCall(request).execute();
+                            response.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            //System.out.println("[Debug] 鯖へPost失敗 "+ sdf.format(new Date()));
+                        }
+                        System.gc();
+                    });
                 }
-            }
-
+            };
+            timer.scheduleAtFixedRate(task, 0L, 40000L);
         }).start();
     }
 
