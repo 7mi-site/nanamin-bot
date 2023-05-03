@@ -43,6 +43,7 @@ public class EventListener extends ListenerAdapter {
     private Vote voteSys = null;
 
     private SlashCommandData vote = Commands.slash("vote", "投票する");
+    private SlashCommandData vote_s = Commands.slash("vote-stop", "投票を終了させる");
     private SlashCommandData music = Commands.slash("music", "音楽/動画 再生");
     private SlashCommandData help = Commands.slash("help", "ヘルプ");
     private SlashCommandData ver_c = Commands.slash("nanami-version", "バージョン情報");
@@ -64,7 +65,7 @@ public class EventListener extends ListenerAdapter {
 
         Guild guild = event.getGuild();
         //System.out.println("test1 : " + guild.getId() + " / " + guild.getName());
-        guild.updateCommands().addCommands(vote, help, ver_c, music).queue();
+        guild.updateCommands().addCommands(vote, vote_s, help, ver_c, music).queue();
     }
 
     @Override
@@ -131,7 +132,7 @@ public class EventListener extends ListenerAdapter {
 
             for (Guild guild : guildList){
 
-                guild.updateCommands().addCommands(vote, help, ver_c, music).queue();
+                guild.updateCommands().addCommands(vote, vote_s, help, ver_c, music).queue();
 
             }
         }
