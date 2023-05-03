@@ -8,10 +8,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
-import redis.clients.jedis.resps.ScanResult;
 
 import java.awt.*;
 import java.io.File;
@@ -176,14 +176,11 @@ public class Vote {
 
             event.replyEmbeds(builder.build()).setEphemeral(true).queue();
             jedis.close();
-            jedisPool.close();
             return;
         }
 
         jedis.set("nanamibot:vote:data:"+contents.getVoteID().toString(), new Gson().toJson(contents));
         jedis.close();
-
-        jedisPool.close();
 
         builder.setDescription(
                 "タイトル : "+event.getOption("タイトル").getAsString()+"\n" +
@@ -202,7 +199,7 @@ public class Vote {
 
         event.getMessageChannel().sendMessageEmbeds(builder.build()).queue(message -> {
             new Thread(()->{
-                jedisPool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+                JedisPool jedisPool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
                 Jedis jedis1 = jedisPool.getResource();
                 jedis1.auth(ConfigYml.string("RedisPass"));
                 jedis1.set("nanamibot:vote:contents:"+contents.getVoteID().toString(), message.getId());
@@ -218,6 +215,57 @@ public class Vote {
                 x++;
             }
         });
+    }
+
+    public void add(MessageReactionAddEvent event){
+        if (event.getMember().getUser().isBot() || event.getMember().getUser().isSystem()){
+            return;
+        }
+        String[] voteList = new String[]{"\uD83C\uDDE6", "\uD83C\uDDE7", "\uD83C\uDDE8", "\uD83C\uDDE9", "\uD83C\uDDEA", "\uD83C\uDDEB", "\uD83C\uDDEC", "\uD83C\uDDED", "\uD83C\uDDEE", "\uD83C\uDDEF", "\uD83C\uDDF0", "\uD83C\uDDF1", "\uD83C\uDDF2", "\uD83C\uDDF3", "\uD83C\uDDF4", "\uD83C\uDDF5", "\uD83C\uDDF6", "\uD83C\uDDF7", "\uD83C\uDDF8", "\uD83C\uDDF9"};
+
+        //System.out.println("a1");
+        int addVote = -1;
+        int i = 0;
+        for (String str : voteList) {
+            if (str.equals(event.getEmoji().getAsReactionCode())){
+                addVote = i;
+                break;
+            }
+            i++;
+        }
+
+        //System.out.println("a2");
+        if (addVote == -1){
+            event.getReaction().removeReaction().queue();
+            return;
+        }
+        //System.out.println("a3");
+
+        new Thread(()->{
+            JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+            Jedis jedis = pool.getResource();
+            jedis.auth(ConfigYml.string("RedisPass"));
+
+            for (String key : jedis.keys("nanamibot:vote:contents:*")) {
+                if (!jedis.get(key).equals(event.getMessageId())){
+                    System.out.println(jedis.get(key) + " / " + event.getMessageId());
+                    continue;
+                }
+                String[] split = key.split(":");
+
+                jedis.set("nanamibot:vote:result:"+split[split.length - 1], event.getEmoji().getAsReactionCode());
+                return;
+            }
+
+            jedis.close();
+            pool.close();
+            System.gc();
+
+        }).start();
+    }
+
+    public void check(){
+
     }
 
 }
