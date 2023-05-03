@@ -13,8 +13,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
 import okhttp3.*;
-import xyz.n7mn.dev.command.music.AudioPlayerSendHandler;
-import xyz.n7mn.dev.command.music.TrackScheduler;
 
 import java.awt.*;
 import java.io.File;
@@ -27,7 +25,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static xyz.n7mn.dev.command.music.MusicBotFunction.*;
+import static xyz.n7mn.dev.music.MusicBotFunction.*;
 
 public class MusicBot {
 

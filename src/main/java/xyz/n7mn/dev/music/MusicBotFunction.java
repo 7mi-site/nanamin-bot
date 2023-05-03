@@ -1,4 +1,4 @@
-package xyz.n7mn.dev.command.music;
+package xyz.n7mn.dev.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import okhttp3.OkHttpClient;
