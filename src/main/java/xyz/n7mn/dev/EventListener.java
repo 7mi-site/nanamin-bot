@@ -95,6 +95,7 @@ public class EventListener extends ListenerAdapter {
 
             // コマンド
             vote.addOption(OptionType.STRING, "タイトル","例「なにを食べますか？」", true, false);
+            vote.addOption(OptionType.STRING, "投票形式","「only」で1人1票になります。何も書かない場合は1人が別の選択肢で投票できます。", false, false);
             vote.addOption(OptionType.STRING, "投票終了日時","例 「2022-12-31 23:59:59」、手動で終了させたい場合は「なし」と入力してください", true, false);
             vote.addOption(OptionType.STRING, "選択肢1","投票の選択肢 例「きのこの山」", true, false);
             vote.addOption(OptionType.STRING, "選択肢2","投票の選択肢 例「たけのこの里」", true, false);

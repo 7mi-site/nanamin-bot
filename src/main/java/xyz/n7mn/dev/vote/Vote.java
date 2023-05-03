@@ -166,8 +166,7 @@ public class Vote {
                      (event.getOption("選択肢20") != null ? event.getOption("選択肢20").getAsString() : null)
              };
 
-
-            contents = new VoteContents(event.getGuild().getId(), event.getMessageChannel().getId(), event.getOption("タイトル").getAsString(), vote, event.getOption("投票終了日時").getAsString().replaceAll("なし","9999-12-31 23:59:59"), "default");
+            contents = new VoteContents(event.getGuild().getId(), event.getMessageChannel().getId(), event.getOption("タイトル").getAsString(), vote, event.getOption("投票終了日時").getAsString().replaceAll("なし","9999-12-31 23:59:59"), event.getOption("投票形式") != null ? event.getOption("投票形式").getAsString() : "default");
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -242,13 +241,30 @@ public class Vote {
         //System.out.println("a3");
 
         new Thread(()->{
+            builder.setTitle("ななみちゃんbot 投票機能");
+            builder.setColor(Color.GREEN);
+            builder.clearFields();
+            builder.setDescription("投票完了しました！\n(このメッセージは2秒後に消えます...たぶん。)");
+            event.getChannel().sendMessage(event.getMember().getAsMention()).setEmbeds(builder.build()).queue((message -> {
+                try {
+                    Thread.sleep(2000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                message.delete().queue();
+            }));
+
+        }).start();
+
+        new Thread(()->{
             JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
             Jedis jedis = pool.getResource();
             jedis.auth(ConfigYml.string("RedisPass"));
 
             for (String key : jedis.keys("nanamibot:vote:contents:*")) {
                 if (!jedis.get(key).equals(event.getMessageId())){
-                    System.out.println(jedis.get(key) + " / " + event.getMessageId());
+                    //System.out.println(jedis.get(key) + " / " + event.getMessageId());
                     continue;
                 }
                 String[] split = key.split(":");
