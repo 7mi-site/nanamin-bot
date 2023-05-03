@@ -18,5 +18,9 @@
 - [LavaPlayer](https://github.com/sedmelluq/lavaplayer)
 - [eo-yaml](https://github.com/decorators-squad/eo-yaml)
 - [gson](https://github.com/google/gson)
-### API
-- [気象庁防災情報XMLフォーマット](https://xml.kishou.go.jp/)
+- [MySQL Connector/J](https://dev.mysql.com/downloads/connector/j/)
+- [Jedis](https://github.com/redis/jedis)
+### 他使用しているもの
+- [ニコニコ動画](https://www.nicovideo.jp/) 動画取得API
+- [防災科研](https://www.bosai.go.jp/) 強震モニタ (緊急地震速報情報取得)
+- [NHK地震情報](https://www.nhk.or.jp/kishou-saigai/earthquake/)
