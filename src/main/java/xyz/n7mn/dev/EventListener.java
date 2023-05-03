@@ -30,6 +30,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
 import xyz.n7mn.dev.api.ver;
+import xyz.n7mn.dev.earthquake.Earthquake;
 import xyz.n7mn.dev.music.MusicBot;
 import xyz.n7mn.dev.music.MusicQueue;
 import xyz.n7mn.dev.vote.Vote;
@@ -98,6 +99,7 @@ public class EventListener extends ListenerAdapter {
         if (event instanceof ReadyEvent){
             JDA jda = event.getJDA();
             voteSys = new Vote(jda);
+            new Earthquake(jda);
 
             List<Guild> guildList = jda.getGuilds();
             jda.getPresence().setActivity(Activity.playing("ななみちゃんbot v"+ ver.get()+" 現在 "+guildList.size()+"サーバーに導入されているらしい。"));
