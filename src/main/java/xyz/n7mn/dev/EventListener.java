@@ -1,5 +1,8 @@
 package xyz.n7mn.dev;
 
+import com.amihaiemil.eoyaml.Yaml;
+import com.amihaiemil.eoyaml.YamlMapping;
+import com.amihaiemil.eoyaml.YamlMappingBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
@@ -23,14 +26,19 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Protocol;
 import xyz.n7mn.dev.api.ver;
 import xyz.n7mn.dev.music.MusicBot;
 import xyz.n7mn.dev.music.MusicQueue;
 import xyz.n7mn.dev.vote.Vote;
+import xyz.n7mn.dev.vote.VoteStop;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +49,7 @@ public class EventListener extends ListenerAdapter {
 
     private final MusicBot musicCommand;
     private Vote voteSys = null;
+    private final VoteStop voteStop = new VoteStop();
 
     private SlashCommandData vote = Commands.slash("vote", "投票する");
     private SlashCommandData vote_s = Commands.slash("vote-stop", "投票を終了させる");
@@ -121,6 +130,8 @@ public class EventListener extends ListenerAdapter {
             help.addOption(OptionType.STRING, "送信方式","DMに送りたい場合は「d」、自分以外にも見えるようにする場合は「a」", false, false);
             music.addOption(OptionType.STRING, "url","URL", true, false);
             music.addOption(OptionType.STRING, "音量","0～100、デフォルトは20です！", false, false);
+
+            vote_s.addOption(OptionType.STRING, "メッセージリンク", "「メッセージリンクをコピー」をして貼り付けてください\n指定しない場合は実行したチャンネルの最新の投票が終了します。", false);
 
 /*
             SlashCommandData setting = Commands.slash("nanami-setting", "ななみちゃんbot 設定画面");
@@ -337,6 +348,11 @@ public class EventListener extends ListenerAdapter {
 
         if (event.getFullCommandName().equals("vote")){
             voteSys.run(event);
+            return;
+        }
+
+        if (event.getFullCommandName().equals("vote-stop")){
+            voteStop.run(event);
             return;
         }
 
