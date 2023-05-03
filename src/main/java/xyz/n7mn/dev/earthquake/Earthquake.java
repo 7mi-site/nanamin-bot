@@ -15,6 +15,7 @@ import redis.clients.jedis.Protocol;
 import xyz.n7mn.dev.earthquake.eew.EEWData;
 import xyz.n7mn.dev.earthquake.eew.KyoushinMonitorJson;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,8 +32,40 @@ import java.util.regex.Pattern;
 public class Earthquake {
     private final JDA jda;
     private final OkHttpClient client = new OkHttpClient();
+    private final YamlMapping ConfigYml;
 
     public Earthquake(JDA jda){
+        YamlMapping ConfigYml1 = null;
+        try {
+            File config = new File("./config-vote.yml");
+            if (!config.exists()){
+                config.createNewFile();
+
+                YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
+                ConfigYml1 = builder.add(
+                        "RedisServer", "127.0.0.1"
+                ).add(
+                        "RedisPort", String.valueOf(Protocol.DEFAULT_PORT)
+                ).add(
+                        "RedisPass", ""
+                ).build();
+
+                try {
+                    PrintWriter writer = new PrintWriter(config);
+                    writer.print(ConfigYml1.toString());
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                ConfigYml1 = Yaml.createYamlInput(config).readYamlMapping();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ConfigYml = ConfigYml1;
+
         this.jda = jda;
 
         Timer timer = new Timer();
@@ -211,9 +244,7 @@ public class Earthquake {
 
             System.out.println("緊急地震速報 受信");
             System.out.println(data.getReport_num() + "," + data.getRegion_name() + "," + data.getLatitude() + "," + data.getLongitude() + "," + data.getDepth() + "," + data.getMagunitude() + "," +data.getCalcintensity());
-            new Thread(()->{
-
-            });
+            eew_send(data.getReport_num(), data.getIs_final(), data.getRegion_name(), data.getLatitude(), data.getLongitude(), data.getDepth(), data.getMagunitude(), data.getCalcintensity(), data.getIs_cancel());
 
             response.close();
 
@@ -223,8 +254,45 @@ public class Earthquake {
 
     }
 
-    private void eew_send(){
+    private void eew_send(String reportNum, Boolean isFinal, String regionName, String latitude, String longitude, String depth, String magunitude, String calcintensity, Boolean isCancel){
+        new Thread(()->{
+            EmbedBuilder builder1 = new EmbedBuilder();
+            builder1.setTitle("緊急地震情報");
+            builder1.setColor(Color.ORANGE);
+            if (isCancel){
+                builder1.setDescription(
+                        "先程の緊急地震速報はキャンセルされました。"
+                );
+            } else {
+                builder1.setDescription("※ 緊急地震速報の仕組み上 誤差がある可能性があります。ご注意ください\n"+
+                        "第 "+ reportNum + "報" + (isFinal ? "(最終報)" : "")+"\n" +
+                        "震源地 : " + regionName + "("+latitude+" "+longitude+")\n" +
+                        "震源の深さ : " + depth + "\n" +
+                        "マグニチュード : " + magunitude+"\n" +
+                        "最大予想震度 : " + calcintensity
+                );
+            }
+            builder1.setFooter("情報元 : NIED 強震モニタ(https://www.bosai.go.jp/)");
 
+
+            new Thread(()->{
+
+                JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+                Jedis jedis = pool.getResource();
+                jedis.auth(ConfigYml.string("RedisPass"));
+
+                for (String key : jedis.keys("nanamibot:eew:*")){
+                    String[] split = key.split(":");
+                    String guildId = split[split.length - 1];
+                    String channelId = jedis.get(key);
+
+                    jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build()).queue();
+                }
+
+                jedis.close();
+                pool.close();
+            }).start();
+        });
     }
 
     private void jisin_send(String date, String intensity, String epicenter, String latitude, String longitude, String magnitude, String depth, String detailImage, String localImage, String globalImage){
@@ -250,50 +318,20 @@ public class Earthquake {
         builder3.setFooter("情報元 : NHK地震情報 (https://www3.nhk.or.jp/sokuho/jishin/)");
 
         new Thread(()->{
-            try {
-                File config = new File("./config-vote.yml");
-                YamlMapping ConfigYml = null;
-                if (!config.exists()){
-                    config.createNewFile();
+            JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+            Jedis jedis = pool.getResource();
+            jedis.auth(ConfigYml.string("RedisPass"));
 
-                    YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
-                    ConfigYml = builder.add(
-                            "RedisServer", "127.0.0.1"
-                    ).add(
-                            "RedisPort", String.valueOf(Protocol.DEFAULT_PORT)
-                    ).add(
-                            "RedisPass", ""
-                    ).build();
+            for (String key : jedis.keys("nanamibot:jisin:*")){
+                String[] split = key.split(":");
+                String guildId = split[split.length - 1];
+                String channelId = jedis.get(key);
 
-                    try {
-                        PrintWriter writer = new PrintWriter(config);
-                        writer.print(ConfigYml.toString());
-                        writer.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    ConfigYml = Yaml.createYamlInput(config).readYamlMapping();
-                }
-
-                JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
-                Jedis jedis = pool.getResource();
-                jedis.auth(ConfigYml.string("RedisPass"));
-
-                for (String key : jedis.keys("nanamibot:jisin:*")){
-                    String[] split = key.split(":");
-                    String guildId = split[split.length - 1];
-                    String channelId = jedis.get(key);
-
-                    jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build(), builder2.build(), builder3.build());
-                }
-
-                jedis.close();
-                pool.close();
-            } catch (IOException e){
-                e.printStackTrace();
+                jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build(), builder2.build(), builder3.build()).queue();
             }
+
+            jedis.close();
+            pool.close();
         }).start();
 
     }
