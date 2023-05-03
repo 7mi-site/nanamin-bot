@@ -81,64 +81,7 @@ public class Vote {
 
                     //System.out.println("----");
 
-                    for (String key : jedis.keys("nanamibot:vote:contents:*")) {
-                        String[] temp = key.split(":");
-                        String voteId = temp[temp.length - 1];
-
-                        VoteContents contents = new Gson().fromJson(jedis.get("nanamibot:vote:data:" + voteId), VoteContents.class);
-                        if (new Date().getTime() >= contents.getEndDate().getTime() && !contents.isEndFlag()){
-                            String MessageId = jedis.get(key);
-
-                            builder.setTitle("ななみちゃんbot 投票機能");
-                            builder.setColor(Color.PINK);
-                            builder.clearFields();
-                            builder.setDescription("「"+contents.getTitle()+"」の投票が投票終了しました！\n結果は以下のとおりです！");
-                            VoteResult result = check(MessageId);
-                            builder.addField("投票総数", result.getTotalCount()+" 票", false);
-                            if (contents.getVoteType().equals("only")){
-                                if (result.getValidityCount() > 0){
-                                    builder.addField("有効投票総数", result.getValidityCount()+" 票 ("+((result.getValidityCount()) / result.getTotalCount() * 100)+" %)", false);
-                                } else {
-                                    builder.addField("有効投票総数", result.getValidityCount()+" 票 (0 %)", false);
-                                }
-                            }
-                            String[] reactionList = new String[]{"\uD83C\uDDE6", "\uD83C\uDDE7", "\uD83C\uDDE8", "\uD83C\uDDE9", "\uD83C\uDDEA", "\uD83C\uDDEB", "\uD83C\uDDEC", "\uD83C\uDDED", "\uD83C\uDDEE", "\uD83C\uDDEF", "\uD83C\uDDF0", "\uD83C\uDDF1", "\uD83C\uDDF2", "\uD83C\uDDF3", "\uD83C\uDDF4", "\uD83C\uDDF5", "\uD83C\uDDF6", "\uD83C\uDDF7", "\uD83C\uDDF8", "\uD83C\uDDF9"};
-
-                            int i = 0;
-                            for (String name : result.getVoteResult()){
-                                int count = 0;
-                                StringBuilder voteNameList = new StringBuilder();
-
-                                for (PersonalResult personalResult : result.getPersonalResults()) {
-                                    if (personalResult.getSelectReaction().equals(reactionList[i])){
-                                        count++;
-
-                                        if (voteNameList.length() == 0){
-                                            voteNameList.append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
-                                        } else {
-                                            voteNameList.append("\n").append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
-                                        }
-
-                                    }
-                                }
-
-                                builder.addField(Emoji.fromUnicode(reactionList[i]).getFormatted() + " " + name + "("+count+" 票)", voteNameList.toString(), false);
-                                i++;
-                            }
-
-
-                            jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).getHistoryAfter(MessageId, 1).queue(messageHistory -> {
-                                if (messageHistory.getMessageById(MessageId) != null && messageHistory.getMessageById(MessageId).getReactions() != null && messageHistory.getMessageById(MessageId).getReactions().size() > 0){
-                                    messageHistory.getMessageById(MessageId).clearReactions().queue();
-                                }
-
-                            });
-                            jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).sendMessageEmbeds(builder.build()).queue();
-
-                            contents.setEndFlag(true);
-                            jedis.set("nanamibot:vote:data:" + voteId, new Gson().toJson(contents));
-                        }
-                    }
+                    stop(jda, jedis);
 
                     //System.out.println("----");
                     jedis.close();
@@ -379,6 +322,69 @@ public class Vote {
         System.gc();
 
         return result;
+    }
+
+    public void stop(JDA jda, Jedis jedis){
+
+        for (String key : jedis.keys("nanamibot:vote:contents:*")) {
+            String[] temp = key.split(":");
+            String voteId = temp[temp.length - 1];
+
+            VoteContents contents = new Gson().fromJson(jedis.get("nanamibot:vote:data:" + voteId), VoteContents.class);
+            if (new Date().getTime() >= contents.getEndDate().getTime() && !contents.isEndFlag()){
+                String MessageId = jedis.get(key);
+
+                builder.setTitle("ななみちゃんbot 投票機能");
+                builder.setColor(Color.PINK);
+                builder.clearFields();
+                builder.setDescription("「"+contents.getTitle()+"」の投票が投票終了しました！\n結果は以下のとおりです！");
+                VoteResult result = check(MessageId);
+                builder.addField("投票総数", result.getTotalCount()+" 票", false);
+                if (contents.getVoteType().equals("only")){
+                    if (result.getValidityCount() > 0){
+                        builder.addField("有効投票総数", result.getValidityCount()+" 票 ("+((result.getValidityCount()) / result.getTotalCount() * 100)+" %)", false);
+                    } else {
+                        builder.addField("有効投票総数", result.getValidityCount()+" 票 (0 %)", false);
+                    }
+                }
+                String[] reactionList = new String[]{"\uD83C\uDDE6", "\uD83C\uDDE7", "\uD83C\uDDE8", "\uD83C\uDDE9", "\uD83C\uDDEA", "\uD83C\uDDEB", "\uD83C\uDDEC", "\uD83C\uDDED", "\uD83C\uDDEE", "\uD83C\uDDEF", "\uD83C\uDDF0", "\uD83C\uDDF1", "\uD83C\uDDF2", "\uD83C\uDDF3", "\uD83C\uDDF4", "\uD83C\uDDF5", "\uD83C\uDDF6", "\uD83C\uDDF7", "\uD83C\uDDF8", "\uD83C\uDDF9"};
+
+                int i = 0;
+                for (String name : result.getVoteResult()){
+                    int count = 0;
+                    StringBuilder voteNameList = new StringBuilder();
+
+                    for (PersonalResult personalResult : result.getPersonalResults()) {
+                        if (personalResult.getSelectReaction().equals(reactionList[i])){
+                            count++;
+
+                            if (voteNameList.length() == 0){
+                                voteNameList.append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                            } else {
+                                voteNameList.append("\n").append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                            }
+
+                        }
+                    }
+
+                    builder.addField(Emoji.fromUnicode(reactionList[i]).getFormatted() + " " + name + "("+count+" 票)", voteNameList.toString(), false);
+                    i++;
+                }
+
+
+                jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).getHistoryAfter(MessageId, 1).queue(messageHistory -> {
+                    if (messageHistory.getMessageById(MessageId) != null && messageHistory.getMessageById(MessageId).getReactions() != null && messageHistory.getMessageById(MessageId).getReactions().size() > 0){
+                        messageHistory.getMessageById(MessageId).clearReactions().queue();
+                    }
+
+                });
+                jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).sendMessageEmbeds(builder.build()).queue();
+
+                contents.setEndFlag(true);
+                jedis.set("nanamibot:vote:data:" + voteId, new Gson().toJson(contents));
+            }
+        }
+
     }
 
 }
