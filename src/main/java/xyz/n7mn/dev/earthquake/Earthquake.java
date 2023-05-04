@@ -227,6 +227,7 @@ public class Earthquake {
         try {
             Request request = new Request.Builder()
                     .url("http://www.kmoni.bosai.go.jp/webservice/hypo/eew/"+ Timestamp +".json")
+                    //.url("http://www.kmoni.bosai.go.jp/webservice/hypo/eew/20230503053834.json")
                     .build();
 
             Response response = client.newCall(request).execute();
@@ -255,7 +256,9 @@ public class Earthquake {
     }
 
     private void eew_send(String reportNum, Boolean isFinal, String regionName, String latitude, String longitude, String depth, String magunitude, String calcintensity, Boolean isCancel){
+        //System.out.println("eew0");
         new Thread(()->{
+            //System.out.println("eew1");
             EmbedBuilder builder1 = new EmbedBuilder();
             builder1.setTitle("緊急地震情報");
             builder1.setColor(Color.ORANGE);
@@ -274,25 +277,29 @@ public class Earthquake {
             }
             builder1.setFooter("情報元 : NIED 強震モニタ(https://www.bosai.go.jp/)");
 
+            //System.out.println("eew2");
 
             new Thread(()->{
 
+                //System.out.println("eew3");
                 JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
                 Jedis jedis = pool.getResource();
                 jedis.auth(ConfigYml.string("RedisPass"));
 
                 for (String key : jedis.keys("nanamibot:eew:*")){
+                    //System.out.println("eew4");
                     String[] split = key.split(":");
                     String guildId = split[split.length - 1];
                     String channelId = jedis.get(key);
 
+                    //System.out.println("eew5");
                     jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build()).queue();
                 }
 
                 jedis.close();
                 pool.close();
             }).start();
-        });
+        }).start();
     }
 
     private void jisin_send(String date, String intensity, String epicenter, String latitude, String longitude, String magnitude, String depth, String detailImage, String localImage, String globalImage){
