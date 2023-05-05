@@ -176,7 +176,7 @@ public class Earthquake {
                                         new Thread(()->{
 
                                             jisin_send(Date, Intensity, Epicenter, Latitude, Longitude, Magnitude, Depth, Detail, Local, Global);
-                                        });
+                                        }).start();
                                         id[0] = matcher1.group(1);
                                     }
                                 //}
@@ -245,7 +245,7 @@ public class Earthquake {
 
             System.out.println("緊急地震速報 受信");
             System.out.println(data.getReport_num() + "," + data.getRegion_name() + "," + data.getLatitude() + "," + data.getLongitude() + "," + data.getDepth() + "," + data.getMagunitude() + "," +data.getCalcintensity());
-            eew_send(data.getReport_num(), data.getIs_final(), data.getRegion_name(), data.getLatitude(), data.getLongitude(), data.getDepth(), data.getMagunitude(), data.getCalcintensity(), data.getIs_cancel());
+            eew_send(data.getReport_time(), data.getReport_num(), data.getIs_final(), data.getRegion_name(), data.getLatitude(), data.getLongitude(), data.getDepth(), data.getMagunitude(), data.getCalcintensity(), data.getIs_cancel());
 
             response.close();
 
@@ -255,8 +255,16 @@ public class Earthquake {
 
     }
 
-    private void eew_send(String reportNum, Boolean isFinal, String regionName, String latitude, String longitude, String depth, String magunitude, String calcintensity, Boolean isCancel){
+    private String temp_date = "";
+    private String report_Num = "";
+    private void eew_send(String reportTime, String reportNum, Boolean isFinal, String regionName, String latitude, String longitude, String depth, String magunitude, String calcintensity, Boolean isCancel){
         //System.out.println("eew0");
+        if (temp_date.equals(reportTime) && report_Num.equals(reportNum)){
+            return;
+        }
+        temp_date = reportTime;
+        report_Num = reportNum;
+
         new Thread(()->{
             //System.out.println("eew1");
             EmbedBuilder builder1 = new EmbedBuilder();
@@ -276,7 +284,6 @@ public class Earthquake {
                 );
             }
             builder1.setFooter("情報元 : NIED 強震モニタ(https://www.bosai.go.jp/)");
-
             //System.out.println("eew2");
 
             new Thread(()->{
@@ -303,6 +310,7 @@ public class Earthquake {
     }
 
     private void jisin_send(String date, String intensity, String epicenter, String latitude, String longitude, String magnitude, String depth, String detailImage, String localImage, String globalImage){
+        System.out.println("j1");
         EmbedBuilder builder1 = new EmbedBuilder();
         builder1.setTitle("地震情報");
         builder1.setDescription(
@@ -325,6 +333,7 @@ public class Earthquake {
         builder3.setFooter("情報元 : NHK地震情報 (https://www3.nhk.or.jp/sokuho/jishin/)");
 
         new Thread(()->{
+            System.out.println("j2");
             JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
             Jedis jedis = pool.getResource();
             jedis.auth(ConfigYml.string("RedisPass"));
