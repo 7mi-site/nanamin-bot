@@ -95,16 +95,16 @@ public class Earthquake {
                         if (matcher1.find()){
                             try {
                                 Date date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(matcher1.group(1));
-                                //if ((new Date().getTime() - date.getTime()) <= 60000){
+                                if ((new Date().getTime() - date.getTime()) <= 60000){
                                     if (!id[0].equals(matcher1.group(1))){
                                         //System.out.println("!!");
                                         //System.out.println(xml);
                                         Matcher matcher_date = Pattern.compile("Time=\"(.*)\" Intensity").matcher(xml);
-                                        Matcher matcher_intensity = Pattern.compile("Intensity=\"(.*)\" Epicenter").matcher(xml);
+                                        Matcher matcher_intensity = Pattern.compile("Intensity=\"(\\d+|\\d+[+|\\-])\" Epicenter").matcher(xml);
                                         Matcher matcher_epicenter = Pattern.compile("Epicenter=\"(.*)\" Latitude").matcher(xml);
                                         Matcher matcher_latitude = Pattern.compile("Latitude=\"(.*)\" Longitude").matcher(xml);
                                         Matcher matcher_longitude = Pattern.compile("Longitude=\"(.*)\" Magnitude").matcher(xml);
-                                        Matcher matcher_magnitude = Pattern.compile("Magnitude=\"(.*)\" Depth").matcher(xml);
+                                        Matcher matcher_magnitude = Pattern.compile("Magnitude=\"(\\d+\\.\\d+)\" Depth").matcher(xml);
                                         Matcher matcher_depth = Pattern.compile("Depth=\"(\\d+)km\" >").matcher(xml);
 
                                         Matcher matcher_detail = Pattern.compile("<Detail>(.*)</Detail>").matcher(xml);
@@ -118,56 +118,56 @@ public class Earthquake {
                                             Date = null;
                                         }
                                         final String Intensity;
-                                        if (matcher_date.find()){
+                                        if (matcher_intensity.find()){
                                             Intensity = matcher_intensity.group(1);
                                         } else {
                                             Intensity = null;
                                         }
                                         final String Epicenter;
-                                        if (matcher_date.find()){
+                                        if (matcher_epicenter.find()){
                                             Epicenter = matcher_epicenter.group(1);
                                         } else {
                                             Epicenter = null;
                                         }
                                         final String Latitude;
-                                        if (matcher_date.find()){
+                                        if (matcher_latitude.find()){
                                             Latitude = matcher_latitude.group(1);
                                         } else {
                                             Latitude = null;
                                         }
                                         final String Longitude;
-                                        if (matcher_date.find()){
+                                        if (matcher_longitude.find()){
                                             Longitude = matcher_longitude.group(1);
                                         } else {
                                             Longitude = null;
                                         }
                                         final String Magnitude;
-                                        if (matcher_date.find()){
+                                        if (matcher_magnitude.find()){
                                             Magnitude = matcher_magnitude.group(1);
                                         } else {
                                             Magnitude = null;
                                         }
                                         final String Depth;
-                                        if (matcher_date.find()){
+                                        if (matcher_depth.find()){
                                             Depth = matcher_depth.group(1) + "km";
                                         } else {
                                             Depth = null;
                                         }
 
                                         final String Detail;
-                                        if (matcher_date.find()){
+                                        if (matcher_detail.find()){
                                             Detail = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_detail.group(1);
                                         } else {
                                             Detail = null;
                                         }
                                         final String Local;
-                                        if (matcher_date.find()){
+                                        if (matcher_local.find()){
                                             Local = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_local.group(1);
                                         } else {
                                             Local = null;
                                         }
                                         final String Global;
-                                        if (matcher_date.find()){
+                                        if (matcher_global.find()){
                                             Global = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_global.group(1);
                                         } else {
                                             Global = null;
@@ -179,7 +179,7 @@ public class Earthquake {
                                         }).start();
                                         id[0] = matcher1.group(1);
                                     }
-                                //}
+                                }
                                 if (id[0].equals("")){
                                     id[0] = matcher1.group(1);
                                 }
@@ -310,30 +310,44 @@ public class Earthquake {
     }
 
     private void jisin_send(String date, String intensity, String epicenter, String latitude, String longitude, String magnitude, String depth, String detailImage, String localImage, String globalImage){
-        System.out.println("j1");
+        //System.out.println("j1");
         EmbedBuilder builder1 = new EmbedBuilder();
-        builder1.setTitle("地震情報");
+
+        String title = "情報";
+        if (intensity == null){
+            title = "速報";
+        }
+        if (intensity != null && epicenter != null && globalImage == null){
+            title = "情報 (震源に関する情報)";
+        }
+
+        builder1.setTitle("地震"+title);
         builder1.setDescription(
                 "地震発生時間 : "+date + "\n" +
-                "最大震度 : "+intensity + "\n" +
-                "震源地 : "+epicenter+" ("+latitude + " "+ longitude +")\n" +
-                "マグニチュード : " + magnitude + "\n" +
-                "震源の深さ : " + depth
+                (intensity == null ? "" : "最大震度 : "+intensity + "\n") +
+                (epicenter != null ? "震源地 : "+epicenter+" ("+latitude + " "+ longitude +")\n" : "") +
+                (magnitude != null ? "マグニチュード : " + magnitude + "\n" : "") +
+                (depth != null ? "震源の深さ : " + depth : "")
         );
+        builder1.setImage(detailImage);
         builder1.setFooter("情報元 : NHK地震情報 (https://www3.nhk.or.jp/sokuho/jishin/)");
 
         EmbedBuilder builder2 = new EmbedBuilder();
-        builder2.setTitle("地震情報");
-        builder2.setImage(globalImage);
-        builder2.setFooter("情報元 : NHK地震情報 (https://www3.nhk.or.jp/sokuho/jishin/)");
+        if (globalImage != null && !globalImage.isEmpty()){
+            builder2.setTitle("地震情報 (広域)");
+            builder2.setImage(globalImage);
+            builder2.setFooter("情報元 : NHK地震情報 (https://www3.nhk.or.jp/sokuho/jishin/)");
+        }
 
         EmbedBuilder builder3 = new EmbedBuilder();
-        builder3.setTitle("地震情報");
-        builder3.setImage(localImage);
-        builder3.setFooter("情報元 : NHK地震情報 (https://www3.nhk.or.jp/sokuho/jishin/)");
+        if (localImage != null && !localImage.isEmpty()){
+            builder3.setTitle("地震情報 (詳細)");
+            builder3.setImage(localImage);
+            builder3.setFooter("情報元 : NHK地震情報 (https://www3.nhk.or.jp/sokuho/jishin/)");
+        }
 
         new Thread(()->{
-            System.out.println("j2");
+            //System.out.println("j2");
             JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
             Jedis jedis = pool.getResource();
             jedis.auth(ConfigYml.string("RedisPass"));
@@ -343,6 +357,10 @@ public class Earthquake {
                 String guildId = split[split.length - 1];
                 String channelId = jedis.get(key);
 
+                if (builder2.isEmpty()){
+                    jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build()).queue();
+                    continue;
+                }
                 jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build(), builder2.build(), builder3.build()).queue();
             }
 
