@@ -135,8 +135,11 @@ public class EventListener extends ListenerAdapter {
 
             vote_s.addOption(OptionType.STRING, "メッセージリンク", "「メッセージリンクをコピー」をして貼り付けてください\n指定しない場合は実行したチャンネルの最新の投票が終了します。", false);
 
+            setting.addOption(OptionType.STRING, "設定項目", "「eew」で緊急地震速報のチャンネル設定、「earthquake」で地震情報のチャンネル設定、指定しない場合は設定確認", false);
+            setting.addOption(OptionType.CHANNEL, "チャンネル", "設定するチャンネル", false);
+
 /*
-            SlashCommandData setting = Commands.slash("nanami-setting", "ななみちゃんbot 設定画面");
+
 
             SlashCommandData game = Commands.slash("game", "ミニゲーム");
             game.addOption(OptionType.STRING, "ゲームの種類","種類についてはヘルプを見てね！", true, false);
@@ -144,8 +147,7 @@ public class EventListener extends ListenerAdapter {
  */
 
             for (Guild guild : guildList){
-
-                guild.updateCommands().addCommands(vote, vote_s, help, ver_c, music).queue();
+                guild.updateCommands().addCommands(vote, vote_s, help, ver_c, setting, music).queue();
 
             }
         }
