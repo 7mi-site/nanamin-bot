@@ -33,6 +33,7 @@ import xyz.n7mn.dev.api.ver;
 import xyz.n7mn.dev.earthquake.Earthquake;
 import xyz.n7mn.dev.music.MusicBot;
 import xyz.n7mn.dev.music.MusicQueue;
+import xyz.n7mn.dev.setting.Setting;
 import xyz.n7mn.dev.vote.Vote;
 import xyz.n7mn.dev.vote.VoteStop;
 
@@ -357,6 +358,11 @@ public class EventListener extends ListenerAdapter {
 
         if (event.getFullCommandName().equals("vote-stop")){
             voteStop.run(event);
+            return;
+        }
+
+        if (event.getFullCommandName().equals("nanami-setting")){
+            new Setting(jda).run(event);
             return;
         }
 
