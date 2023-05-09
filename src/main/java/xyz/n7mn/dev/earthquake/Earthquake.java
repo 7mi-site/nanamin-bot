@@ -213,10 +213,10 @@ public class Earthquake {
 
                     eew(json.getLatest_time().replaceAll("/","").replaceAll(" ","").replaceAll(":",""));
 
-                    System.gc();
                 } catch (IOException e){
                     e.printStackTrace();
                 }
+                System.gc();
             }
         };
 
