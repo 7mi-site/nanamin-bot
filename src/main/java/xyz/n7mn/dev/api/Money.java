@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
-import xyz.n7mn.dev.money.MoneyData;
 
 import java.io.File;
 import java.io.FileNotFoundException;
