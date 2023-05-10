@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import redis.clients.jedis.Protocol;
 import xyz.n7mn.dev.api.ver;
 
 import java.io.File;
@@ -20,15 +21,16 @@ public class NanamiMain {
     public static void main(String[] args) {
 
         try {
-            File file = new File("./config.yml");
+            File config1 = new File("./config.yml");
+            File config2 = new File("./config-redis.yml");
 
-            YamlMapping ConfigYml;
-            if (!file.exists()){
-                //System.out.println("ない");
+            YamlMapping ConfigYml1;
+            YamlMapping ConfigYml2;
+            if (!config1.exists()){
                 YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
-                ConfigYml = builder.add(
+                ConfigYml1 = builder.add(
                         "DiscordToken", "xxx"
-                /*).add(
+                ).add(
                         "MySQLServerAddress", "localhost"
                 ).add(
                         "MySQLServerPort", "3306"
@@ -37,14 +39,14 @@ public class NanamiMain {
                 ).add(
                         "MySQLServerOption","?allowPublicKeyRetrieval=true&useSSL=false"
                 ).add(
-                        "MySQLServerUsername","a"
+                        "MySQLServerUsername","user"
                 ).add(
-                        "MySQLServerPassword","a" */
+                        "MySQLServerPassword","pass"
                 ).build();
 
                 try {
-                    PrintWriter writer = new PrintWriter(file);
-                    writer.print(ConfigYml.toString());
+                    PrintWriter writer = new PrintWriter(config1);
+                    writer.print(ConfigYml1.toString());
                     writer.close();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -52,11 +54,33 @@ public class NanamiMain {
 
                 return;
             }
-            //System.out.println("ある");
+            ConfigYml1 = Yaml.createYamlInput(config1).readYamlMapping();
 
-            ConfigYml = Yaml.createYamlInput(file).readYamlMapping();
+            if (!config2.exists()){
+                config2.createNewFile();
 
-            String token = ConfigYml.string("DiscordToken");
+                YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
+                ConfigYml2 = builder.add(
+                        "RedisServer", "127.0.0.1"
+                ).add(
+                        "RedisPort", String.valueOf(Protocol.DEFAULT_PORT)
+                ).add(
+                        "RedisPass", ""
+                ).build();
+
+                try {
+                    PrintWriter writer = new PrintWriter(config2);
+                    writer.print(ConfigYml2.toString());
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                return;
+            }
+
+
+            String token = ConfigYml1.string("DiscordToken");
 
             //DriverManager.getConnection("jdbc:mysql://");
 

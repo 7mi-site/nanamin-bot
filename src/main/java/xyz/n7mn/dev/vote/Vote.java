@@ -30,7 +30,7 @@ public class Vote {
 
     public Vote(JDA jda){
 
-        File config = new File("./config-vote.yml");
+        File config = new File("./config-redis.yml");
         try {
             if (!config.exists()){
                 config.createNewFile();
