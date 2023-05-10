@@ -12,7 +12,7 @@
 - [ひむひむちゃんbot](https://github.com/KoutaChan/himuhimu-bot)
 <br>新規導入するなら「ひむひむちゃんbot」をおすすめします。
 
-## 使用しているもの / する予定のもの
+## 使用しているもの
 ### ライブラリ
 - [JDA](https://github.com/DV8FromTheWorld/JDA)
 - [LavaPlayer](https://github.com/sedmelluq/lavaplayer)
