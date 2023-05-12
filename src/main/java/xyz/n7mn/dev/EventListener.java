@@ -31,6 +31,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
 import xyz.n7mn.dev.api.ver;
 import xyz.n7mn.dev.earthquake.Earthquake;
+import xyz.n7mn.dev.game.Game;
 import xyz.n7mn.dev.music.MusicBot;
 import xyz.n7mn.dev.music.MusicQueue;
 import xyz.n7mn.dev.setting.Setting;
@@ -139,16 +140,17 @@ public class EventListener extends ListenerAdapter {
             setting.addOption(OptionType.STRING, "設定項目", "「eew」で緊急地震速報のチャンネル設定、「earthquake」で地震情報のチャンネル設定、指定しない場合は設定確認", false);
             setting.addOption(OptionType.CHANNEL, "チャンネル", "設定するチャンネル", false);
 
-/*
+
 
 
             SlashCommandData game = Commands.slash("game", "ミニゲーム");
-            game.addOption(OptionType.STRING, "ゲームの種類","種類についてはヘルプを見てね！", true, false);
+            game.addOption(OptionType.STRING, "種類","種類について知りたい場合は「list」と入れてね", true, false);
+            game.addOption(OptionType.INTEGER, "掛け金","一部のミニゲームのみ使用できます！", false, false);
 
- */
+
 
             for (Guild guild : guildList){
-                guild.updateCommands().addCommands(vote, vote_s, help, ver_c, setting, music).queue();
+                guild.updateCommands().addCommands(vote, vote_s, help, ver_c, setting, music, game).queue();
 
             }
         }
@@ -363,6 +365,11 @@ public class EventListener extends ListenerAdapter {
 
         if (event.getFullCommandName().equals("nanami-setting")){
             new Setting(jda).run(event);
+            return;
+        }
+
+        if (event.getFullCommandName().equals("game")){
+            new Game().run(event);
             return;
         }
 

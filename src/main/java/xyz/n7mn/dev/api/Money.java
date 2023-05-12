@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 public class Money {
 
     private static final File config = new File("./config-redis.yml");
-    private static long money = 100L;
+    private static long money = 1000L;
 
     @Nullable
     public static Long get(String memberId){
