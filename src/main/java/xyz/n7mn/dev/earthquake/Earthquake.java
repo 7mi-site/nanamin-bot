@@ -311,6 +311,11 @@ public class Earthquake {
 
     private void jisin_send(String date, String intensity, String epicenter, String latitude, String longitude, String magnitude, String depth, String detailImage, String localImage, String globalImage){
         //System.out.println("j1");
+
+        detailImage = detailImage.equals("https://www3.nhk.or.jp/sokuho/jishin/") ? null : detailImage;
+        localImage = localImage.equals("https://www3.nhk.or.jp/sokuho/jishin/") ? null : localImage;
+        globalImage = globalImage.equals("https://www3.nhk.or.jp/sokuho/jishin/") ? null : globalImage;
+
         EmbedBuilder builder1 = new EmbedBuilder();
 
         String title = "情報";
