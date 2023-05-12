@@ -9,7 +9,6 @@ import xyz.n7mn.dev.api.Money;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -201,6 +200,28 @@ public class Game {
             builder.addField("結果！！", endMoney+"コイン獲得！", false);
 
             Money.set(event.getMember().getId(), nowMoney + endMoney);
+            event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+
+            return;
+        }
+
+        if (event.getOption("種類").getAsString().equals("giveme")){
+            String[] strings = {"・・・。", "・・・プライドないないでちゅか～？", "・・・。", "・・・。"};
+
+            Long mon = Money.get(event.getMember().getId());
+            if (mon == null || mon >= 0){
+                builder.setDescription("・・・あなたにはまだ関係ないと思いますよ？");
+                event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+                return;
+            }
+
+            long money = mon + new SecureRandom().nextInt();
+            if (money >= 1000) { money = 1000L; }
+            Money.set(event.getMember().getId(), money);
+
+            builder.addField("現在の所持金：",money+" コイン", false);
+
+            builder.setDescription(strings[new SecureRandom().nextInt(strings.length)]);
             event.replyEmbeds(builder.build()).setEphemeral(false).queue();
 
             return;
