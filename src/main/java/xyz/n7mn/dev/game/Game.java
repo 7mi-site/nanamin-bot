@@ -137,39 +137,47 @@ public class Game {
             long count4 = new SecureRandom().nextLong();
             long count5 = new SecureRandom().nextLong();
 
+            if (startMoney <= Integer.MAX_VALUE){
+                count1 = new SecureRandom().nextInt((int) startMoney);
+                count2 = new SecureRandom().nextInt((int) startMoney);
+                count3 = new SecureRandom().nextInt((int) startMoney);
+                count4 = new SecureRandom().nextInt((int) startMoney);
+                count5 = new SecureRandom().nextInt((int) startMoney);
+            }
+
             if (count1 > startMoney){
-                count1 = (long) (startMoney * 0.9);
+                count1 = (long) (startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
             if (count1 < -startMoney){
-                count1 = (long) -(startMoney * 0.9);
+                count1 = (long) -(startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
 
             if (count2 > startMoney){
-                count2 = (long) (startMoney * 0.9);
+                count2 = (long) (startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
             if (count2 < -startMoney){
-                count2 = (long) -(startMoney * 0.9);
+                count2 = (long) -(startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
 
             if (count3 > startMoney){
-                count3 = (long) (startMoney * 0.9);
+                count3 = (long) (startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
             if (count3 < -startMoney){
-                count3 = (long) -(startMoney * 0.9);
+                count3 = (long) -(startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
 
             if (count4 > startMoney){
-                count4 = (long) (startMoney * 0.9);
+                count4 = (long) (startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
             if (count4 < -startMoney){
-                count4 = (long) -(startMoney * 0.9);
+                count4 = (long) -(startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
 
             if (count5 > startMoney){
-                count5 = (long) (startMoney * 0.9);
+                count5 = (long) (startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
             if (count5 < -startMoney){
-                count5 = (long) -(startMoney * 0.9);
+                count5 = (long) -(startMoney * (new SecureRandom().nextInt(100) / (double) 10000));
             }
 
             if (!new SecureRandom().nextBoolean()){
@@ -216,7 +224,7 @@ public class Game {
             }
 
             long money = mon + new SecureRandom().nextInt();
-            if (money >= 1000) { money = 1000L; }
+            if (money >= 1000) { money = new SecureRandom().nextInt(1000); }
             Money.set(event.getMember().getId(), money);
 
             builder.addField("現在の所持金：",money+" コイン", false);
