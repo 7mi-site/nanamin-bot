@@ -144,7 +144,7 @@ public class EventListener extends ListenerAdapter {
 
 
             SlashCommandData game = Commands.slash("game", "ミニゲーム");
-            game.addOption(OptionType.STRING, "種類","種類について知りたい場合は「list」と入れてね", true, false);
+            game.addOption(OptionType.STRING, "種類","種類について知りたい場合は「help」と入れてね", true, false);
             game.addOption(OptionType.INTEGER, "掛け金","一部のミニゲームのみ使用できます！", false, false);
 
 
