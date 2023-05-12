@@ -4,14 +4,18 @@ import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import xyz.n7mn.dev.api.Money;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class Game {
@@ -21,16 +25,20 @@ public class Game {
             "money",
             "omikuji",
             "fx",
+            "rank",
             "giveme"
     };
     private final String[] gameDescList = new String[]{
             "コイン数が確認できるよ！",
             "おみくじが引けるよ！",
             "ハイリスク・ハイリターンなFXができるよ！",
+            "順位が見れるよ！",
             "・・・お金ないときの最終手段ですよ？"
     };
 
     public void run(SlashCommandInteractionEvent event){
+
+        System.gc();
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("ななみちゃんbot ミニゲーム");
@@ -232,6 +240,60 @@ public class Game {
             builder.setDescription(strings[new SecureRandom().nextInt(strings.length)]);
             event.replyEmbeds(builder.build()).setEphemeral(false).queue();
 
+            return;
+        }
+
+        if (event.getOption("種類").getAsString().equals("rank")){
+            System.gc();
+            List<RankData> list = new ArrayList<>();
+            try {
+                File file = new File("./config-redis.yml");
+                YamlMapping yml = Yaml.createYamlInput(file).readYamlMapping();
+
+                JedisPool pool = new JedisPool(yml.string("RedisServer"), yml.integer("RedisPort"));
+                Jedis jedis = pool.getResource();
+                jedis.auth(yml.string("RedisPass"));
+
+                for (String key : jedis.keys("nanamibot:money:*")) {
+                    String[] split = key.split(":");
+                    list.add(new RankData(split[split.length - 1], Long.parseLong(jedis.get(key))));
+                }
+                jedis.close();
+                pool.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            list.sort(Comparator.comparingLong(RankData::getMoney));
+
+            int rank = 1;
+            int nowRank = -1;
+            for (RankData data : list){
+                Member member = event.getGuild().getMemberById(data.getMemberId());
+
+                if (member == null){
+                    continue;
+                }
+
+                if (event.getMember().getId().equals(data.getMemberId())){
+                    nowRank = rank;
+                }
+
+                if (rank > 10){
+                    rank++;
+                    continue;
+                }
+
+                builder.addField("第 " + rank + "位 ("+data.getMoney()+"コイン)", (member.getNickname() == null ? member.getUser().getName() : member.getNickname()) + "さん" + (rank == nowRank ? " (あなたです！)" : ""), false);
+                rank++;
+            }
+
+            if (nowRank > 10){
+                builder.addField("第 " + nowRank + "位 ("+Money.get(event.getMember().getId())+"コイン)", (event.getMember().getNickname() == null ? event.getMember().getUser().getName() : event.getMember().getNickname()) + "さん" + (rank == nowRank ? " (あなたです！)" : ""), false);
+            }
+
+            event.replyEmbeds(builder.build()).setEphemeral(false).queue();
+            System.gc();
             return;
         }
 
