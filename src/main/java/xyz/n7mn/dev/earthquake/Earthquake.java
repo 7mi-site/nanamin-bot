@@ -213,7 +213,7 @@ public class Earthquake {
 
                     eew(json.getLatest_time().replaceAll("/","").replaceAll(" ","").replaceAll(":",""));
 
-                } catch (IOException e){
+                } catch (Exception e){
                     e.printStackTrace();
                 }
                 System.gc();
@@ -249,7 +249,7 @@ public class Earthquake {
 
             response.close();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
