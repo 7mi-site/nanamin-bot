@@ -415,7 +415,7 @@ public class Setting {
             JedisPool pool = new JedisPool(RedisConfigYaml.string("RedisServer"), RedisConfigYaml.integer("RedisPort"));
             Jedis jedis = pool.getResource();
             jedis.auth(RedisConfigYaml.string("RedisPass"));
-            String keyName = "nanamibot:"+event.getOption("設定項目").getAsString()+":"+event.getGuild().getId();
+            String keyName = "nanamibot:"+(event.getOption("設定項目").getAsString().replaceAll("earthquake","jisin"))+":"+event.getGuild().getId();
 
             // 設定解除
             if (!setting[0]){
