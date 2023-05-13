@@ -7,19 +7,22 @@ public class SettingJson {
     private String eewSendChannel;
     private boolean earthquake;
     private String earthquakeSendChannel;
+    private String[] SettingOKRoleList;
 
     private SettingJson(){
         this.eew = false;
         this.eewSendChannel = "";
         this.earthquake = false;
         this.earthquakeSendChannel = "";
+        this.SettingOKRoleList = new String[]{""};
     }
 
-    public SettingJson(boolean eew, String eewSendChannel, boolean earthquake, String earthquakeSendChannel){
+    public SettingJson(boolean eew, String eewSendChannel, boolean earthquake, String earthquakeSendChannel, String[] settingOKRoleList){
         this.eew = eew;
         this.eewSendChannel = eewSendChannel;
         this.earthquake = earthquake;
         this.earthquakeSendChannel = earthquakeSendChannel;
+        this.SettingOKRoleList = settingOKRoleList;
     }
 
     public int getVersion() {
@@ -56,5 +59,13 @@ public class SettingJson {
 
     public void setEarthquakeSendChannel(String earthquakeSendChannel) {
         this.earthquakeSendChannel = earthquakeSendChannel;
+    }
+
+    public String[] getSettingOKRoleList() {
+        return SettingOKRoleList;
+    }
+
+    public void setSettingOKRoleList(String[] settingOKRoleList) {
+        SettingOKRoleList = settingOKRoleList;
     }
 }
