@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -148,11 +149,97 @@ public class EventListener extends ListenerAdapter {
             game.addOption(OptionType.INTEGER, "掛け金","一部のミニゲームのみ使用できます！", false, false);
 
 
+            // v1 ---> v2 移行
+            System.gc();
+            File config = new File("./config-redis.yml");
+            YamlMapping ConfigYml = null;
+            try {
+                if (!config.exists()){
+                    config.createNewFile();
+
+                    YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
+                    ConfigYml = builder.add(
+                            "RedisServer", "127.0.0.1"
+                    ).add(
+                            "RedisPort", String.valueOf(Protocol.DEFAULT_PORT)
+                    ).add(
+                            "RedisPass", ""
+                    ).build();
+
+                    try {
+                        PrintWriter writer = new PrintWriter(config);
+                        writer.print(ConfigYml.toString());
+                        writer.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    ConfigYml = Yaml.createYamlInput(config).readYamlMapping();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.gc();
+                return;
+            }
+
+            JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+            Jedis jedis = pool.getResource();
+            jedis.auth(ConfigYml.string("RedisPass"));
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("ななみちゃんbotからのおしらせ");
+            builder.setDescription("ななみちゃんbot v2.0からこのチャンネルは不要になりました。\n自動で設定は移行してあります。\n/nanami-settingで確認ができます。");
+            builder.setColor(Color.PINK);
 
             for (Guild guild : guildList){
                 guild.updateCommands().addCommands(vote, vote_s, help, ver_c, setting, music, game).queue();
 
+                List<TextChannel> channel = guild.getTextChannels();
+                if (channel.size() == 0){
+                    System.out.println("チャンネル取得できてない");
+                    continue;
+                }
+
+                if (jedis.get("nanamibot:eew:"+guild.getId()) != null || jedis.get("nanamibot:jisin:"+guild.getId()) != null){
+                    System.out.println("すでに移行済み");
+                    continue;
+                }
+
+
+                for (TextChannel textChannel : channel) {
+
+                    if (!textChannel.getName().equals("nanami_setting")){
+                        //System.out.println(textChannel.getName());
+                        continue;
+                    }
+
+                    textChannel.getHistoryAfter(1, 100).queue(history->{
+                        for (Message message : history.getRetrievedHistory()) {
+                            if (message.getContentRaw().startsWith("jisin:")){
+                                String[] s = message.getContentRaw().split(" ");
+
+                                TextChannel t = guild.getTextChannelById(s[s.length - 1]);
+                                if (t != null && t.canTalk()){
+                                    jedis.set("nanamibot:jisin:"+guild.getId(), t.getId());
+                                    builder.addField("地震情報", t.getAsMention(), false);
+                                }
+
+                                textChannel.sendMessageEmbeds(builder.build()).queue();
+
+
+                                jedis.close();
+                                pool.close();
+                                return;
+                            }
+                        }
+
+                    });
+
+                }
+                System.gc();
             }
+
         }
     }
 
