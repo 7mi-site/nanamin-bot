@@ -140,6 +140,7 @@ public class EventListener extends ListenerAdapter {
 
             setting.addOption(OptionType.STRING, "設定項目", "指定しない場合は設定確認 (設定確認時にどの設定項目か出てきます)", false);
             setting.addOption(OptionType.CHANNEL, "チャンネル", "設定するチャンネル", false);
+            setting.addOption(OptionType.ROLE, "ロール", "設定するロール", false);
 
             SlashCommandData game = Commands.slash("game", "ミニゲーム");
             game.addOption(OptionType.STRING, "種類","種類について知りたい場合は「help」と入れてね", true, false);

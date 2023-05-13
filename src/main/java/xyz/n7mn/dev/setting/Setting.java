@@ -143,11 +143,9 @@ public class Setting {
             TextChannel mention2 = data.isEarthquake() ? event.getGuild().getTextChannelById(data.getEarthquakeSendChannel()) : null;
             builder.setColor(Color.PINK);
 
-            builder.addField("緊急地震速報 (設定項目: eew)", (data.isEEW() ? "設定済み (" + (mention1 != null ? mention1.getAsMention() : "不明") + ")" : "未設定"), false);
-            builder.addField("地震情報 (設定項目: earthquake)", (data.isEarthquake() ? "設定済み (" + (mention2 != null ? mention2.getAsMention() : "不明") + ")" : "未設定"), false);
-
+            StringBuffer buffer = new StringBuffer();
             if (data.getSettingOKRoleList() != null){
-                StringBuffer buffer = new StringBuffer();
+
                 for (String roleId : data.getSettingOKRoleList()){
                     if (!roleId.equals("") && event.getGuild().getRoleById(roleId) != null){
                         buffer.append(event.getGuild().getRoleById(roleId).getAsMention());
@@ -158,7 +156,11 @@ public class Setting {
                 data.setSettingOKRoleList(new String[]{""});
             }
 
-            builder.addField("設定変更できるロール (設定項目: OKRole ※ここのオーナーのみ)", (data.getSettingOKRoleList()[0].length() != 0 ? "設定済み ("+builder.toString()+")" : "未設定"), false);
+            builder.addField("設定変更できるロール (設定項目: OKRole ※ここのオーナーのみ)", (data.getSettingOKRoleList()[0].length() != 0 ? "設定済み ("+buffer+")" : "未設定"), false);
+            // builder.addField("入室ログ (設定項目: join)", "", false);
+            // builder.addField("退室ログ (設定項目: leave)", "", false);
+            builder.addField("緊急地震速報 (設定項目: eew)", (data.isEEW() ? "設定済み (" + (mention1 != null ? mention1.getAsMention() : "不明") + ")" : "未設定"), false);
+            builder.addField("地震情報 (設定項目: earthquake)", (data.isEarthquake() ? "設定済み (" + (mention2 != null ? mention2.getAsMention() : "不明") + ")" : "未設定"), false);
 
             event.replyEmbeds(builder.build()).setEphemeral(false).queue();
             return;
@@ -198,6 +200,91 @@ public class Setting {
         if (!event.getOption("設定項目").getAsString().equals("eew") && !event.getOption("設定項目").getAsString().equals("earthquake") && !event.getOption("設定項目").getAsString().equals("OKRole")){
             builder.setColor(Color.RED);
             builder.setDescription("現在 設定できません。");
+            event.replyEmbeds(builder.build()).setEphemeral(true).queue();
+            return;
+        }
+
+        // ロール設定
+        if (event.getOption("設定項目").getAsString().equals("OKRole")){
+            boolean isAdd = true;
+
+            if (event.getOption("ロール") == null){
+                builder.setColor(Color.RED);
+                builder.setDescription("ロールを指定してください。");
+                event.replyEmbeds(builder.build()).setEphemeral(true).queue();
+                return;
+            }
+
+            if (data.getSettingOKRoleList() != null && !data.getSettingOKRoleList()[0].equals("")){
+                for (String s : data.getSettingOKRoleList()) {
+                    if (event.getOption("ロール").getAsRole().getId().equals(s)){
+                        isAdd = false;
+                        break;
+                    }
+                }
+
+            }
+            String[] NewList = null;
+            if (isAdd){
+                if (data.getSettingOKRoleList()[0].equals("")){
+                    data.setSettingOKRoleList(new String[]{event.getOption("ロール").getAsRole().getId()});
+                } else {
+                    NewList = new String[data.getSettingOKRoleList().length + 1];
+                    for (int i = 0; i < data.getSettingOKRoleList().length; i++){
+                        NewList[i] = data.getSettingOKRoleList()[i];
+                    }
+                    NewList[NewList.length - 1] = event.getOption("ロール").getAsRole().getId();
+                }
+            } else {
+                NewList = new String[data.getSettingOKRoleList().length - 1];
+
+                for (int i = 0; i < data.getSettingOKRoleList().length; i++){
+                    if (data.getSettingOKRoleList()[i].equals(event.getOption("ロール").getAsRole().getId())){
+                        continue;
+                    }
+                    NewList[i] = data.getSettingOKRoleList()[i];
+                }
+            }
+
+            Connection con1 = null;
+            try {
+                con1 = DriverManager.getConnection("jdbc:mysql://" + MySQLConfigYaml.string("MySQLServerAddress") + ":" + MySQLConfigYaml.integer("MySQLServerPort") + "/" + MySQLConfigYaml.string("MySQLServerDatabase") + MySQLConfigYaml.string("MySQLServerOption"), MySQLConfigYaml.string("MySQLServerUsername"), MySQLConfigYaml.string("MySQLServerPassword"));
+                con1.setAutoCommit(true);
+
+                PreparedStatement statement1 = con1.prepareStatement("UPDATE `SettingTable` SET `Active`= ? WHERE `GuildID` = ?");
+                statement1.setBoolean(1, false);
+                statement1.setString(2, event.getGuild().getId());
+                statement1.execute();
+                statement1.close();
+
+                PreparedStatement statement2 = con1.prepareStatement("INSERT INTO `SettingTable`(`ID`, `GuildID`, `JSON`, `Active`) VALUES (?, ?, ?, ?)");
+                statement2.setString(1, UUID.randomUUID().toString());
+                statement2.setString(2, event.getGuild().getId());
+                statement2.setString(3, new Gson().toJson(data));
+                statement2.setBoolean(4, true);
+                statement2.execute();
+                statement2.close();
+
+                con1.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (con1 != null){
+                        con1.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            builder.setColor(Color.GREEN);
+            if (!isAdd){
+                builder.setDescription("設定可能ロールから"+event.getOption("ロール").getAsRole().getAsMention()+"を解除しました。");
+            } else {
+                builder.setDescription("設定可能ロールに"+event.getOption("ロール").getAsRole().getAsMention()+"を追加しました。");
+            }
+
             event.replyEmbeds(builder.build()).setEphemeral(true).queue();
             return;
         }
