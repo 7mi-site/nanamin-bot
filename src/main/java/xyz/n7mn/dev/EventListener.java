@@ -138,11 +138,8 @@ public class EventListener extends ListenerAdapter {
 
             vote_s.addOption(OptionType.STRING, "メッセージリンク", "「メッセージリンクをコピー」をして貼り付けてください\n指定しない場合は実行したチャンネルの最新の投票が終了します。", false);
 
-            setting.addOption(OptionType.STRING, "設定項目", "「eew」で緊急地震速報のチャンネル設定、「earthquake」で地震情報のチャンネル設定、指定しない場合は設定確認", false);
+            setting.addOption(OptionType.STRING, "設定項目", "指定しない場合は設定確認 (設定確認時にどの設定項目か出てきます)", false);
             setting.addOption(OptionType.CHANNEL, "チャンネル", "設定するチャンネル", false);
-
-
-
 
             SlashCommandData game = Commands.slash("game", "ミニゲーム");
             game.addOption(OptionType.STRING, "種類","種類について知りたい場合は「help」と入れてね", true, false);

@@ -80,7 +80,7 @@ public class Setting {
         if (json != null){
             data = new Gson().fromJson(json, SettingJson.class);
         } else {
-            data = data = new SettingJson(false, "", false, "", new String[]{""});;
+            data = new SettingJson(false, "", false, "", new String[]{""});;
         }
 
         /* 確認 */
@@ -143,8 +143,8 @@ public class Setting {
             TextChannel mention2 = data.isEarthquake() ? event.getGuild().getTextChannelById(data.getEarthquakeSendChannel()) : null;
             builder.setColor(Color.PINK);
 
-            builder.addField("緊急地震速報", (data.isEEW() ? "設定済み (" + (mention1 != null ? mention1.getAsMention() : "不明") + ")" : "未設定"), false);
-            builder.addField("地震情報", (data.isEarthquake() ? "設定済み (" + (mention2 != null ? mention2.getAsMention() : "不明") + ")" : "未設定"), false);
+            builder.addField("緊急地震速報 (設定項目: eew)", (data.isEEW() ? "設定済み (" + (mention1 != null ? mention1.getAsMention() : "不明") + ")" : "未設定"), false);
+            builder.addField("地震情報 (設定項目: earthquake)", (data.isEarthquake() ? "設定済み (" + (mention2 != null ? mention2.getAsMention() : "不明") + ")" : "未設定"), false);
 
             if (data.getSettingOKRoleList() != null){
                 StringBuffer buffer = new StringBuffer();
@@ -158,7 +158,7 @@ public class Setting {
                 data.setSettingOKRoleList(new String[]{""});
             }
 
-            builder.addField("設定変更できるロール (管理者のみ)", (data.getSettingOKRoleList()[0].length() != 0 ? "設定済み ("+builder.toString()+")" : "未設定"), false);
+            builder.addField("設定変更できるロール (設定項目: OKRole ※ここのオーナーのみ)", (data.getSettingOKRoleList()[0].length() != 0 ? "設定済み ("+builder.toString()+")" : "未設定"), false);
 
             event.replyEmbeds(builder.build()).setEphemeral(false).queue();
             return;
@@ -181,6 +181,11 @@ public class Setting {
                     break;
                 }
             }
+        }
+
+        // ロール設定のときはロール持ちには設定させない (事故防止)
+        if (event.getOption("設定項目").getAsString().equals("OKRole")){
+            isRole = false;
         }
 
         if (!isRole && !event.getMember().isOwner()){
@@ -250,10 +255,13 @@ public class Setting {
                     data.setEarthquakeSendChannel("");
                 }
             } else {
-                data.setEEW(event.getOption("設定項目").getAsString().equals("eew"));
-                data.setEEWSendChannel(event.getOption("設定項目").getAsString().equals("eew") ? event.getOption("チャンネル").getAsChannel().getId() : "");
-                data.setEarthquake(event.getOption("設定項目").getAsString().equals("earthquake"));
-                data.setEarthquakeSendChannel(event.getOption("設定項目").getAsString().equals("earthquake") ? event.getOption("チャンネル").getAsChannel().getId() : "");
+                if (event.getOption("設定項目").getAsString().equals("eew")){
+                    data.setEEW(event.getOption("設定項目").getAsString().equals("eew"));
+                    data.setEEWSendChannel(event.getOption("設定項目").getAsString().equals("eew") ? event.getOption("チャンネル").getAsChannel().getId() : "");
+                } else {
+                    data.setEarthquake(event.getOption("設定項目").getAsString().equals("earthquake"));
+                    data.setEarthquakeSendChannel(event.getOption("設定項目").getAsString().equals("earthquake") ? event.getOption("チャンネル").getAsChannel().getId() : "");
+                }
             }
 
             Connection con1 = null;
