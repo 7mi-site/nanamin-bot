@@ -128,7 +128,7 @@ public class EventListener extends ListenerAdapter {
         Jedis jedis = pool.getResource();
         jedis.auth(ConfigYml.string("RedisPass"));
 
-        String id = jedis.get("nanamibot:join" + event.getGuild().getId());
+        String id = jedis.get("nanamibot:join:" + event.getGuild().getId());
         if (id != null){
 
             EmbedBuilder builder = new EmbedBuilder();
@@ -152,7 +152,7 @@ public class EventListener extends ListenerAdapter {
         Jedis jedis = pool.getResource();
         jedis.auth(ConfigYml.string("RedisPass"));
 
-        String id = jedis.get("nanamibot:leave" + event.getGuild().getId());
+        String id = jedis.get("nanamibot:leave:" + event.getGuild().getId());
         if (id != null){
 
             EmbedBuilder builder = new EmbedBuilder();
