@@ -65,8 +65,42 @@ public class EventListener extends ListenerAdapter {
 
     private List<MusicQueue> musicQueueList = new ArrayList<>();
 
+    private final File config = new File("./config-redis.yml");
+    private YamlMapping ConfigYml = null;
+
     public EventListener() {
         musicCommand = new MusicBot(musicQueueList);
+
+        try {
+            if (!config.exists()){
+                config.createNewFile();
+
+                YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
+                ConfigYml = builder.add(
+                        "RedisServer", "127.0.0.1"
+                ).add(
+                        "RedisPort", String.valueOf(Protocol.DEFAULT_PORT)
+                ).add(
+                        "RedisPass", ""
+                ).build();
+
+                try {
+                    PrintWriter writer = new PrintWriter(config);
+                    writer.print(ConfigYml.toString());
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                ConfigYml = Yaml.createYamlInput(config).readYamlMapping();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.gc();
+            return;
+        }
+
     }
 
     @Override
@@ -90,11 +124,50 @@ public class EventListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+        JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+        Jedis jedis = pool.getResource();
+        jedis.auth(ConfigYml.string("RedisPass"));
+
+        String id = jedis.get("nanamibot:join" + event.getGuild().getId());
+        if (id != null){
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("入室通知");
+            builder.setColor(Color.GREEN);
+            builder.setThumbnail(event.getMember().getAvatarUrl());
+            builder.setDescription(event.getMember().getAsMention()+"さんが入室しました！");
+            builder.setFooter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+
+            event.getGuild().getTextChannelById(id).sendMessageEmbeds(builder.build()).queue();
+
+        }
+
+        jedis.close();
+        pool.close();
     }
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
+        JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+        Jedis jedis = pool.getResource();
+        jedis.auth(ConfigYml.string("RedisPass"));
 
+        String id = jedis.get("nanamibot:leave" + event.getGuild().getId());
+        if (id != null){
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("退室通知");
+            builder.setColor(Color.GREEN);
+            builder.setThumbnail(event.getMember().getAvatarUrl());
+            builder.setDescription(event.getMember().getAsMention()+"さんが退室しました！ ");
+            builder.setFooter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+
+            event.getGuild().getTextChannelById(id).sendMessageEmbeds(builder.build()).queue();
+
+        }
+
+        jedis.close();
+        pool.close();
     }
 
     @Override
@@ -149,37 +222,6 @@ public class EventListener extends ListenerAdapter {
 
             // v1 ---> v2 移行
             System.gc();
-            File config = new File("./config-redis.yml");
-            YamlMapping ConfigYml = null;
-            try {
-                if (!config.exists()){
-                    config.createNewFile();
-
-                    YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
-                    ConfigYml = builder.add(
-                            "RedisServer", "127.0.0.1"
-                    ).add(
-                            "RedisPort", String.valueOf(Protocol.DEFAULT_PORT)
-                    ).add(
-                            "RedisPass", ""
-                    ).build();
-
-                    try {
-                        PrintWriter writer = new PrintWriter(config);
-                        writer.print(ConfigYml.toString());
-                        writer.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    ConfigYml = Yaml.createYamlInput(config).readYamlMapping();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.gc();
-                return;
-            }
 
             JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
             Jedis jedis = pool.getResource();

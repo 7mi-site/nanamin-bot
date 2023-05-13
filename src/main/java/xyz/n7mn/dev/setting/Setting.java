@@ -80,7 +80,7 @@ public class Setting {
         if (json != null){
             data = new Gson().fromJson(json, SettingJson.class);
         } else {
-            data = new SettingJson(false, "", false, "", new String[]{""});;
+            data = new SettingJson(false, "", false, "", new String[]{""}, false, "", false, "");
         }
 
         /* 確認 */
@@ -100,6 +100,17 @@ public class Setting {
                 if (redis_jisin != null && !redis_jisin.isEmpty()){
                     data.setEarthquake(true);
                     data.setEarthquakeSendChannel(redis_jisin);
+                }
+
+                String redis_join = jedis.get("nanamibot:join:" + event.getGuild().getId());
+                if (redis_join != null && !redis_join.isEmpty()){
+                    data.setJoin(true);
+                    data.setJoinSendChannel(redis_join);
+                }
+                String redis_leave = jedis.get("nanamibot:leave:" + event.getGuild().getId());
+                if (redis_leave != null && !redis_leave.isEmpty()){
+                    data.setLeave(true);
+                    data.setLeaveSendChannel(redis_leave);
                 }
 
                 jedis.close();
@@ -141,6 +152,8 @@ public class Setting {
 
             TextChannel mention1 = data.isEEW() ? event.getGuild().getTextChannelById(data.getEEWSendChannel()) : null;
             TextChannel mention2 = data.isEarthquake() ? event.getGuild().getTextChannelById(data.getEarthquakeSendChannel()) : null;
+            TextChannel mention3 = data.isJoin() ? event.getGuild().getTextChannelById(data.getJoinSendChannel()) : null;
+            TextChannel mention4 = data.isLeave() ? event.getGuild().getTextChannelById(data.getLeaveSendChannel()) : null;
             builder.setColor(Color.PINK);
 
             StringBuffer buffer = new StringBuffer();
@@ -157,8 +170,8 @@ public class Setting {
             }
 
             builder.addField("設定変更できるロール (設定項目: OKRole ※ここのオーナーのみ)", (data.getSettingOKRoleList()[0].length() != 0 ? "設定済み ("+buffer+")" : "未設定"), false);
-            // builder.addField("入室ログ (設定項目: join)", "", false);
-            // builder.addField("退室ログ (設定項目: leave)", "", false);
+            builder.addField("入室通知 (設定項目: join)", (data.isJoin() ? "設定済み ("+mention3.getAsMention()+")" : "未設定"), false);
+            builder.addField("退室通知 (設定項目: leave)", (data.isLeave() ? "設定済み ("+mention4.getAsMention()+")" : "未設定"), false);
             builder.addField("緊急地震速報 (設定項目: eew)", (data.isEEW() ? "設定済み (" + (mention1 != null ? mention1.getAsMention() : "不明") + ")" : "未設定"), false);
             builder.addField("地震情報 (設定項目: earthquake)", (data.isEarthquake() ? "設定済み (" + (mention2 != null ? mention2.getAsMention() : "不明") + ")" : "未設定"), false);
 
@@ -197,7 +210,7 @@ public class Setting {
             return;
         }
 
-        if (!event.getOption("設定項目").getAsString().equals("eew") && !event.getOption("設定項目").getAsString().equals("earthquake") && !event.getOption("設定項目").getAsString().equals("OKRole")){
+        if (!event.getOption("設定項目").getAsString().equals("eew") && !event.getOption("設定項目").getAsString().equals("earthquake") && !event.getOption("設定項目").getAsString().equals("OKRole") && !event.getOption("設定項目").getAsString().equals("join") && !event.getOption("設定項目").getAsString().equals("leave")){
             builder.setColor(Color.RED);
             builder.setDescription("現在 設定できません。");
             event.replyEmbeds(builder.build()).setEphemeral(true).queue();
@@ -285,6 +298,90 @@ public class Setting {
                 builder.setDescription("設定可能ロールに"+event.getOption("ロール").getAsRole().getAsMention()+"を追加しました。");
             }
 
+            event.replyEmbeds(builder.build()).setEphemeral(true).queue();
+            return;
+        }
+
+        // 入室ログ・退出ログ
+        if (event.getOption("設定項目") != null && (event.getOption("設定項目").getAsString().equals("join") || event.getOption("設定項目").getAsString().equals("leave"))){
+
+            JedisPool pool = new JedisPool(RedisConfigYaml.string("RedisServer"), RedisConfigYaml.integer("RedisPort"));
+            Jedis jedis = pool.getResource();
+            jedis.auth(RedisConfigYaml.string("RedisPass"));
+
+            boolean isAdd = true;
+            if (event.getOption("チャンネル") != null){
+                if (event.getOption("チャンネル").getAsChannel().getType() != ChannelType.TEXT){
+                    builder.setColor(Color.RED);
+                    builder.setDescription("テキストチャンネルを指定してください。");
+                    event.replyEmbeds(builder.build()).setEphemeral(true).queue();
+                    return;
+                }
+
+                if (!event.getOption("チャンネル").getAsChannel().asTextChannel().canTalk()){
+                    builder.setColor(Color.RED);
+                    builder.setDescription("このテキストチャンネルには書き込めないようです...");
+                    event.replyEmbeds(builder.build()).setEphemeral(true).queue();
+                    return;
+                }
+
+                jedis.set("nanamibot:"+event.getOption("設定項目").getAsString()+":"+event.getGuild().getId(), event.getOption("チャンネル").getAsChannel().getId());
+                if (event.getOption("設定項目").getAsString().equals("join")){
+                    data.setJoin(true);
+                    data.setJoinSendChannel(event.getOption("チャンネル").getAsChannel().getId());
+                } else {
+                    data.setLeave(true);
+                    data.setLeaveSendChannel(event.getOption("チャンネル").getAsChannel().getId());
+                }
+            } else {
+                isAdd = false;
+                jedis.del("nanamibot:"+event.getOption("設定項目").getAsString()+":"+event.getGuild().getId());
+                if (event.getOption("設定項目").getAsString().equals("join")){
+                    data.setJoin(false);
+                    data.setJoinSendChannel("");
+                } else {
+                    data.setLeave(false);
+                    data.setLeaveSendChannel("");
+                }
+            }
+            jedis.close();
+            pool.close();
+
+            Connection con1 = null;
+            try {
+                con1 = DriverManager.getConnection("jdbc:mysql://" + MySQLConfigYaml.string("MySQLServerAddress") + ":" + MySQLConfigYaml.integer("MySQLServerPort") + "/" + MySQLConfigYaml.string("MySQLServerDatabase") + MySQLConfigYaml.string("MySQLServerOption"), MySQLConfigYaml.string("MySQLServerUsername"), MySQLConfigYaml.string("MySQLServerPassword"));
+                con1.setAutoCommit(true);
+
+                PreparedStatement statement1 = con1.prepareStatement("UPDATE `SettingTable` SET `Active`= ? WHERE `GuildID` = ?");
+                statement1.setBoolean(1, false);
+                statement1.setString(2, event.getGuild().getId());
+                statement1.execute();
+                statement1.close();
+
+                PreparedStatement statement2 = con1.prepareStatement("INSERT INTO `SettingTable`(`ID`, `GuildID`, `JSON`, `Active`) VALUES (?, ?, ?, ?)");
+                statement2.setString(1, UUID.randomUUID().toString());
+                statement2.setString(2, event.getGuild().getId());
+                statement2.setString(3, new Gson().toJson(data));
+                statement2.setBoolean(4, true);
+                statement2.execute();
+                statement2.close();
+
+                con1.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (con1 != null){
+                        con1.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            builder.setColor(Color.GREEN);
+            builder.setDescription("チャンネル設定を"+(isAdd ? "更新" : "削除")+"しました。");
+            builder.addField((event.getOption("設定項目").getAsString().equals("join") ? "入室" : "退室")+"通知", event.getOption("チャンネル").getAsChannel().getAsMention(), false);
             event.replyEmbeds(builder.build()).setEphemeral(true).queue();
             return;
         }
