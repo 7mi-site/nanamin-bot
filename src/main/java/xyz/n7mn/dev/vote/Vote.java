@@ -197,6 +197,31 @@ public class Vote {
         if (event.getMember().getUser().isBot() || event.getMember().getUser().isSystem()){
             return;
         }
+
+        JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+        Jedis jedis = pool.getResource();
+        jedis.auth(ConfigYml.string("RedisPass"));
+
+        boolean isFound = false;
+
+        for (String key : jedis.keys("nanamibot:vote:contents:*")) {
+            if (jedis.get(key).equals(event.getMessageId())){
+                //System.out.println("found");
+                isFound = true;
+            }
+        }
+
+        if (!isFound){
+            //System.out.println("not found");
+            jedis.close();
+            pool.close();
+            return;
+        }
+
+        jedis.close();
+        pool.close();
+
+
         String[] voteList = new String[]{"\uD83C\uDDE6", "\uD83C\uDDE7", "\uD83C\uDDE8", "\uD83C\uDDE9", "\uD83C\uDDEA", "\uD83C\uDDEB", "\uD83C\uDDEC", "\uD83C\uDDED", "\uD83C\uDDEE", "\uD83C\uDDEF", "\uD83C\uDDF0", "\uD83C\uDDF1", "\uD83C\uDDF2", "\uD83C\uDDF3", "\uD83C\uDDF4", "\uD83C\uDDF5", "\uD83C\uDDF6", "\uD83C\uDDF7", "\uD83C\uDDF8", "\uD83C\uDDF9"};
 
         //System.out.println("a1");
@@ -236,24 +261,24 @@ public class Vote {
         }).start();
 
         new Thread(()->{
-            JedisPool pool = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
-            Jedis jedis = pool.getResource();
-            jedis.auth(ConfigYml.string("RedisPass"));
+            JedisPool pool1 = new JedisPool(ConfigYml.string("RedisServer"), ConfigYml.integer("RedisPort"));
+            Jedis jedis1 = pool1.getResource();
+            jedis1.auth(ConfigYml.string("RedisPass"));
 
-            for (String key : jedis.keys("nanamibot:vote:contents:*")) {
-                if (!jedis.get(key).equals(event.getMessageId())){
+            for (String key : jedis1.keys("nanamibot:vote:contents:*")) {
+                if (!jedis1.get(key).equals(event.getMessageId())){
                     //System.out.println(jedis.get(key) + " / " + event.getMessageId());
                     continue;
                 }
                 String[] split = key.split(":");
 
                 PersonalResult result = new PersonalResult(event.getEmoji().getAsReactionCode(), event.getMember().getUser().getId(), event.getMember().getUser().getAsTag(), event.getMember().getUser().getName(), event.getMember().getNickname(), true);
-                jedis.set("nanamibot:vote:result:"+new Date().getTime()+":"+split[split.length - 1], new Gson().toJson(result));
+                jedis1.set("nanamibot:vote:result:"+new Date().getTime()+":"+split[split.length - 1], new Gson().toJson(result));
                 return;
             }
 
-            jedis.close();
-            pool.close();
+            jedis1.close();
+            pool1.close();
             System.gc();
 
         }).start();
