@@ -264,7 +264,7 @@ public class Game {
                 e.printStackTrace();
             }
 
-            list.sort(Comparator.comparingLong(RankData::getMoney));
+            list.sort(Comparator.comparingLong(RankData::getMoney).reversed());
 
             int rank = 1;
             int nowRank = -1;

@@ -56,6 +56,9 @@ public class Money {
         jedis.auth(ConfigYml.string("RedisPass"));
 
         try {
+            if (jedis.get("nanamibot:money:" + memberId) == null){
+                return money;
+            }
             money = Long.parseLong(jedis.get("nanamibot:money:" + memberId));
         } catch (Exception e){
             e.printStackTrace();
