@@ -12,9 +12,10 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import redis.clients.jedis.Protocol;
 import xyz.n7mn.dev.api.ver;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class NanamiMain {
 
@@ -79,6 +80,29 @@ public class NanamiMain {
                 return;
             }
 
+            while (true){
+
+                try {
+                    Socket socket = new Socket("www.google.co.jp", 80);
+                    InputStream inputStream = socket.getInputStream();
+                    OutputStream outputStream = socket.getOutputStream();
+                    outputStream.write("HEAD / HTTP/1.1\n\n".getBytes(StandardCharsets.UTF_8));
+                    outputStream.flush();
+
+                    byte[] bytes = new byte[100000000];
+                    int i = inputStream.read(bytes);
+                    if (i >= 0){
+                        bytes = Arrays.copyOf(bytes, i);
+                    }
+                    //System.out.println(new String(bytes, StandardCharsets.UTF_8));
+                    outputStream.close();
+                    inputStream.close();
+                } catch (Exception e){
+                    continue;
+                }
+
+                break;
+            }
 
             String token = ConfigYml1.string("DiscordToken");
 
