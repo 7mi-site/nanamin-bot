@@ -307,7 +307,7 @@ public class EventListener extends ListenerAdapter {
             builder.setDescription("" +
                     "Ver "+ver.get()+"\n" +
                     "サポート(質問・バグ報告・要望)サーバー : https://discord.gg/FnjCMzP7d4\n" +
-                    "ソースコード : https://github.com/n7mn-xyz/nanamin-bot"
+                    "ソースコード : https://github.com/7mi-site/nanamin-bot"
             );
 
             channel.sendMessage("なにも起きませんです。送らないでくださいです。\n").addEmbeds(builder.build()).queue();
