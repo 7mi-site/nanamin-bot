@@ -91,6 +91,7 @@ public class NanamiMain {
                     .enableCache(CacheFlag.STICKER)
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
                     .setActivity(Activity.playing("ななみちゃんbot v"+ ver.get()))
+                    .setAutoReconnect(true)
                     .build();
 
             //System.out.println(build.getSelfUser().getAsTag());
