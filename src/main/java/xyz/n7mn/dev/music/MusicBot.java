@@ -376,7 +376,7 @@ public class MusicBot {
                     Response response1 = client.newCall(request1).execute();
                     HtmlText = response1.body().string();
 
-                    Matcher matcher1   = Pattern.compile("playerId&quot;:&quot;nicovideo-(.*)&quot;,&quot;videos").matcher(HtmlText);
+                    Matcher matcher1   = Pattern.compile("player_id\\\\&quot;:\\\\&quot;nicovideo-(.*)\\\\&quot;,\\\\&quot;recipe_id").matcher(HtmlText);
                     if (matcher1.find()){
                         SessionId = matcher1.group(1);
                         //System.out.println("[Debug] セッションID : "+SessionId+" "+sdf.format(new Date()));
