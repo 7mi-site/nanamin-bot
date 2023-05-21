@@ -296,6 +296,7 @@ public class MusicBot {
 
                 // Proxy読み込み
                 List<String> ProxyList = new ArrayList<>();
+                List<String> ProxyList2 = new ArrayList<>();
                 File config = new File("./config.yml");
                 YamlMapping ConfigYaml = null;
                 try {
@@ -324,10 +325,17 @@ public class MusicBot {
                 for (int i = 0; i < list.size(); i++){
                     ProxyList.add(list.string(i));
                 }
+                YamlSequence list2 = ConfigYaml.yamlSequence("ProxyForOfficial");
+                for (int i = 0; i < list2.size(); i++){
+                    ProxyList2.add(list2.string(i));
+                }
 
                 try {
+                    String id = VideoURL.replaceAll("http://nicovideo.jp/watch/","").replaceAll("https://nicovideo.jp/watch/","").replaceAll("http://www.nicovideo.jp/watch/","").replaceAll("https://www.nicovideo.jp/watch/","").replaceAll("http://nico.ms/","").replaceAll("https://nico.ms/","");
+                    id = id.split("\\?")[0];
+
                     OkHttpClient.Builder builder1 = new OkHttpClient.Builder();
-                    String[] split = ProxyList.get(new SecureRandom().nextInt(ProxyList.size())).split(":");
+                    String[] split = id.startsWith("so") ? ProxyList2.get(new SecureRandom().nextInt(ProxyList2.size())).split(":") : ProxyList.get(new SecureRandom().nextInt(ProxyList.size())).split(":");
                     String ProxyIP = split[0];
                     int ProxyPort = Integer.parseInt(split[1]);
                     OkHttpClient client = builder1.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ProxyIP, ProxyPort))).build();
@@ -335,8 +343,6 @@ public class MusicBot {
                     System.gc();
                     String resUrl = null;
 
-                    String id = VideoURL.replaceAll("http://nicovideo.jp/watch/","").replaceAll("https://nicovideo.jp/watch/","").replaceAll("http://www.nicovideo.jp/watch/","").replaceAll("https://www.nicovideo.jp/watch/","").replaceAll("http://nico.ms/","").replaceAll("https://nico.ms/","");
-                    id = id.split("\\?")[0];
 
                     Request request = new Request.Builder()
                             .url("https://ext.nicovideo.jp/api/getthumbinfo/"+id)
