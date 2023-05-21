@@ -390,68 +390,35 @@ public class MusicBot {
                         throw new Exception("動画情報 取得失敗 (アクセスエラー)");
                     }
 
-                    String json = "{\n" +
-                                "\t\"session\": {\n" +
-                                "\t\t\"recipe_id\": \"nicovideo-"+id+"\",\n" +
-                                "\t\t\"content_id\": \"out1\",\n" +
-                                "\t\t\"content_type\": \"movie\",\n" +
-                                "\t\t\"content_src_id_sets\": [\n" +
-                                "\t\t\t{\n" +
-                                "\t\t\t\t\"content_src_ids\": [\n" +
-                                "\t\t\t\t\t{\n" +
-                                "\t\t\t\t\t\t\"src_id_to_mux\": {\n" +
-                                "\t\t\t\t\t\t\t\"video_src_ids\": [\n" +
-                                "\t\t\t\t\t\t\t\t\"archive_h264_360p\",\n" +
-                                "\t\t\t\t\t\t\t\t\"archive_h264_360p_low\"\n" +
-                                "\t\t\t\t\t\t\t],\n" +
-                                "\t\t\t\t\t\t\t\"audio_src_ids\": [\n" +
-                                "\t\t\t\t\t\t\t\t\"archive_aac_64kbps\"\n" +
-                                "\t\t\t\t\t\t\t]\n" +
-                                "\t\t\t\t\t\t}\n" +
-                                "\t\t\t\t\t}\n" +
-                                "\t\t\t\t]\n" +
-                                "\t\t\t}\n" +
-                                "\t\t],\n" +
-                                "\t\t\"timing_constraint\": \"unlimited\",\n" +
-                                "\t\t\"keep_method\": {\n" +
-                                "\t\t\t\"heartbeat\": {\n" +
-                                "\t\t\t\t\"lifetime\": 120000\n" +
-                                "\t\t\t}\n" +
-                                "\t\t},\n" +
-                                "\t\t\"protocol\": {\n" +
-                                "\t\t\t\"name\": \"http\",\n" +
-                                "\t\t\t\"parameters\": {\n" +
-                                "\t\t\t\t\"http_parameters\": {\n" +
-                                "\t\t\t\t\t\"parameters\": {\n" +
-                                "\t\t\t\t\t\t\"http_output_download_parameters\": {\n" +
-                                "\t\t\t\t\t\t\t\"use_well_known_port\": \"yes\",\n" +
-                                "\t\t\t\t\t\t\t\"use_ssl\": \"yes\",\n" +
-                                "\t\t\t\t\t\t\t\"transfer_preset\": \"\"\n" +
-                                (id.startsWith("so") ? "\t\t\t\t\t\t\t\"segment_duration\": 6000\n\" +" : "")+
-                                "\t\t\t\t\t\t}\n" +
-                                "\t\t\t\t\t}\n" +
-                                "\t\t\t\t}\n" +
-                                "\t\t\t}\n" +
-                                "\t\t},\n" +
-                                "\t\t\"content_uri\": \"\",\n" +
-                                "\t\t\"session_operation_auth\": {\n" +
-                                "\t\t\t\"session_operation_auth_by_signature\": {\n" +
-                                "\t\t\t\t\"token\": \""+Token+"\",\n" +
-                                "\t\t\t\t\"signature\": \""+Signature+"\"\n" +
-                                "\t\t\t}\n" +
-                                "\t\t},\n" +
-                                "\t\t\"content_auth\": {\n" +
-                                "\t\t\t\"auth_type\": \"ht2\",\n" +
-                                "\t\t\t\"content_key_timeout\": 600000,\n" +
-                                "\t\t\t\"service_id\": \"nicovideo\",\n" +
-                                "\t\t\t\"service_user_id\": \""+SessionId+"\"\n" +
-                                "\t\t},\n" +
-                                "\t\t\"client_info\": {\n" +
-                                "\t\t\t\"player_id\": \"nicovideo-"+SessionId+"\"\n" +
-                                "\t\t},\n" +
-                                "\t\t\"priority\": "+(id.startsWith("sm") ? "0" : "0.2")+"\n" +
-                                "\t}\n" +
-                                "}";
+                    Matcher matcher4 = Pattern.compile("archive_h264_600kbps_360p").matcher(HtmlText);
+                    Matcher matcher5 = Pattern.compile("archive_h264_300kbps_360p").matcher(HtmlText);
+                    Matcher matcher_http = Pattern.compile("&quot;http&quot;").matcher(HtmlText);
+
+                    String json = "{\"session\":{\"recipe_id\":\"nicovideo-"+id+"\",\"content_id\":\"out1\",\"content_type\":\"movie\",\"content_src_id_sets\":[{\"content_src_ids\":[{\"src_id_to_mux\":{\"video_src_ids\":["+(matcher5.find() ? "\"archive_h264_300kbps_360p\"" : (matcher4.find() ? "\"archive_h264_600kbps_360p\",\"archive_h264_300kbps_360p\"" : "\"archive_h264_360p\",\"archive_h264_360p_low\""))+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}}]}],\"timing_constraint\":\"unlimited\",\"keep_method\":{\"heartbeat\":{\"lifetime\":120000}},\"protocol\":{\"name\":\"http\",\"parameters\":{\"http_parameters\":{\"parameters\":{\"http_output_download_parameters\":{\"use_well_known_port\":\"yes\",\"use_ssl\":\"yes\",\"transfer_preset\":\"\"}}}}},\"content_uri\":\"\",\"session_operation_auth\":{\"session_operation_auth_by_signature\":{\"token\":\""+Token+"\",\"signature\":\""+Signature+"\"}},\"content_auth\":{\"auth_type\":\"ht2\",\"content_key_timeout\":600000,\"service_id\":\"nicovideo\",\"service_user_id\":\""+SessionId+"\"},\"client_info\":{\"player_id\":\"nicovideo-"+SessionId+"\"},\"priority\":0"+(id.startsWith("so") ? ".2" : "")+"}}";
+                    if (!matcher_http.find()){
+                        Matcher matcher_hls1 = Pattern.compile("hls_encrypted_key\\\\&quot;:\\\\&quot;(.*)\\\\&quot;}&quot;,&quot;signature").matcher(HtmlText);
+                        Matcher matcher_hls2 = Pattern.compile("&quot;keyUri&quot;:&quot;(.*)&quot;},&quot;movie").matcher(HtmlText);
+                        Matcher matcher_hls3 = Pattern.compile(",&quot;token&quot;:&quot;(.*)&quot;,&quot;signature&quot;:&quot;").matcher(HtmlText);
+
+                        String hls_encrypted_key = "";
+                        if (matcher_hls1.find()){
+                            hls_encrypted_key = matcher_hls1.group(1).replaceAll("\\\\","");
+                        }
+                        String keyUri = "";
+                        if (matcher_hls2.find()){
+                            keyUri = matcher_hls2.group(1).replaceAll("\\\\","").replaceAll("&amp;","&");
+                        }
+
+                        if (matcher_hls3.find()){
+                            Token = matcher_hls3.group(1).replaceAll("&quot;","\"");
+                        }
+
+                        //System.out.println(hls_encrypted_key);
+                        //System.out.println(keyUri);
+                        //System.out.println(SessionId);
+
+                        json = "{\"session\":{\"recipe_id\":\"nicovideo-"+id+"\",\"content_id\":\"out1\",\"content_type\":\"movie\",\"content_src_id_sets\":[{\"content_src_ids\":[{\"src_id_to_mux\":{\"video_src_ids\":[\"archive_h264_360p\",\"archive_h264_360p_low\"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}},{\"src_id_to_mux\":{\"video_src_ids\":[\"archive_h264_360p_low\"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}}]}],\"timing_constraint\":\"unlimited\",\"keep_method\":{\"heartbeat\":{\"lifetime\":120000}},\"protocol\":{\"name\":\"http\",\"parameters\":{\"http_parameters\":{\"parameters\":{\"hls_parameters\":{\"use_well_known_port\":\"yes\",\"use_ssl\":\"yes\",\"transfer_preset\":\"\",\"segment_duration\":6000,\"encryption\":{\"hls_encryption_v1\":{\"encrypted_key\":\""+hls_encrypted_key+"\",\"key_uri\":\""+keyUri+"\"}}}}}}},\"content_uri\":\"\",\"session_operation_auth\":{\"session_operation_auth_by_signature\":{\"token\":\""+Token+"\",\"signature\":\""+Signature+"\"}},\"content_auth\":{\"auth_type\":\"ht2\",\"content_key_timeout\":600000,\"service_id\":\"nicovideo\",\"service_user_id\":\""+SessionId+"\"},\"client_info\":{\"player_id\":\"nicovideo-"+SessionId+"\"},\"priority\":0.2}}";
+                    }
 
                     String ResponseJson;
                     RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
