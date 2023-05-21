@@ -81,9 +81,9 @@ public class NanamiMain {
             }
 
             while (true){
-
+                Socket socket = null;
                 try {
-                    Socket socket = new Socket("www.google.co.jp", 80);
+                    socket =new Socket("www.google.co.jp", 80);
                     InputStream inputStream = socket.getInputStream();
                     OutputStream outputStream = socket.getOutputStream();
                     outputStream.write("HEAD / HTTP/1.1\n\n".getBytes(StandardCharsets.UTF_8));
@@ -100,6 +100,10 @@ public class NanamiMain {
                     socket.close();
                 } catch (Exception e){
                     continue;
+                } finally {
+                    if (socket != null){
+                        socket.close();
+                    }
                 }
 
                 break;
