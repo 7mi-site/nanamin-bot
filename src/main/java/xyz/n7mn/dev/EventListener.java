@@ -11,12 +11,14 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -26,6 +28,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -506,5 +509,34 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
         voteSys.add(event);
+    }
+
+    @Override
+    public void onGenericGuildVoice(GenericGuildVoiceEvent event) {
+
+        for (AudioManager manager : event.getJDA().getAudioManagers()) {
+            if (!manager.isConnected()){
+                continue;
+            }
+
+            if (manager.getConnectedChannel() == null){
+                continue;
+            }
+
+            VoiceChannel channel = manager.getConnectedChannel().asVoiceChannel();
+
+            if (channel.getMembers().size() == 1 && channel.getMembers().get(0).getUser().getId().equals(event.getJDA().getSelfUser().getId())){
+                manager.closeAudioConnection();
+
+                ArrayList<MusicQueue> queues = new ArrayList<>(musicQueueList);
+                for (MusicQueue queue : queues) {
+                    if (queue.getGuildId().equals(channel.getGuild().getId())){
+                        musicQueueList.remove(queue);
+                    }
+                }
+            }
+        }
+
+
     }
 }
