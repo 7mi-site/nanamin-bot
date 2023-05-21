@@ -29,10 +29,10 @@ public class Help {
 
         builder.addField("/help", "いまあなたが見ているやつですっ！！", false);
         builder.addField("/vote", "投票機能\n投票期間を「なし」にした場合は/vote-stopで終了させることができます。\n\n例\n/vote 朝ごはん食べる？ 2024-12-01 00:00:00 食べる 食べない なにそれ？ ご飯を食べられない人だっているんですよ！！！ それってあなたの感想ですよね？", false);
-        // builder.addField("/game", "ミニゲーム機能\n\n実装し直し中です。しばらく待っててね！", false);
+        builder.addField("/game", "ミニゲーム機能", false);
         builder.addField("/music", "音楽再生機能", false);
         builder.addField("/nanami-version", "バージョン情報を出す。\nバグ報告に役にたつのでそのときはお願いしますっ", false);
-        //builder.addField("/nanami-setting", "ななみちゃんbotの設定ができるコマンドです。 \n昔のnanami_settingチャンネルの代わりですっ", false);
+        builder.addField("/nanami-setting", "ななみちゃんbotの設定ができるコマンドです。 \n昔のnanami_settingチャンネルの代わりですっ", false);
 
         OptionMapping option = event.getOption("送信方式");
 
