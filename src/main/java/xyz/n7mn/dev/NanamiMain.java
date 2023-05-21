@@ -97,6 +97,7 @@ public class NanamiMain {
                     //System.out.println(new String(bytes, StandardCharsets.UTF_8));
                     outputStream.close();
                     inputStream.close();
+                    socket.close();
                 } catch (Exception e){
                     continue;
                 }
