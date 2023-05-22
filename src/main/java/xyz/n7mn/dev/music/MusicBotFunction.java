@@ -4,7 +4,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import xyz.n7mn.dev.music.NicoVideoInfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,14 +25,15 @@ public class MusicBotFunction {
             } else {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url("https://ext.nicovideo.jp/api/getthumbinfo/"+NicoId)
+                        .url("https://www.nicovideo.jp/watch/"+NicoId)
                         .build();
 
                 try {
                     Response response = client.newCall(request).execute();
-                    NicoVideoInfo videoInfo = NicoVideoInfo.newInstance(response.body().string());
+                    String HtmlText = response.body().string();
+                    Matcher matcher = Pattern.compile("<meta property=\"og:title\" content=\"(.*)\">").matcher(HtmlText);
                     response.close();
-                    return videoInfo.getTitle();
+                    return matcher.find() ? matcher.group(1) : "";
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -56,14 +56,18 @@ public class MusicBotFunction {
             } else {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url("https://ext.nicovideo.jp/api/getthumbinfo/"+NicoId)
+                        .url("https://www.nicovideo.jp/watch/"+NicoId)
                         .build();
 
                 try {
                     Response response = client.newCall(request).execute();
-                    NicoVideoInfo videoInfo = NicoVideoInfo.newInstance(response.body().string());
+                    String HtmlText = response.body().string();
+                    Matcher matcher = Pattern.compile("<meta property=\"video:duration\" content=\"(\\d+)\">").matcher(HtmlText);
+                    if (!matcher.find()){
+                        return null;
+                    }
                     response.close();
-                    return videoInfo.getVideoId();
+                    return "https://www.nicovideo.jp/watch/"+NicoId;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

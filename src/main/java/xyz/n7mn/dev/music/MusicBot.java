@@ -343,19 +343,6 @@ public class MusicBot {
                     System.gc();
                     String resUrl = null;
 
-
-                    Request request = new Request.Builder()
-                            .url("https://ext.nicovideo.jp/api/getthumbinfo/"+id)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    NicoVideoInfo videoInfo = NicoVideoInfo.newInstance(response.body().string());
-
-                    response.close();
-
-                    if (videoInfo.getVideoId() == null){
-                        throw new Exception("動画情報 取得失敗");
-                    }
-
                     final String HtmlText;
                     Request request1;
                     if (!id.startsWith("so")){
@@ -369,12 +356,18 @@ public class MusicBot {
 
                     }
 
+                    Response response1 = client.newCall(request1).execute();
+                    HtmlText = response1.body().string();
+
+                    Matcher matcher = Pattern.compile("<meta property=\"video:duration\" content=\"(\\d+)\">").matcher(HtmlText);
+                    if (!matcher.find()){
+                        throw new Exception("動画が存在しないか 再生できません。");
+                    }
+
                     String SessionId = null;
                     String Token = null;
                     String Signature = null;
 
-                    Response response1 = client.newCall(request1).execute();
-                    HtmlText = response1.body().string();
 
                     Matcher matcher1   = Pattern.compile("player_id\\\\&quot;:\\\\&quot;nicovideo-(.*)\\\\&quot;,\\\\&quot;recipe_id").matcher(HtmlText);
                     if (matcher1.find()){
