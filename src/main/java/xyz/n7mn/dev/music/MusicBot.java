@@ -344,17 +344,9 @@ public class MusicBot {
                     String resUrl = null;
 
                     final String HtmlText;
-                    Request request1;
-                    if (!id.startsWith("so")){
-                        request1 = new Request.Builder()
-                                .url("https://nico.ms/"+id)
-                                .build();
-                    } else {
-                        request1 = new Request.Builder()
+                    Request request1 = new Request.Builder()
                                 .url("https://www.nicovideo.jp/watch/"+id)
                                 .build();
-
-                    }
 
                     Response response1 = client.newCall(request1).execute();
                     HtmlText = response1.body().string();
@@ -389,34 +381,35 @@ public class MusicBot {
                         throw new Exception("動画情報 取得失敗 (アクセスエラー)");
                     }
 
-                    Matcher matcher4 = Pattern.compile("archive_h264_600kbps_360p").matcher(HtmlText);
-                    Matcher matcher5 = Pattern.compile("archive_h264_300kbps_360p").matcher(HtmlText);
-                    Matcher matcher_http = Pattern.compile("&quot;http&quot;").matcher(HtmlText);
+                    Matcher matcher_video = Pattern.compile("&quot;,&quot;videos&quot;:\\[(.*)\\],&quot;audios").matcher(HtmlText);
+                    String video_src = null;
+                    if (matcher_video.find()){
+                        video_src = matcher_video.group(1).replaceAll("&quot;","\"");
+                    }
 
-                    String json = "{\"session\":{\"recipe_id\":\"nicovideo-"+id+"\",\"content_id\":\"out1\",\"content_type\":\"movie\",\"content_src_id_sets\":[{\"content_src_ids\":[{\"src_id_to_mux\":{\"video_src_ids\":["+(matcher5.find() ? "\"archive_h264_300kbps_360p\"" : (matcher4.find() ? "\"archive_h264_600kbps_360p\",\"archive_h264_300kbps_360p\"" : "\"archive_h264_360p\",\"archive_h264_360p_low\""))+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}}]}],\"timing_constraint\":\"unlimited\",\"keep_method\":{\"heartbeat\":{\"lifetime\":120000}},\"protocol\":{\"name\":\"http\",\"parameters\":{\"http_parameters\":{\"parameters\":{\"http_output_download_parameters\":{\"use_well_known_port\":\"yes\",\"use_ssl\":\"yes\",\"transfer_preset\":\"\"}}}}},\"content_uri\":\"\",\"session_operation_auth\":{\"session_operation_auth_by_signature\":{\"token\":\""+Token+"\",\"signature\":\""+Signature+"\"}},\"content_auth\":{\"auth_type\":\"ht2\",\"content_key_timeout\":600000,\"service_id\":\"nicovideo\",\"service_user_id\":\""+SessionId+"\"},\"client_info\":{\"player_id\":\"nicovideo-"+SessionId+"\"},\"priority\":0"+(id.startsWith("so") ? ".2" : "")+"}}";
-                    if (!matcher_http.find()){
-                        Matcher matcher_hls1 = Pattern.compile("hls_encrypted_key\\\\&quot;:\\\\&quot;(.*)\\\\&quot;}&quot;,&quot;signature").matcher(HtmlText);
-                        Matcher matcher_hls2 = Pattern.compile("&quot;keyUri&quot;:&quot;(.*)&quot;},&quot;movie").matcher(HtmlText);
-                        Matcher matcher_hls3 = Pattern.compile(",&quot;token&quot;:&quot;(.*)&quot;,&quot;signature&quot;:&quot;").matcher(HtmlText);
+                    Matcher matcher_hls1 = Pattern.compile("hls_encrypted_key\\\\&quot;:\\\\&quot;(.*)\\\\&quot;}&quot;,&quot;signature").matcher(HtmlText);
+                    Matcher matcher_hls2 = Pattern.compile("&quot;keyUri&quot;:&quot;(.*)&quot;},&quot;movie").matcher(HtmlText);
+                    Matcher matcher_hls3 = Pattern.compile(",&quot;token&quot;:&quot;(.*)&quot;,&quot;signature&quot;:&quot;").matcher(HtmlText);
 
-                        String hls_encrypted_key = "";
-                        if (matcher_hls1.find()){
-                            hls_encrypted_key = matcher_hls1.group(1).replaceAll("\\\\","");
-                        }
-                        String keyUri = "";
-                        if (matcher_hls2.find()){
-                            keyUri = matcher_hls2.group(1).replaceAll("\\\\","").replaceAll("&amp;","&");
-                        }
+                    String hls_encrypted_key = "";
+                    if (matcher_hls1.find()){
+                        hls_encrypted_key = matcher_hls1.group(1).replaceAll("\\\\","");
+                    }
+                    String keyUri = "";
+                    if (matcher_hls2.find()){
+                        keyUri = matcher_hls2.group(1).replaceAll("\\\\","").replaceAll("&amp;","&");
+                    }
 
-                        if (matcher_hls3.find()){
-                            Token = matcher_hls3.group(1).replaceAll("&quot;","\"");
-                        }
+                    if (matcher_hls3.find()){
+                        Token = matcher_hls3.group(1).replaceAll("&quot;","\"");
+                    }
 
-                        //System.out.println(hls_encrypted_key);
-                        //System.out.println(keyUri);
-                        //System.out.println(SessionId);
+                    String json = "{\"session\":{\"recipe_id\":\"nicovideo-"+id+"\",\"content_id\":\"out1\",\"content_type\":\"movie\",\"content_src_id_sets\":[{\"content_src_ids\":[{\"src_id_to_mux\":{\"video_src_ids\":["+video_src.toString()+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}},{\"src_id_to_mux\":{\"video_src_ids\":["+video_src.toString()+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}}]}],\"timing_constraint\":\"unlimited\",\"keep_method\":{\"heartbeat\":{\"lifetime\":120000}},\"protocol\":{\"name\":\"http\",\"parameters\":{\"http_parameters\":{\"parameters\":{\"hls_parameters\":{\"use_well_known_port\":\"yes\",\"use_ssl\":\"yes\",\"transfer_preset\":\"\",\"segment_duration\":6000,\"encryption\":{\"hls_encryption_v1\":{\"encrypted_key\":\""+hls_encrypted_key+"\",\"key_uri\":\""+keyUri+"\"}}}}}}},\"content_uri\":\"\",\"session_operation_auth\":{\"session_operation_auth_by_signature\":{\"token\":\""+Token+"\",\"signature\":\""+Signature+"\"}},\"content_auth\":{\"auth_type\":\"ht2\",\"content_key_timeout\":600000,\"service_id\":\"nicovideo\",\"service_user_id\":\""+SessionId+"\"},\"client_info\":{\"player_id\":\"nicovideo-"+SessionId+"\"},\"priority\":0.2}}";
+                    if (!matcher_hls1.find()){
+                        String[] split1 = video_src.split(",");
 
-                        json = "{\"session\":{\"recipe_id\":\"nicovideo-"+id+"\",\"content_id\":\"out1\",\"content_type\":\"movie\",\"content_src_id_sets\":[{\"content_src_ids\":[{\"src_id_to_mux\":{\"video_src_ids\":[\"archive_h264_360p\",\"archive_h264_360p_low\"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}},{\"src_id_to_mux\":{\"video_src_ids\":[\"archive_h264_360p_low\"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}}]}],\"timing_constraint\":\"unlimited\",\"keep_method\":{\"heartbeat\":{\"lifetime\":120000}},\"protocol\":{\"name\":\"http\",\"parameters\":{\"http_parameters\":{\"parameters\":{\"hls_parameters\":{\"use_well_known_port\":\"yes\",\"use_ssl\":\"yes\",\"transfer_preset\":\"\",\"segment_duration\":6000,\"encryption\":{\"hls_encryption_v1\":{\"encrypted_key\":\""+hls_encrypted_key+"\",\"key_uri\":\""+keyUri+"\"}}}}}}},\"content_uri\":\"\",\"session_operation_auth\":{\"session_operation_auth_by_signature\":{\"token\":\""+Token+"\",\"signature\":\""+Signature+"\"}},\"content_auth\":{\"auth_type\":\"ht2\",\"content_key_timeout\":600000,\"service_id\":\"nicovideo\",\"service_user_id\":\""+SessionId+"\"},\"client_info\":{\"player_id\":\"nicovideo-"+SessionId+"\"},\"priority\":0.2}}";
+                        json = "{\"session\":{\"recipe_id\":\"nicovideo-"+id+"\",\"content_id\":\"out1\",\"content_type\":\"movie\",\"content_src_id_sets\":[{\"content_src_ids\":[{\"src_id_to_mux\":{\"video_src_ids\":["+video_src.toString()+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}},{\"src_id_to_mux\":{\"video_src_ids\":["+split1[split1.length - 1]+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}}]}],\"timing_constraint\":\"unlimited\",\"keep_method\":{\"heartbeat\":{\"lifetime\":120000}},\"protocol\":{\"name\":\"http\",\"parameters\":{\"http_parameters\":{\"parameters\":{\"hls_parameters\":{\"use_well_known_port\":\"yes\",\"use_ssl\":\"yes\",\"transfer_preset\":\"\",\"segment_duration\":6000}}}}},\"content_uri\":\"\",\"session_operation_auth\":{\"session_operation_auth_by_signature\":{\"token\":\""+Token+"\",\"signature\":\""+Signature+"\"}},\"content_auth\":{\"auth_type\":\"ht2\",\"content_key_timeout\":600000,\"service_id\":\"nicovideo\",\"service_user_id\":\""+SessionId+"\"},\"client_info\":{\"player_id\":\"nicovideo-"+SessionId+"\"},\"priority\":0}}";
+                        // {"session":{"recipe_id":"nicovideo-sm500873","content_id":"out1","content_type":"movie","content_src_id_sets":[{"content_src_ids":[{"src_id_to_mux":{"video_src_ids":["archive_h264_360p","archive_h264_360p_low"],"audio_src_ids":["archive_aac_64kbps"]}},{"src_id_to_mux":{"video_src_ids":["archive_h264_360p_low"],"audio_src_ids":["archive_aac_64kbps"]}}]}],"timing_constraint":"unlimited","keep_method":{"heartbeat":{"lifetime":120000}},"protocol":{"name":"http","parameters":{"http_parameters":{"parameters":{"hls_parameters":{"use_well_known_port":"yes","use_ssl":"yes","transfer_preset":"","segment_duration":6000}}}}},"content_uri":"","session_operation_auth":{"session_operation_auth_by_signature":{"token":"{\"service_id\":\"nicovideo\",\"player_id\":\"nicovideo-6-h9V9x02JtS_1685101570190\",\"recipe_id\":\"nicovideo-sm500873\",\"service_user_id\":\"6-h9V9x02JtS_1685101570190\",\"protocols\":[{\"name\":\"http\",\"auth_type\":\"ht2\"},{\"name\":\"hls\",\"auth_type\":\"ht2\"}],\"videos\":[\"archive_h264_360p\",\"archive_h264_360p_low\"],\"audios\":[\"archive_aac_64kbps\"],\"movies\":[],\"created_time\":1685101570000,\"expire_time\":1685187970000,\"content_ids\":[\"out1\"],\"heartbeat_lifetime\":120000,\"content_key_timeout\":600000,\"priority\":0,\"transfer_presets\":[]}","signature":"491ecff65d053d7a46976f17c85c291e43a3d845f3c2d59b277712edf25953af"}},"content_auth":{"auth_type":"ht2","content_key_timeout":600000,"service_id":"nicovideo","service_user_id":"6-h9V9x02JtS_1685101570190"},"client_info":{"player_id":"nicovideo-6-h9V9x02JtS_1685101570190"},"priority":0}}
                     }
 
                     String ResponseJson;
