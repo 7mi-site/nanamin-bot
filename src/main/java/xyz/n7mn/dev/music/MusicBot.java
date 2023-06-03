@@ -13,6 +13,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
 import okhttp3.*;
+import xyz.n7mn.nico_proxy.BilibiliCom;
+import xyz.n7mn.nico_proxy.BilibiliTv;
+import xyz.n7mn.nico_proxy.NicoNicoVideo;
+import xyz.n7mn.nico_proxy.ShareService;
 
 import java.awt.*;
 import java.io.File;
@@ -43,27 +47,13 @@ public class MusicBot {
         player = playerManager.createPlayer();
 
         new Thread(()->{
-            OkHttpClient client = new OkHttpClient();
-
             Timer timer = new Timer();
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
                     nicoVideoHeartBeatList.forEach((id, token) -> {
                         String[] split = token.split("::");
-
-                        RequestBody body = RequestBody.create(split[1], MediaType.get("application/json; charset=utf-8"));
-                        Request request = new Request.Builder()
-                                .url("https://api.dmc.nico/api/sessions/"+split[0]+"?_format=json&_method=PUT")
-                                .post(body)
-                                .build();
-                        try {
-                            Response response = client.newCall(request).execute();
-                            response.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            //System.out.println("[Debug] 鯖へPost失敗 "+ sdf.format(new Date()));
-                        }
+                        new NicoNicoVideo().SendHeartBeatVideo(split[0], split[1], null);
                         System.gc();
                     });
                 }
@@ -292,184 +282,46 @@ public class MusicBot {
         if (channel.getType().isAudio()){
             AudioManager manager = event.getGuild().getAudioManager();
 
-            if (VideoURL.startsWith("http://nico.ms/") || VideoURL.startsWith("https://nico.ms/") || VideoURL.startsWith("http://nicovideo.jp/") || VideoURL.startsWith("https://nicovideo.jp/") || VideoURL.startsWith("http://www.nicovideo.jp/") || VideoURL.startsWith("https://www.nicovideo.jp/")){
+            Matcher nico_video = Pattern.compile("(nico\\.ms|nicovideo\\.jp)").matcher(VideoURL);
+            Matcher nico_live = Pattern.compile("(nico\\.ms/lv|live\\.nicovideo\\.jp|live\\.sp\\.nicovideo\\.jp)").matcher(VideoURL);
+            Matcher bili_com = Pattern.compile("bilibili.com").matcher(VideoURL);
+            Matcher bili_tv = Pattern.compile("bilibili.tv").matcher(VideoURL);
 
-                // Proxy読み込み
-                List<String> ProxyList = new ArrayList<>();
-                List<String> ProxyList2 = new ArrayList<>();
-                File config = new File("./config.yml");
-                YamlMapping ConfigYaml = null;
-                try {
-                    if (config.exists()){
-                        ConfigYaml = Yaml.createYamlInput(config).readYamlMapping();
-                    } else {
+            try {
+                if (nico_live.find()){
+                    VideoURL = new NicoNicoVideo().getLive(VideoURL, null);
+                } else if (nico_video.find()) {
+                    NicoNicoVideo nicoVideo = new NicoNicoVideo();
+                    String[] video = nicoVideo.getVideo(VideoURL, null, false);
+                    VideoURL = video[0];
 
-                        System.out.println("ProxyList is Empty!!!");
-                        builder.setColor(Color.RED);
-                        builder.setTitle("ななみちゃんbot エラー");
-                        builder.setDescription("内部エラー : proxy not set");
-                        event.replyEmbeds(builder.build()).setEphemeral(false).queue();
-                        return;
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    builder.setColor(Color.RED);
-                    builder.setTitle("ななみちゃんbot エラー");
-                    builder.setDescription("内部エラー : " + e.getMessage());
-                    event.replyEmbeds(builder.build()).setEphemeral(false).queue();
-                    return;
+                    nicoVideo.SendHeartBeatVideo(video[1], video[2], null);
+                    nicoVideoHeartBeatList.put(VideoURL, video[1]+"::"+video[2]);
+                } else if (bili_com.find()) {
+                    VideoURL = new BilibiliCom().getVideo(VideoURL, null);
+                } else if (bili_tv.find()){
+                    VideoURL = new BilibiliTv().getVideo(VideoURL, null);
                 }
+            } catch (Exception e) {
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("ななみちゃんbot 音楽再生機能");
+                builder.setColor(Color.RED);
 
-                YamlSequence list = ConfigYaml.yamlSequence("Proxy");
-                for (int i = 0; i < list.size(); i++){
-                    ProxyList.add(list.string(i));
-                }
-                YamlSequence list2 = ConfigYaml.yamlSequence("ProxyForOfficial");
-                for (int i = 0; i < list2.size(); i++){
-                    ProxyList2.add(list2.string(i));
-                }
+                builder.setDescription("内部エラーです。\nエラーメッセージ : " + e.getMessage());
+                event.replyEmbeds(builder.build()).setEphemeral(false).queue();
 
-                try {
-                    String id = VideoURL.replaceAll("http://nicovideo.jp/watch/","").replaceAll("https://nicovideo.jp/watch/","").replaceAll("http://www.nicovideo.jp/watch/","").replaceAll("https://www.nicovideo.jp/watch/","").replaceAll("http://nico.ms/","").replaceAll("https://nico.ms/","");
-                    id = id.split("\\?")[0];
-
-                    OkHttpClient.Builder builder1 = new OkHttpClient.Builder();
-                    String[] split = id.startsWith("so") ? ProxyList2.get(new SecureRandom().nextInt(ProxyList2.size())).split(":") : ProxyList.get(new SecureRandom().nextInt(ProxyList.size())).split(":");
-                    String ProxyIP = split[0];
-                    int ProxyPort = Integer.parseInt(split[1]);
-                    OkHttpClient client = builder1.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ProxyIP, ProxyPort))).build();
-
-                    System.gc();
-                    String resUrl = null;
-
-                    final String HtmlText;
-                    Request request1 = new Request.Builder()
-                                .url("https://www.nicovideo.jp/watch/"+id)
-                                .build();
-
-                    Response response1 = client.newCall(request1).execute();
-                    HtmlText = response1.body().string();
-
-                    Matcher matcher = Pattern.compile("<meta property=\"video:duration\" content=\"(\\d+)\">").matcher(HtmlText);
-                    if (!matcher.find()){
-                        throw new Exception("動画が存在しないか 再生できません。");
-                    }
-
-                    String SessionId = null;
-                    String Token = null;
-                    String Signature = null;
-
-
-                    Matcher matcher1   = Pattern.compile("player_id\\\\&quot;:\\\\&quot;nicovideo-(.*)\\\\&quot;,\\\\&quot;recipe_id").matcher(HtmlText);
-                    if (matcher1.find()){
-                        SessionId = matcher1.group(1);
-                        //System.out.println("[Debug] セッションID : "+SessionId+" "+sdf.format(new Date()));
-                    }
-                    Matcher matcher2 = Pattern.compile("\\{\\\\&quot;service_id\\\\&quot;:\\\\&quot;nicovideo\\\\&quot;(.*)\\\\&quot;transfer_presets\\\\&quot;:\\[\\]\\}").matcher(HtmlText);
-                    if (matcher2.find()){
-                        Token = matcher2.group().replaceAll("\\\\","").replaceAll("&quot;","\"").replaceAll("\"","\\\\\"");
-                        //System.out.println("[Debug] TokenData : \n"+Token+"\n"+ sdf.format(new Date()));
-                    }
-                    Matcher matcher3 = Pattern.compile("signature&quot;:&quot;(.*)&quot;,&quot;contentId").matcher(HtmlText);
-                    if (matcher3.find()){
-                        Signature = matcher3.group(1);
-                        //System.out.println("[Debug] signature : "+Signature+" "+ sdf.format(new Date()));
-                    }
-
-                    if (SessionId == null || Token == null || Signature == null){
-                        throw new Exception("動画情報 取得失敗 (アクセスエラー)");
-                    }
-
-                    Matcher matcher_video = Pattern.compile("&quot;,&quot;videos&quot;:\\[(.*)\\],&quot;audios").matcher(HtmlText);
-                    String video_src = null;
-                    if (matcher_video.find()){
-                        video_src = matcher_video.group(1).replaceAll("&quot;","\"");
-                    }
-
-                    Matcher matcher_hls1 = Pattern.compile("hls_encrypted_key\\\\&quot;:\\\\&quot;(.*)\\\\&quot;}&quot;,&quot;signature").matcher(HtmlText);
-                    Matcher matcher_hls2 = Pattern.compile("&quot;keyUri&quot;:&quot;(.*)&quot;},&quot;movie").matcher(HtmlText);
-                    Matcher matcher_hls3 = Pattern.compile(",&quot;token&quot;:&quot;(.*)&quot;,&quot;signature&quot;:&quot;").matcher(HtmlText);
-
-                    String hls_encrypted_key = "";
-                    if (matcher_hls1.find()){
-                        hls_encrypted_key = matcher_hls1.group(1).replaceAll("\\\\","");
-                    }
-                    String keyUri = "";
-                    if (matcher_hls2.find()){
-                        keyUri = matcher_hls2.group(1).replaceAll("\\\\","").replaceAll("&amp;","&");
-                    }
-
-                    if (matcher_hls3.find()){
-                        Token = matcher_hls3.group(1).replaceAll("&quot;","\"");
-                    }
-
-                    String json = "{\"session\":{\"recipe_id\":\"nicovideo-"+id+"\",\"content_id\":\"out1\",\"content_type\":\"movie\",\"content_src_id_sets\":[{\"content_src_ids\":[{\"src_id_to_mux\":{\"video_src_ids\":["+video_src.toString()+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}},{\"src_id_to_mux\":{\"video_src_ids\":["+video_src.toString()+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}}]}],\"timing_constraint\":\"unlimited\",\"keep_method\":{\"heartbeat\":{\"lifetime\":120000}},\"protocol\":{\"name\":\"http\",\"parameters\":{\"http_parameters\":{\"parameters\":{\"hls_parameters\":{\"use_well_known_port\":\"yes\",\"use_ssl\":\"yes\",\"transfer_preset\":\"\",\"segment_duration\":6000,\"encryption\":{\"hls_encryption_v1\":{\"encrypted_key\":\""+hls_encrypted_key+"\",\"key_uri\":\""+keyUri+"\"}}}}}}},\"content_uri\":\"\",\"session_operation_auth\":{\"session_operation_auth_by_signature\":{\"token\":\""+Token+"\",\"signature\":\""+Signature+"\"}},\"content_auth\":{\"auth_type\":\"ht2\",\"content_key_timeout\":600000,\"service_id\":\"nicovideo\",\"service_user_id\":\""+SessionId+"\"},\"client_info\":{\"player_id\":\"nicovideo-"+SessionId+"\"},\"priority\":0.2}}";
-                    if (!matcher_hls1.find()){
-                        String[] split1 = video_src.split(",");
-
-                        json = "{\"session\":{\"recipe_id\":\"nicovideo-"+id+"\",\"content_id\":\"out1\",\"content_type\":\"movie\",\"content_src_id_sets\":[{\"content_src_ids\":[{\"src_id_to_mux\":{\"video_src_ids\":["+video_src.toString()+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}},{\"src_id_to_mux\":{\"video_src_ids\":["+split1[split1.length - 1]+"],\"audio_src_ids\":[\"archive_aac_64kbps\"]}}]}],\"timing_constraint\":\"unlimited\",\"keep_method\":{\"heartbeat\":{\"lifetime\":120000}},\"protocol\":{\"name\":\"http\",\"parameters\":{\"http_parameters\":{\"parameters\":{\"hls_parameters\":{\"use_well_known_port\":\"yes\",\"use_ssl\":\"yes\",\"transfer_preset\":\"\",\"segment_duration\":6000}}}}},\"content_uri\":\"\",\"session_operation_auth\":{\"session_operation_auth_by_signature\":{\"token\":\""+Token+"\",\"signature\":\""+Signature+"\"}},\"content_auth\":{\"auth_type\":\"ht2\",\"content_key_timeout\":600000,\"service_id\":\"nicovideo\",\"service_user_id\":\""+SessionId+"\"},\"client_info\":{\"player_id\":\"nicovideo-"+SessionId+"\"},\"priority\":0}}";
-                        // {"session":{"recipe_id":"nicovideo-sm500873","content_id":"out1","content_type":"movie","content_src_id_sets":[{"content_src_ids":[{"src_id_to_mux":{"video_src_ids":["archive_h264_360p","archive_h264_360p_low"],"audio_src_ids":["archive_aac_64kbps"]}},{"src_id_to_mux":{"video_src_ids":["archive_h264_360p_low"],"audio_src_ids":["archive_aac_64kbps"]}}]}],"timing_constraint":"unlimited","keep_method":{"heartbeat":{"lifetime":120000}},"protocol":{"name":"http","parameters":{"http_parameters":{"parameters":{"hls_parameters":{"use_well_known_port":"yes","use_ssl":"yes","transfer_preset":"","segment_duration":6000}}}}},"content_uri":"","session_operation_auth":{"session_operation_auth_by_signature":{"token":"{\"service_id\":\"nicovideo\",\"player_id\":\"nicovideo-6-h9V9x02JtS_1685101570190\",\"recipe_id\":\"nicovideo-sm500873\",\"service_user_id\":\"6-h9V9x02JtS_1685101570190\",\"protocols\":[{\"name\":\"http\",\"auth_type\":\"ht2\"},{\"name\":\"hls\",\"auth_type\":\"ht2\"}],\"videos\":[\"archive_h264_360p\",\"archive_h264_360p_low\"],\"audios\":[\"archive_aac_64kbps\"],\"movies\":[],\"created_time\":1685101570000,\"expire_time\":1685187970000,\"content_ids\":[\"out1\"],\"heartbeat_lifetime\":120000,\"content_key_timeout\":600000,\"priority\":0,\"transfer_presets\":[]}","signature":"491ecff65d053d7a46976f17c85c291e43a3d845f3c2d59b277712edf25953af"}},"content_auth":{"auth_type":"ht2","content_key_timeout":600000,"service_id":"nicovideo","service_user_id":"6-h9V9x02JtS_1685101570190"},"client_info":{"player_id":"nicovideo-6-h9V9x02JtS_1685101570190"},"priority":0}}
-                    }
-
-                    String ResponseJson;
-                    RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
-                    Request request2 = new Request.Builder()
-                            .url("https://api.dmc.nico/api/sessions?_format=json")
-                            .post(body)
-                            .build();
-
-                    Response response2 = client.newCall(request2).execute();
-                    ResponseJson = response2.body().string();
-                    //System.out.println(response2.body().string());
-
-                    Matcher video_matcher = Pattern.compile("\"content_uri\":\"(.*)\",\"session_operation_auth").matcher(ResponseJson);
-                    VideoURL = null;
-                    if (video_matcher.find()){
-                        VideoURL = video_matcher.group(1).replaceAll("\\\\","");
-                        //System.out.println("[Debug] 動画URL : "+VideoURL+" "+sdf.format(new Date()));
-                    }
-
-                    String HeartBeatSession = null;
-                    String HeartBeatSessionId = null;
-                    Matcher heart_session_matcher = Pattern.compile("\\{\"meta\":\\{\"status\":201,\"message\":\"created\"},\"data\":\\{(.*)\\}").matcher(ResponseJson);
-                    if (heart_session_matcher.find()){
-                        HeartBeatSession = "{"+heart_session_matcher.group(1); //.replaceAll("\\\\","");
-                        //System.out.println("[Debug] ハートビート信号用 セッション : \n"+HeartBeatSession+"\n"+sdf.format(new Date()));
-                    }
-
-                    Matcher heart_session_matcher2 = Pattern.compile("\"data\":\\{\"session\":\\{\"id\":\"(.*)\",\"recipe_id\"").matcher(ResponseJson);
-                    if (heart_session_matcher2.find()){
-                        HeartBeatSessionId = heart_session_matcher2.group(1).replaceAll("\\\\","");
-                        //System.out.println("[Debug] ハートビート信号用 セッションID : \n"+HeartBeatSessionId+"\n"+sdf.format(new Date()));
-                    }
-
-                    if (VideoURL == null || HeartBeatSession == null || HeartBeatSessionId == null){
-                        //System.out.println("[Debug] 動画情報 取得失敗 "+ sdf.format(new Date()));
-                        throw new Exception("動画URL取得失敗 (nicovideo apiエラー)");
-                    }
-                    //System.out.println("[Debug] 動画情報 取得成功\n動画URL : "+VideoURL+" \n"+ sdf.format(new Date()));
-                    nicoVideoHeartBeatList.put(VideoURL, HeartBeatSessionId+"::"+HeartBeatSession);
-                    System.gc();
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    builder.setColor(Color.RED);
-                    builder.setTitle("ななみちゃんbot エラー");
-                    builder.setDescription("内部エラー : " + e.getMessage());
-                    event.replyEmbeds(builder.build()).setEphemeral(false).queue();
-                    return;
-                }
-
+                return;
             }
+
 
             manager.openAudioConnection(channel.asVoiceChannel());
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
 
+            //System.out.println(VideoURL);
             playerManager.loadItem(VideoURL, new AudioLoadResultHandler() {
                 @Override
                 public void trackLoaded(AudioTrack track) {
+                    //System.out.println(track.getInfo().uri);
                     trackScheduler.play(track);
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("ななみちゃんbot 音楽再生機能");
@@ -502,6 +354,7 @@ public class MusicBot {
                 @Override
                 public void loadFailed(FriendlyException throwable) {
                     // Notify the user that everything exploded
+                    throwable.printStackTrace();
                 }
             });
         }
