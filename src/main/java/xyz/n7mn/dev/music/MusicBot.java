@@ -4,6 +4,7 @@ import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
 import com.amihaiemil.eoyaml.YamlSequence;
 import com.sedmelluq.discord.lavaplayer.player.*;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
@@ -279,6 +280,7 @@ public class MusicBot {
             player.setVolume(volume);
         }
 
+        final String InputURL = VideoURL;
         if (channel.getType().isAudio()){
             AudioManager manager = event.getGuild().getAudioManager();
 
@@ -318,17 +320,17 @@ public class MusicBot {
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
 
             //System.out.println(VideoURL);
+
             playerManager.loadItem(VideoURL, new AudioLoadResultHandler() {
                 @Override
                 public void trackLoaded(AudioTrack track) {
-                    //System.out.println(track.getInfo().uri);
                     trackScheduler.play(track);
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("ななみちゃんbot 音楽再生機能");
                     builder.setColor(Color.PINK);
 
                     //System.out.println("URL : " + track.getIdentifier());
-                    builder.setDescription(getTitle(track) + "を追加しました！\nURL : "+getURL(track));
+                    builder.setDescription(getTitle(track) + "を追加しました！\nURL : "+InputURL);
                     event.replyEmbeds(builder.build()).setEphemeral(false).queue();
                 }
 

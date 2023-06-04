@@ -37,7 +37,7 @@ public class Earthquake {
     public Earthquake(JDA jda){
         YamlMapping ConfigYml1 = null;
         try {
-            File config = new File("./config-vote.yml");
+            File config = new File("./config-redis.yml");
             if (!config.exists()){
                 config.createNewFile();
 
