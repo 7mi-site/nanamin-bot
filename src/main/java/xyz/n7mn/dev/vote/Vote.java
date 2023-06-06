@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.utils.FileUpload;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
@@ -384,9 +385,19 @@ public class Vote {
                             count++;
 
                             if (voteNameList.length() == 0){
-                                voteNameList.append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                if (personalResult.getNickname() == null && personalResult.getNickname() == null){
+                                    voteNameList.append("(不明)");
+                                } else {
+                                    voteNameList.append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                }
+
                             } else {
-                                voteNameList.append("\n").append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                if (personalResult.getNickname() == null && personalResult.getNickname() == null){
+                                    voteNameList.append("\n").append("(不明)");
+                                } else {
+                                    voteNameList.append("\n").append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                }
+
                             }
 
                         }
@@ -396,14 +407,78 @@ public class Vote {
                     i++;
                 }
 
-
                 jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).getHistoryAfter(MessageId, 1).queue(messageHistory -> {
                     if (messageHistory.getMessageById(MessageId) != null && messageHistory.getMessageById(MessageId).getReactions() != null && messageHistory.getMessageById(MessageId).getReactions().size() > 0){
                         messageHistory.getMessageById(MessageId).clearReactions().queue();
                     }
 
                 });
-                jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).sendMessageEmbeds(builder.build()).queue();
+
+                if (!builder.isValidLength()){
+                    StringBuffer buffer = new StringBuffer();
+
+                    for (String name : result.getVoteResult()) {
+                        int count = 0;
+
+                        StringBuffer buffer1 = new StringBuffer();
+
+                        for (PersonalResult personalResult : result.getPersonalResults()) {
+                            count++;
+
+                            if (buffer1.length() == 0){
+                                if (personalResult.getNickname() == null && personalResult.getNickname() == null){
+                                    buffer1.append("(不明)");
+                                } else {
+                                    buffer1.append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                }
+
+                            } else {
+                                if (personalResult.getNickname() == null && personalResult.getNickname() == null){
+                                    buffer1.append("\r\n").append("(不明)");
+                                } else {
+                                    buffer1.append("\r\n").append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                }
+
+                            }
+
+                        }
+
+                        buffer.append(name).append(" (").append(count).append(" 票)\r\n");
+                        buffer.append(buffer1).append("\r\n");
+                    }
+
+                    EmbedBuilder builder2 = new EmbedBuilder();
+                    builder2.setTitle("ななみちゃんbot 投票機能");
+                    builder2.setColor(Color.PINK);
+                    builder2.clearFields();
+                    builder2.setDescription("「"+contents.getTitle()+"」の投票が投票終了しました！\n結果は以下のとおりです！");
+                    VoteResult result2 = check(MessageId);
+                    builder2.addField("投票総数", result.getTotalCount()+" 票", false);
+                    if (contents.getVoteType().equals("only")){
+                        if (result2.getValidityCount() > 0){
+                            builder.addField("有効投票総数", result.getValidityCount()+" 票 ("+((result.getValidityCount()) / result.getTotalCount() * 100)+" %)", false);
+                        } else {
+                            builder.addField("有効投票総数", result.getValidityCount()+" 票 (0 %)", false);
+                        }
+                    }
+
+                    File file = new File("./vote.txt");
+                    try {
+                        file.createNewFile();
+                        PrintWriter writer = new PrintWriter(file);
+                        writer.print(buffer.toString());
+                        writer.close();
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+                    jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).sendMessageEmbeds(builder2.build()).setFiles(FileUpload.fromData(file)).queue();
+                    file.delete();
+
+                } else {
+                    jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).sendMessageEmbeds(builder.build()).queue();
+                }
+
+
 
                 contents.setEndFlag(true);
                 jedis.set("nanamibot:vote:data:" + voteId, new Gson().toJson(contents));
