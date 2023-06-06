@@ -115,7 +115,7 @@ public class EventListener extends ListenerAdapter {
 
         Guild guild = event.getGuild();
         //System.out.println("test1 : " + guild.getId() + " / " + guild.getName());
-        guild.updateCommands().addCommands(vote, vote_s, help, ver_c, music).queue();
+        guild.updateCommands().addCommands(vote, vote_s, help, ver_c, music, setting).queue();
     }
 
     @Override
