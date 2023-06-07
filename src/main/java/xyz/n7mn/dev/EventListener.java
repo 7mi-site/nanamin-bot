@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class EventListener extends ListenerAdapter {
 
@@ -58,26 +59,23 @@ public class EventListener extends ListenerAdapter {
     private Vote voteSys = null;
     private final VoteStop voteStop = new VoteStop();
 
-    private SlashCommandData vote = Commands.slash("vote", "投票する");
-    private SlashCommandData vote_s = Commands.slash("vote-stop", "投票を終了させる");
-    private SlashCommandData music = Commands.slash("music", "音楽/動画 再生");
-    private SlashCommandData help = Commands.slash("help", "ヘルプ");
-    private SlashCommandData ver_c = Commands.slash("nanami-version", "バージョン情報");
-    private SlashCommandData setting = Commands.slash("nanami-setting", "ななみちゃんbot 設定画面");
-    private SlashCommandData game = Commands.slash("game", "ミニゲーム");
+    private final SlashCommandData vote = Commands.slash("vote", "投票する");
+    private final SlashCommandData vote_s = Commands.slash("vote-stop", "投票を終了させる");
+    private final SlashCommandData music = Commands.slash("music", "音楽/動画 再生");
+    private final SlashCommandData help = Commands.slash("help", "ヘルプ");
+    private final SlashCommandData ver_c = Commands.slash("nanami-version", "バージョン情報");
+    private final SlashCommandData setting = Commands.slash("nanami-setting", "ななみちゃんbot 設定画面");
+    private final SlashCommandData game = Commands.slash("game", "ミニゲーム");
 
-    private List<MusicQueue> musicQueueList = new ArrayList<>();
+    private final List<MusicQueue> musicQueueList = new ArrayList<>();
 
-    private final File config = new File("./config-redis.yml");
     private YamlMapping ConfigYml = null;
 
     public EventListener() {
         musicCommand = new MusicBot(musicQueueList);
-
+        final File config = new File("./config-redis.yml");
         try {
             if (!config.exists()){
-                config.createNewFile();
-
                 YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
                 ConfigYml = builder.add(
                         "RedisServer", "127.0.0.1"
@@ -88,9 +86,11 @@ public class EventListener extends ListenerAdapter {
                 ).build();
 
                 try {
-                    PrintWriter writer = new PrintWriter(config);
-                    writer.print(ConfigYml.toString());
-                    writer.close();
+                    if (config.createNewFile()){
+                        PrintWriter writer = new PrintWriter(config);
+                        writer.print(ConfigYml.toString());
+                        writer.close();
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -101,7 +101,6 @@ public class EventListener extends ListenerAdapter {
         } catch (IOException e) {
             e.printStackTrace();
             System.gc();
-            return;
         }
 
     }
@@ -141,7 +140,7 @@ public class EventListener extends ListenerAdapter {
             builder.setDescription(event.getMember().getAsMention()+"さんが入室しました！");
             builder.setFooter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
-            event.getGuild().getTextChannelById(id).sendMessageEmbeds(builder.build()).queue();
+            Objects.requireNonNull(event.getGuild().getTextChannelById(id)).sendMessageEmbeds(builder.build()).queue();
 
         }
 
@@ -161,11 +160,13 @@ public class EventListener extends ListenerAdapter {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("退室通知");
             builder.setColor(Color.GREEN);
-            builder.setThumbnail(event.getMember().getAvatarUrl());
+            if (event.getMember() != null){
+                builder.setThumbnail(event.getMember().getAvatarUrl());
+            }
             builder.setDescription(event.getMember().getAsMention()+"さんが退室しました！ ");
             builder.setFooter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
-            event.getGuild().getTextChannelById(id).sendMessageEmbeds(builder.build()).queue();
+            Objects.requireNonNull(event.getGuild().getTextChannelById(id)).sendMessageEmbeds(builder.build()).queue();
 
         }
 
@@ -174,7 +175,7 @@ public class EventListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGenericEvent(GenericEvent event) {
+    public void onGenericEvent(@NotNull GenericEvent event) {
         if (event instanceof ReadyEvent){
             JDA jda = event.getJDA();
             voteSys = new Vote(jda);
@@ -218,7 +219,6 @@ public class EventListener extends ListenerAdapter {
             setting.addOption(OptionType.CHANNEL, "チャンネル", "設定するチャンネル", false);
             setting.addOption(OptionType.ROLE, "ロール", "設定するロール", false);
 
-            SlashCommandData game = Commands.slash("game", "ミニゲーム");
             game.addOption(OptionType.STRING, "種類","種類について知りたい場合は「help」と入れてね", true, false);
             game.addOption(OptionType.INTEGER, "掛け金","一部のミニゲームのみ使用できます！", false, false);
 
@@ -282,6 +282,8 @@ public class EventListener extends ListenerAdapter {
                 }
                 System.gc();
             }
+            jedis.close();
+            pool.close();
 
         }
     }
@@ -307,7 +309,7 @@ public class EventListener extends ListenerAdapter {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.PINK);
             builder.setTitle("ななみちゃんbot");
-            builder.setDescription("" +
+            builder.setDescription(
                     "Ver "+ver.get()+"\n" +
                     "サポート(質問・バグ報告・要望)サーバー : https://discord.gg/FnjCMzP7d4\n" +
                     "ソースコード : https://github.com/7mi-site/nanamin-bot"
@@ -317,14 +319,20 @@ public class EventListener extends ListenerAdapter {
 
             // ログ記録
             if (!new File("./log").exists()){
-                new File("./log").mkdir();
+                boolean mkdir1 = new File("./log").mkdir();
+                if (!mkdir1){
+                    return;
+                }
             }
 
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
 
             if (!new File("./log/"+sdf.format(date)).exists()){
-                new File("./log/log"+sdf.format(date)).mkdir();
+                boolean mkdir = new File("./log/log" + sdf.format(date)).mkdir();
+                if (!mkdir){
+                    return;
+                }
             }
 
             File file = new File("./log/log" + sdf.format(date) + "/" + event.getAuthor().getId() + "-" + message.getId() + "-private.txt");
@@ -365,7 +373,7 @@ public class EventListener extends ListenerAdapter {
         if (
                 message.getContentRaw().startsWith("n.vote") || message.getContentRaw().startsWith("n.role") || message.getContentRaw().equals("n.ui")
                 || message.getContentRaw().equals("n.nullpo") || message.getContentRaw().equals("n.dice") || message.getContentRaw().equals("n.burn") || message.getContentRaw().equals("n.burst") || message.getContentRaw().equals("n.aisatu") || message.getContentRaw().equals("n.あいさつ") || message.getContentRaw().startsWith("n.random")
-                || message.getContentRaw().startsWith("n.play") || message.getContentRaw().equals("n.stop") || message.getContentRaw().equals("n.repeat") || message.getContentRaw().equals("n.nowPlay") || message.getContentRaw().toLowerCase().equals("n.nowplay") || message.getContentRaw().startsWith("n.musicVolume")
+                || message.getContentRaw().startsWith("n.play") || message.getContentRaw().equals("n.stop") || message.getContentRaw().equals("n.repeat") || message.getContentRaw().equals("n.nowPlay") || message.getContentRaw().equalsIgnoreCase("n.nowplay") || message.getContentRaw().startsWith("n.musicVolume")
                 || message.getContentRaw().startsWith("n.volume") || message.getContentRaw().equals("n.musicSkip") || message.getContentRaw().equals("n.skip")
                 || message.getContentRaw().equals("n.game") || message.getContentRaw().startsWith("n.money") || message.getContentRaw().equals("n.bank") || message.getContentRaw().equals("n.slot")
                 || message.getContentRaw().equals("n.rank") || message.getContentRaw().equals("n.yosogame") || message.getContentRaw().equals("n.fx") || message.getContentRaw().equals("n.omikuji") || message.getContentRaw().equals("n.nomoney") || message.getContentRaw().equals("n.nomoney2")
@@ -375,17 +383,28 @@ public class EventListener extends ListenerAdapter {
             new Thread(()->{
                 // ログ記録
                 if (!new File("./log").exists()){
-                    new File("./log").mkdir();
+                    boolean mkdir1 = new File("./log").mkdir();
+                    if (!mkdir1){
+                        return;
+                    }
                 }
-
                 Date date = new Date();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
 
                 if (!new File("./log/"+sdf.format(date)).exists()){
-                    new File("./log/log"+sdf.format(date)).mkdir();
+                    boolean mkdir = new File("./log/log" + sdf.format(date)).mkdir();
+                    if (!mkdir){
+                        return;
+                    }
                 }
 
-                File file = new File("./log/log" + sdf.format(date) + "/" + event.getMember().getId() + "-" + event.getMessageId() + "-messageCommand.txt");
+                final File file;
+                if (event.getMember() != null){
+                    file = new File("./log/log" + sdf.format(date) + "/" + event.getMember().getId() + "-" + event.getMessageId() + "-messageCommand.txt");
+                } else {
+                    file = new File("./log/log" + sdf.format(date) + "/" + "unknown_user" + "-" + event.getMessageId() + "-messageCommand.txt");
+                }
+
 
                 StringBuffer sb = new StringBuffer();
 
@@ -423,22 +442,38 @@ public class EventListener extends ListenerAdapter {
         new Thread(()->{
             // ログ記録
             if (!new File("./log").exists()){
-                new File("./log").mkdir();
+                boolean mkdir = new File("./log").mkdir();
+                if (!mkdir){
+                    return;
+                }
             }
 
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd");
 
             if (!new File("./log/"+sdf.format(date)).exists()){
-                new File("./log/log"+sdf.format(date)).mkdir();
+                boolean mkdir = new File("./log/log" + sdf.format(date)).mkdir();
+                if (!mkdir){
+                    return;
+                }
             }
 
-            File file = new File("./log/log" + sdf.format(date) + "/" + member.getId() + "-" + event.getId() + "-command.txt");
+            final File file;
+            if (member != null){
+                file = new File("./log/log" + sdf.format(date) + "/" + member.getId() + "-" + event.getId() + "-command.txt");
+            } else {
+                file = new File("./log/log" + sdf.format(date) + "/" + "unknown_user" + "-" + event.getId() + "-command.txt");
+            }
 
             StringBuffer sb = new StringBuffer();
 
-            sb.append(member.getUser().getAsTag()); sb.append("\r\n");
-            sb.append(member.getUser().getId()); sb.append("\r\n");
+            if (member != null){
+                sb.append(member.getUser().getAsTag()); sb.append("\r\n");
+                sb.append(member.getUser().getId()); sb.append("\r\n");
+            } else {
+                sb.append("unknown#----"); sb.append("\r\n");
+                sb.append("unknown_user"); sb.append("\r\n");
+            }
             sb.append(event.getFullCommandName()); sb.append("\r\n");
             for (OptionMapping option : event.getOptions()){
                 sb.append(option.getName());
@@ -460,7 +495,7 @@ public class EventListener extends ListenerAdapter {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(Color.PINK);
             builder.setTitle("ななみちゃんbot");
-            builder.setDescription("" +
+            builder.setDescription(
                     "Ver "+ver.get()+"\n" +
                     "サポート(質問・バグ報告・要望)サーバー : https://discord.gg/FnjCMzP7d4\n" +
                     "ソースコード : https://github.com/n7mn-xyz/nanamin-bot"
@@ -478,7 +513,7 @@ public class EventListener extends ListenerAdapter {
         if (event.getFullCommandName().equals("music")){
             OptionMapping option1 = event.getOption("url");
             OptionMapping option2 = event.getOption("音量");
-            musicCommand.run(event, option1, option2);
+            musicCommand.run(event, Objects.requireNonNull(option1), option2);
 
             return;
         }
@@ -494,7 +529,7 @@ public class EventListener extends ListenerAdapter {
         }
 
         if (event.getFullCommandName().equals("nanami-setting")){
-            new Setting(jda).run(event);
+            new Setting().run(event);
             return;
         }
 
@@ -507,7 +542,7 @@ public class EventListener extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReactionAdd(MessageReactionAddEvent event) {
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         voteSys.add(event);
     }
 

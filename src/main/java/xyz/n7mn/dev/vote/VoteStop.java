@@ -18,17 +18,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Objects;
 
 public class VoteStop {
 
     YamlMapping ConfigYml = null;
 
     public VoteStop(){
-        File config = new File("./config-redis.yml");
+        final File config = new File("./config-redis.yml");
         try {
             if (!config.exists()){
-                config.createNewFile();
-
                 YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
                 ConfigYml = builder.add(
                         "RedisServer", "127.0.0.1"
@@ -39,9 +38,11 @@ public class VoteStop {
                 ).build();
 
                 try {
-                    PrintWriter writer = new PrintWriter(config);
-                    writer.print(ConfigYml.toString());
-                    writer.close();
+                    if (config.createNewFile()){
+                        PrintWriter writer = new PrintWriter(config);
+                        writer.print(ConfigYml.toString());
+                        writer.close();
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -76,13 +77,13 @@ public class VoteStop {
         String VoteId = null;
 
         if (event.getOption("メッセージリンク") != null){
-            String[] split = event.getOption("メッセージリンク").getAsString().split("/");
+            String[] split = Objects.requireNonNull(event.getOption("メッセージリンク")).getAsString().split("/");
 
             ChannelId[0] = split[split.length - 2];
             MessageId[0] = split[split.length - 1];
         } else {
             // 最新の投票の投稿を持ってくる
-            event.getGuild().getTextChannelById(ChannelId[0]).getHistoryBefore(event.getId(), 100).queue((messageHistory -> {
+            Objects.requireNonNull(Objects.requireNonNull(event.getGuild()).getTextChannelById(ChannelId[0])).getHistoryBefore(event.getId(), 100).queue((messageHistory -> {
                 List<Message> history = messageHistory.getRetrievedHistory();
                 for (Message message : history){
                     for (String key : jedis.keys("nanamibot:vote:contents:*")) {
@@ -158,13 +159,13 @@ public class VoteStop {
         }
 
 
-        event.getJDA().getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).getHistoryAfter(MessageId[0], 1).queue(messageHistory -> {
-            if (messageHistory.getMessageById(MessageId[0]) != null && messageHistory.getMessageById(MessageId[0]).getReactions() != null && messageHistory.getMessageById(MessageId[0]).getReactions().size() > 0){
-                messageHistory.getMessageById(MessageId[0]).clearReactions().queue();
+        Objects.requireNonNull(Objects.requireNonNull(event.getJDA().getGuildById(contents.getGuildId())).getTextChannelById(contents.getMessageChannelId())).getHistoryAfter(MessageId[0], 1).queue(messageHistory -> {
+            if (messageHistory.getMessageById(MessageId[0]) != null && Objects.requireNonNull(messageHistory.getMessageById(MessageId[0])).getReactions().size() > 0){
+                Objects.requireNonNull(messageHistory.getMessageById(MessageId[0])).clearReactions().queue();
             }
 
         });
-        event.getJDA().getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).sendMessageEmbeds(builder.build()).queue();
+        Objects.requireNonNull(Objects.requireNonNull(event.getJDA().getGuildById(contents.getGuildId())).getTextChannelById(contents.getMessageChannelId())).sendMessageEmbeds(builder.build()).queue();
 
         contents.setEndFlag(true);
         jedis.set("nanamibot:vote:data:" + VoteId, new Gson().toJson(contents));

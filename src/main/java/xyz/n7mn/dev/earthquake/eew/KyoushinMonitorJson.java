@@ -1,6 +1,5 @@
 package xyz.n7mn.dev.earthquake.eew;
 
-import java.util.Date;
 
 public class KyoushinMonitorJson {
 

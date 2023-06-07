@@ -1,10 +1,6 @@
 package xyz.n7mn.dev.music;
 
-import com.amihaiemil.eoyaml.Yaml;
-import com.amihaiemil.eoyaml.YamlMapping;
-import com.amihaiemil.eoyaml.YamlSequence;
 import com.sedmelluq.discord.lavaplayer.player.*;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
@@ -13,18 +9,11 @@ import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
-import okhttp3.*;
 import xyz.n7mn.nico_proxy.BilibiliCom;
 import xyz.n7mn.nico_proxy.BilibiliTv;
 import xyz.n7mn.nico_proxy.NicoNicoVideo;
-import xyz.n7mn.nico_proxy.ShareService;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.security.SecureRandom;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -85,23 +74,19 @@ public class MusicBot {
 
         if (URL.getAsString().equals("stop")){
             //System.out.println("d1");
-            AudioManager manager = event.getGuild().getAudioManager();
+            AudioManager manager = event.getGuild() != null ? event.getGuild().getAudioManager() : null;
 
-            List<MusicQueue> list = new ArrayList<>();
-            for (MusicQueue q : musicQueueList){
-                list.add(q);
-            }
+            List<MusicQueue> list = new ArrayList<>(musicQueueList);
 
-            for (int i = 0; i < list.size(); i++){
-                if (list.get(i).getGuildId().equals(event.getGuild().getId())){
-                    //System.out.println("d1-1 : "+ i);
-                    musicQueueList.remove(list.get(i));
+            for (MusicQueue musicQueue : list) {
+                if (musicQueue.getGuildId().equals(event.getGuild().getId())) {
+                    musicQueueList.remove(musicQueue);
                 }
             }
             //System.out.println("d2");
             player = playerManager.createPlayer();
 
-            if (manager.getConnectedChannel() != null) {
+            if (manager != null && manager.getConnectedChannel() != null) {
                 builder.setDescription("再生停止しました！");
 
                 event.replyEmbeds(builder.build()).setEphemeral(false).queue();
@@ -149,7 +134,7 @@ public class MusicBot {
 
             int i = 0;
             for (MusicQueue queue : list){
-                if (queue.getGuildId().equals(event.getGuild().getId())){
+                if (queue.getGuildId().equals(Objects.requireNonNull(event.getGuild()).getId())){
                     list2.add(queue);
                 }
 
@@ -199,23 +184,11 @@ public class MusicBot {
             new Thread(()->{
                 if (player.getPlayingTrack() != null){
 
-                    //double par = (double) (player.getPlayingTrack().getPosition() / player.getPlayingTrack().getInfo().length);
-                    //int n = (int)par * 10;
-
-                    //String bar = "";
-                    //for (int i = 0; i < n; i++){
-                    //    bar = bar + "■";
-                    //}
-                    //for (int i = 0; i < (10 - n); i++){
-                    //    bar = bar + "□";
-                    //}
-
                     builder.setDescription(
                             "現在再生されている曲:\n" +
                                     "タイトル : "+getTitle(player.getPlayingTrack())+"\n" +
                                     "URL : " + getURL(player.getPlayingTrack())+"\n" +
-                                    "再生時間 : " + getLengthStr(player.getPlayingTrack().getInfo().length) + "\n" //+
-                            //"現在位置 : "+bar+"("+getLengthStr(player.getPlayingTrack().getPosition())+" / "+getLengthStr(player.getPlayingTrack().getInfo().length)+","+(par * 100)+"%)"
+                                    "再生時間 : " + getLengthStr(player.getPlayingTrack().getInfo().length) + "\n"
                     );
 
                 } else {
@@ -232,9 +205,9 @@ public class MusicBot {
         if (URL.getAsString().equals("queue")){
             new Thread(()->{
                 System.gc();
-                List<MusicQueue> queue = new ArrayList();
+                List<MusicQueue> queue = new ArrayList<>();
                 for (MusicQueue q : musicQueueList){
-                    if (q.getGuildId().equals(event.getGuild().getId())){
+                    if (q.getGuildId().equals(Objects.requireNonNull(event.getGuild()).getId())){
                         queue.add(q);
                     }
                 }
@@ -257,6 +230,7 @@ public class MusicBot {
             try {
                 volume = Math.max(Math.min(option.getAsInt(), 100), 0);
             } catch (Exception e){
+                // volume = 20;
             }
         }
 
@@ -282,7 +256,7 @@ public class MusicBot {
 
         final String InputURL = VideoURL;
         if (channel.getType().isAudio()){
-            AudioManager manager = event.getGuild().getAudioManager();
+            AudioManager manager = event.getGuild() != null ? event.getGuild().getAudioManager() : null;
 
             Matcher nico_video = Pattern.compile("(nico\\.ms|nicovideo\\.jp)").matcher(VideoURL);
             Matcher nico_live = Pattern.compile("(nico\\.ms/lv|live\\.nicovideo\\.jp|live\\.sp\\.nicovideo\\.jp)").matcher(VideoURL);
@@ -316,10 +290,11 @@ public class MusicBot {
             }
 
 
-            manager.openAudioConnection(channel.asVoiceChannel());
-            manager.setSendingHandler(new AudioPlayerSendHandler(player));
+            if (manager != null){
+                manager.openAudioConnection(channel.asVoiceChannel());
+                manager.setSendingHandler(new AudioPlayerSendHandler(player));
+            }
 
-            //System.out.println(VideoURL);
 
             playerManager.loadItem(VideoURL, new AudioLoadResultHandler() {
                 @Override

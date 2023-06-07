@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class MusicQueue {
 
-    private UUID QueueId;
+    private final UUID QueueId;
     private String GuildId;
     private String AddDiscordId;
     private String AddDiscordUsername;

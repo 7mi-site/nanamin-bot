@@ -1,7 +1,5 @@
 package xyz.n7mn.dev.earthquake.eew;
 
-import java.util.Date;
-
 public class EEWData {
     private Result result;
     private String report_time;

@@ -20,11 +20,9 @@ public class Money {
 
     @Nullable
     public static Long get(String memberId){
-        YamlMapping ConfigYml = null;
+        YamlMapping ConfigYml;
         try {
             if (!config.exists()){
-                config.createNewFile();
-
                 YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
                 ConfigYml = builder.add(
                         "RedisServer", "127.0.0.1"
@@ -35,9 +33,11 @@ public class Money {
                 ).build();
 
                 try {
-                    PrintWriter writer = new PrintWriter(config);
-                    writer.print(ConfigYml.toString());
-                    writer.close();
+                    if (config.createNewFile()){
+                        PrintWriter writer = new PrintWriter(config);
+                        writer.print(ConfigYml.toString());
+                        writer.close();
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -75,10 +75,10 @@ public class Money {
     public static void set(String memberId, Long money){
         System.gc();
 
-        YamlMapping ConfigYml = null;
+        YamlMapping ConfigYml;
         try {
             if (!config.exists()){
-                config.createNewFile();
+
 
                 YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
                 ConfigYml = builder.add(
@@ -90,9 +90,11 @@ public class Money {
                 ).build();
 
                 try {
-                    PrintWriter writer = new PrintWriter(config);
-                    writer.print(ConfigYml.toString());
-                    writer.close();
+                    if (config.createNewFile()){
+                        PrintWriter writer = new PrintWriter(config);
+                        writer.print(ConfigYml.toString());
+                        writer.close();
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }

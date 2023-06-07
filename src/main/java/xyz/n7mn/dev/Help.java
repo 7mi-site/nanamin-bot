@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import xyz.n7mn.dev.api.ver;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class Help {
 
@@ -22,7 +23,7 @@ public class Help {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.PINK);
         builder.setTitle("ななみちゃんbot ヘルプ");
-        builder.setDescription("" +
+        builder.setDescription(
                 "質問や要望、バグ報告は https://discord.gg/FnjCMzP7d4 までお願いします。\n" +
                 (ver.get().matches(".*dev.*") ? "**このBotはベータ版です！予告なしで停止する場合があります！！*" : "")
         );
@@ -37,11 +38,12 @@ public class Help {
         OptionMapping option = event.getOption("送信方式");
 
         if (option != null && option.getAsString().equals("d")){
-            jda.getUserById(event.getMember().getId()).openPrivateChannel().queue((s->{
-                s.sendMessageEmbeds(builder.build()).queue();
-                event.reply("ヘルプをDMに送信しましたっ！").setEphemeral(true).queue();
-            }));
-
+            if (event.getMember() != null){
+                Objects.requireNonNull(jda.getUserById(event.getMember().getId())).openPrivateChannel().queue((s->{
+                    s.sendMessageEmbeds(builder.build()).queue();
+                    event.reply("ヘルプをDMに送信しましたっ！").setEphemeral(true).queue();
+                }));
+            }
             return;
         }
 

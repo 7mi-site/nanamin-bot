@@ -2,7 +2,6 @@ package xyz.n7mn.dev.game;
 
 import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
-import com.google.gson.Gson;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -12,14 +11,12 @@ import xyz.n7mn.dev.api.Money;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.List;
 
 public class Game {
-    private final Long defaultMoney = 1000L;
 
     private final String[] gameList = new String[]{
             "money",
@@ -46,7 +43,7 @@ public class Game {
         builder.setColor(Color.PINK);
         builder.clearFields();
 
-        if (event.getOption("種類").getAsString().equals("help")){
+        if (Objects.requireNonNull(event.getOption("種類")).getAsString().equals("help")){
             builder.setDescription("いま遊べるミニゲームは以下のとおりです！");
             for (int i = 0; i < gameList.length; i++){
                 builder.addField("/game "+gameList[i], gameDescList[i], false);
@@ -56,8 +53,9 @@ public class Game {
             return;
         }
 
-        if (event.getOption("種類").getAsString().equals("money")){
-            Long money = Money.get(event.getMember().getId());
+        Long defaultMoney = 1000L;
+        if (Objects.requireNonNull(event.getOption("種類")).getAsString().equals("money")){
+            Long money = Money.get(Objects.requireNonNull(event.getMember()).getId());
             if (money == null){
                 money = defaultMoney;
                 Money.set(event.getMember().getId(), defaultMoney);
@@ -68,12 +66,12 @@ public class Game {
             return;
         }
 
-        if (event.getOption("種類").getAsString().equals("omikuji")){
+        if (Objects.requireNonNull(event.getOption("種類")).getAsString().equals("omikuji")){
             File file = new File("./money/default.yml");
 
             List<OmikujiData> list = new ArrayList<>();
 
-            if (new File("./money/"+event.getGuild().getId()+".yml").exists()){
+            if (new File("./money/"+ Objects.requireNonNull(event.getGuild()).getId()+".yml").exists()){
                 file = new File("./money/"+event.getGuild().getId()+".yml");
             }
 
@@ -88,7 +86,7 @@ public class Game {
 
             int i = new SecureRandom().nextInt(list.size());
             OmikujiData data = list.get(i);
-            Long money = Money.get(event.getMember().getId());
+            Long money = Money.get(Objects.requireNonNull(event.getMember()).getId());
             if (money == null){
                 money = defaultMoney;
             }
@@ -100,7 +98,7 @@ public class Game {
             return;
         }
 
-        if (event.getOption("種類").getAsString().equals("fx")){
+        if (Objects.requireNonNull(event.getOption("種類")).getAsString().equals("fx")){
 
             if (event.getOption("掛け金") == null){
                 builder.setColor(Color.RED);
@@ -109,8 +107,8 @@ public class Game {
                 return;
             }
 
-            int money = event.getOption("掛け金").getAsInt();
-            long nowMoney = (Money.get(event.getMember().getId()) == null ? defaultMoney : Money.get(event.getMember().getId()));
+            int money = Objects.requireNonNull(event.getOption("掛け金")).getAsInt();
+            long nowMoney = (Money.get(Objects.requireNonNull(event.getMember()).getId()) == null ? defaultMoney : Money.get(Objects.requireNonNull(event.getMember()).getId()) != null ? Money.get(Objects.requireNonNull(event.getMember()).getId()) : defaultMoney);
 
             if (money <= 0){
                 builder.setColor(Color.RED);
@@ -126,7 +124,7 @@ public class Game {
                 return;
             }
 
-            int multiple = 0;
+            int multiple;
             if (money <= 100000){
                 multiple = money / 100;
             } else {
@@ -221,10 +219,10 @@ public class Game {
             return;
         }
 
-        if (event.getOption("種類").getAsString().equals("giveme")){
+        if (Objects.requireNonNull(event.getOption("種類")).getAsString().equals("giveme")){
             String[] strings = {"・・・。", "・・・プライドないないでちゅか～？", "・・・。", "・・・。"};
 
-            Long mon = Money.get(event.getMember().getId());
+            Long mon = Money.get(Objects.requireNonNull(event.getMember()).getId());
             if (mon == null || mon >= 0){
                 builder.setDescription("・・・あなたにはまだ関係ないと思いますよ？");
                 event.replyEmbeds(builder.build()).setEphemeral(false).queue();
@@ -243,7 +241,7 @@ public class Game {
             return;
         }
 
-        if (event.getOption("種類").getAsString().equals("rank")){
+        if (Objects.requireNonNull(event.getOption("種類")).getAsString().equals("rank")){
             System.gc();
             List<RankData> list = new ArrayList<>();
             try {
@@ -269,13 +267,13 @@ public class Game {
             int rank = 1;
             int nowRank = -1;
             for (RankData data : list){
-                Member member = event.getGuild().getMemberById(data.getMemberId());
+                Member member = Objects.requireNonNull(event.getGuild()).getMemberById(data.getMemberId());
 
                 if (member == null){
                     continue;
                 }
 
-                if (event.getMember().getId().equals(data.getMemberId())){
+                if (Objects.requireNonNull(event.getMember()).getId().equals(data.getMemberId())){
                     nowRank = rank;
                 }
 

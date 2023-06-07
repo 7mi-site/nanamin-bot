@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -39,7 +40,8 @@ public class Earthquake {
         try {
             File config = new File("./config-redis.yml");
             if (!config.exists()){
-                config.createNewFile();
+                boolean newFile = config.createNewFile();
+
 
                 YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
                 ConfigYml1 = builder.add(
@@ -51,9 +53,11 @@ public class Earthquake {
                 ).build();
 
                 try {
-                    PrintWriter writer = new PrintWriter(config);
-                    writer.print(ConfigYml1.toString());
-                    writer.close();
+                    if (newFile){
+                        PrintWriter writer = new PrintWriter(config);
+                        writer.print(ConfigYml1.toString());
+                        writer.close();
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -82,115 +86,116 @@ public class Earthquake {
                             .build();
                     Response response = client.newCall(request).execute();
 
-                    Matcher matcher = Pattern.compile("<item time=\"(.*)\" shindo=\"(.*)\" url=\"(.*)\">(.*)\\</item\\>").matcher(response.body().string());
-                    if (matcher.find()){
-                        Request request1 = new Request.Builder()
-                                .url(matcher.group(3))
-                                .build();
-                        Response response_xml = client.newCall(request1).execute();
-                        String xml = new String(new String(response_xml.body().bytes(), "MS932").getBytes(), StandardCharsets.UTF_8);
-                        Matcher matcher1 = Pattern.compile("<Timestamp>(.*)</Timestamp>").matcher(xml);
-                        //System.out.println("!");
-                        response_xml.close();
-                        if (matcher1.find()){
-                            try {
-                                Date date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(matcher1.group(1));
-                                if ((new Date().getTime() - date.getTime()) <= 60000){
-                                    if (!id[0].equals(matcher1.group(1))){
-                                        //System.out.println("!!");
-                                        //System.out.println(xml);
-                                        Matcher matcher_date = Pattern.compile("Time=\"(.*)\" Intensity").matcher(xml);
-                                        Matcher matcher_intensity = Pattern.compile("Intensity=\"(\\d+|\\d+[+|\\-])\" Epicenter").matcher(xml);
-                                        Matcher matcher_epicenter = Pattern.compile("Epicenter=\"(.*)\" Latitude").matcher(xml);
-                                        Matcher matcher_latitude = Pattern.compile("Latitude=\"(.*)\" Longitude").matcher(xml);
-                                        Matcher matcher_longitude = Pattern.compile("Longitude=\"(.*)\" Magnitude").matcher(xml);
-                                        Matcher matcher_magnitude = Pattern.compile("Magnitude=\"(\\d+\\.\\d+)\" Depth").matcher(xml);
-                                        Matcher matcher_depth = Pattern.compile("Depth=\"(\\d+)km\" >").matcher(xml);
+                    if (response.body() != null){
+                        Matcher matcher = Pattern.compile("<item time=\"(.*)\" shindo=\"(.*)\" url=\"(.*)\">(.*)</item>").matcher(response.body().string());
 
-                                        Matcher matcher_detail = Pattern.compile("<Detail>(.*)</Detail>").matcher(xml);
-                                        Matcher matcher_local = Pattern.compile("<Local>(.*)</Local>").matcher(xml);
-                                        Matcher matcher_global = Pattern.compile("<Global>(.*)</Global>").matcher(xml);
+                        if (matcher.find()){
+                            Request request1 = new Request.Builder()
+                                    .url(matcher.group(3))
+                                    .build();
+                            Response response_xml = client.newCall(request1).execute();
+                            String xml = "";
+                            if (response_xml.body() != null){
+                                xml = new String(new String(response_xml.body().bytes(), "MS932").getBytes(), StandardCharsets.UTF_8);
+                            }
 
-                                        final String Date;
-                                        if (matcher_date.find()){
-                                            Date = matcher_date.group(1);
-                                        } else {
-                                            Date = null;
-                                        }
-                                        final String Intensity;
-                                        if (matcher_intensity.find()){
-                                            Intensity = matcher_intensity.group(1);
-                                        } else {
-                                            Intensity = null;
-                                        }
-                                        final String Epicenter;
-                                        if (matcher_epicenter.find()){
-                                            Epicenter = matcher_epicenter.group(1);
-                                        } else {
-                                            Epicenter = null;
-                                        }
-                                        final String Latitude;
-                                        if (matcher_latitude.find()){
-                                            Latitude = matcher_latitude.group(1);
-                                        } else {
-                                            Latitude = null;
-                                        }
-                                        final String Longitude;
-                                        if (matcher_longitude.find()){
-                                            Longitude = matcher_longitude.group(1);
-                                        } else {
-                                            Longitude = null;
-                                        }
-                                        final String Magnitude;
-                                        if (matcher_magnitude.find()){
-                                            Magnitude = matcher_magnitude.group(1);
-                                        } else {
-                                            Magnitude = null;
-                                        }
-                                        final String Depth;
-                                        if (matcher_depth.find()){
-                                            Depth = matcher_depth.group(1) + "km";
-                                        } else {
-                                            Depth = null;
-                                        }
+                            Matcher matcher1 = Pattern.compile("<Timestamp>(.*)</Timestamp>").matcher(xml);
+                            //System.out.println("!");
+                            response_xml.close();
+                            if (matcher1.find()){
+                                try {
+                                    Date date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse(matcher1.group(1));
+                                    if ((new Date().getTime() - date.getTime()) <= 60000){
+                                        if (!id[0].equals(matcher1.group(1))){
+                                            Matcher matcher_date = Pattern.compile("Time=\"(.*)\" Intensity").matcher(xml);
+                                            Matcher matcher_intensity = Pattern.compile("Intensity=\"(\\d+|\\d+[+|\\-])\" Epicenter").matcher(xml);
+                                            Matcher matcher_epicenter = Pattern.compile("Epicenter=\"(.*)\" Latitude").matcher(xml);
+                                            Matcher matcher_latitude = Pattern.compile("Latitude=\"(.*)\" Longitude").matcher(xml);
+                                            Matcher matcher_longitude = Pattern.compile("Longitude=\"(.*)\" Magnitude").matcher(xml);
+                                            Matcher matcher_magnitude = Pattern.compile("Magnitude=\"(\\d+\\.\\d+)\" Depth").matcher(xml);
+                                            Matcher matcher_depth = Pattern.compile("Depth=\"(\\d+)km\" >").matcher(xml);
 
-                                        final String Detail;
-                                        if (matcher_detail.find()){
-                                            Detail = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_detail.group(1);
-                                        } else {
-                                            Detail = null;
-                                        }
-                                        final String Local;
-                                        if (matcher_local.find()){
-                                            Local = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_local.group(1);
-                                        } else {
-                                            Local = null;
-                                        }
-                                        final String Global;
-                                        if (matcher_global.find()){
-                                            Global = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_global.group(1);
-                                        } else {
-                                            Global = null;
-                                        }
+                                            Matcher matcher_detail = Pattern.compile("<Detail>(.*)</Detail>").matcher(xml);
+                                            Matcher matcher_local = Pattern.compile("<Local>(.*)</Local>").matcher(xml);
+                                            Matcher matcher_global = Pattern.compile("<Global>(.*)</Global>").matcher(xml);
 
-                                        new Thread(()->{
+                                            final String Date;
+                                            if (matcher_date.find()){
+                                                Date = matcher_date.group(1);
+                                            } else {
+                                                Date = null;
+                                            }
+                                            final String Intensity;
+                                            if (matcher_intensity.find()){
+                                                Intensity = matcher_intensity.group(1);
+                                            } else {
+                                                Intensity = null;
+                                            }
+                                            final String Epicenter;
+                                            if (matcher_epicenter.find()){
+                                                Epicenter = matcher_epicenter.group(1);
+                                            } else {
+                                                Epicenter = null;
+                                            }
+                                            final String Latitude;
+                                            if (matcher_latitude.find()){
+                                                Latitude = matcher_latitude.group(1);
+                                            } else {
+                                                Latitude = null;
+                                            }
+                                            final String Longitude;
+                                            if (matcher_longitude.find()){
+                                                Longitude = matcher_longitude.group(1);
+                                            } else {
+                                                Longitude = null;
+                                            }
+                                            final String Magnitude;
+                                            if (matcher_magnitude.find()){
+                                                Magnitude = matcher_magnitude.group(1);
+                                            } else {
+                                                Magnitude = null;
+                                            }
+                                            final String Depth;
+                                            if (matcher_depth.find()){
+                                                Depth = matcher_depth.group(1) + "km";
+                                            } else {
+                                                Depth = null;
+                                            }
 
-                                            jisin_send(Date, Intensity, Epicenter, Latitude, Longitude, Magnitude, Depth, Detail, Local, Global);
-                                        }).start();
+                                            final String Detail;
+                                            if (matcher_detail.find()){
+                                                Detail = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_detail.group(1);
+                                            } else {
+                                                Detail = null;
+                                            }
+                                            final String Local;
+                                            if (matcher_local.find()){
+                                                Local = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_local.group(1);
+                                            } else {
+                                                Local = null;
+                                            }
+                                            final String Global;
+                                            if (matcher_global.find()){
+                                                Global = "https://www3.nhk.or.jp/sokuho/jishin/"+matcher_global.group(1);
+                                            } else {
+                                                Global = null;
+                                            }
+
+                                            new Thread(()-> jisin_send(Date, Intensity, Epicenter, Latitude, Longitude, Magnitude, Depth, Detail, Local, Global)).start();
+                                            id[0] = matcher1.group(1);
+                                        }
+                                    }
+                                    if (id[0].equals("")){
                                         id[0] = matcher1.group(1);
                                     }
-                                }
-                                if (id[0].equals("")){
-                                    id[0] = matcher1.group(1);
-                                }
 
-                            } catch (ParseException e) {
-                                throw new RuntimeException(e);
+                                } catch (ParseException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
                         }
-
-
                     }
+
                     response.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -208,10 +213,11 @@ public class Earthquake {
                             .url("http://www.kmoni.bosai.go.jp/webservice/server/pros/latest.json")
                             .build();
                     Response response = client.newCall(request).execute();
-                    KyoushinMonitorJson json = new Gson().fromJson(response.body().string(), KyoushinMonitorJson.class);
+                    if (response.body() != null){
+                        KyoushinMonitorJson json = new Gson().fromJson(response.body().string(), KyoushinMonitorJson.class);
+                        eew(json.getLatest_time().replaceAll("/","").replaceAll(" ","").replaceAll(":",""));
+                    }
                     response.close();
-
-                    eew(json.getLatest_time().replaceAll("/","").replaceAll(" ","").replaceAll(":",""));
 
                 } catch (Exception e){
                     e.printStackTrace();
@@ -231,22 +237,23 @@ public class Earthquake {
                     .build();
 
             Response response = client.newCall(request).execute();
-            EEWData data = new Gson().fromJson(response.body().string(), EEWData.class);
+            if (response.body() != null){
+                EEWData data = new Gson().fromJson(response.body().string(), EEWData.class);
 
-            if (data.getResult().getMessage().equals("データがありません")){
-                response.close();
-                return;
+                if (data.getResult().getMessage().equals("データがありません")){
+                    response.close();
+                    return;
+                }
+
+                if (data.getIs_training() || !data.getAlertflg().equals("予報")){
+                    response.close();
+                    return;
+                }
+
+                System.out.println("緊急地震速報 受信");
+                System.out.println(data.getReport_num() + "," + data.getRegion_name() + "," + data.getLatitude() + "," + data.getLongitude() + "," + data.getDepth() + "," + data.getMagunitude() + "," +data.getCalcintensity());
+                eew_send(data.getReport_time(), data.getReport_num(), data.getIs_final(), data.getRegion_name(), data.getLatitude(), data.getLongitude(), data.getDepth(), data.getMagunitude(), data.getCalcintensity(), data.getIs_cancel());
             }
-
-            if (data.getIs_training() || !data.getAlertflg().equals("予報")){
-                response.close();
-                return;
-            }
-
-            System.out.println("緊急地震速報 受信");
-            System.out.println(data.getReport_num() + "," + data.getRegion_name() + "," + data.getLatitude() + "," + data.getLongitude() + "," + data.getDepth() + "," + data.getMagunitude() + "," +data.getCalcintensity());
-            eew_send(data.getReport_time(), data.getReport_num(), data.getIs_final(), data.getRegion_name(), data.getLatitude(), data.getLongitude(), data.getDepth(), data.getMagunitude(), data.getCalcintensity(), data.getIs_cancel());
-
             response.close();
 
         } catch (Exception e) {
@@ -257,7 +264,7 @@ public class Earthquake {
 
     private String temp_date = "";
     private String report_Num = "";
-    private void eew_send(String reportTime, String reportNum, Boolean isFinal, String regionName, String latitude, String longitude, String depth, String magunitude, String calcintensity, Boolean isCancel){
+    private void eew_send(String reportTime, String reportNum, Boolean isFinal, String regionName, String latitude, String longitude, String depth, String magnitude, String calcIntensity, Boolean isCancel){
         //System.out.println("eew0");
         if (temp_date.equals(reportTime) && report_Num.equals(reportNum)){
             return;
@@ -279,8 +286,8 @@ public class Earthquake {
                         "第 "+ reportNum + "報" + (isFinal ? "(最終報)" : "")+"\n" +
                         "震源地 : " + regionName + "("+latitude+" "+longitude+")\n" +
                         "震源の深さ : " + depth + "\n" +
-                        "マグニチュード : " + magunitude+"\n" +
-                        "最大予想震度 : " + calcintensity
+                        "マグニチュード : " + magnitude+"\n" +
+                        "最大予想震度 : " + calcIntensity
                 );
             }
             builder1.setFooter("情報元 : NIED 強震モニタ(https://www.bosai.go.jp/)");
@@ -300,7 +307,9 @@ public class Earthquake {
                     String channelId = jedis.get(key);
 
                     //System.out.println("eew5");
-                    jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build()).queue();
+                    if (Objects.requireNonNull(jda.getGuildById(guildId)).getTextChannelById(channelId) != null){
+                        Objects.requireNonNull(Objects.requireNonNull(jda.getGuildById(guildId)).getTextChannelById(channelId)).sendMessageEmbeds(builder1.build()).queue();
+                    }
                 }
 
                 jedis.close();
@@ -363,10 +372,11 @@ public class Earthquake {
                 String channelId = jedis.get(key);
 
                 if (builder2.isEmpty()){
-                    jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build()).queue();
+
+                    Objects.requireNonNull(Objects.requireNonNull(jda.getGuildById(guildId)).getTextChannelById(channelId)).sendMessageEmbeds(builder1.build()).queue();
                     continue;
                 }
-                jda.getGuildById(guildId).getTextChannelById(channelId).sendMessageEmbeds(builder1.build(), builder2.build(), builder3.build()).queue();
+                Objects.requireNonNull(Objects.requireNonNull(jda.getGuildById(guildId)).getTextChannelById(channelId)).sendMessageEmbeds(builder1.build(), builder2.build(), builder3.build()).queue();
             }
 
             jedis.close();
