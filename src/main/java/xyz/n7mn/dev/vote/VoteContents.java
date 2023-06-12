@@ -13,7 +13,7 @@ public class VoteContents {
     private String Title;
     private String[] Vote;
     private Date EndDate;
-    private String VoteType = "default";
+    private String VoteType;
     private boolean EndFlag = false;
 
     public VoteContents(String guildId, String messageChannelId, String title, String[] vote, String endDate, String voteType) throws ParseException {

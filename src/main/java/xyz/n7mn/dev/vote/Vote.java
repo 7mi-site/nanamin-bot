@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.utils.FileUpload;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
@@ -26,14 +27,13 @@ public class Vote {
 
     private JedisPool jedisPool;
     private YamlMapping ConfigYml = null;
-    private EmbedBuilder builder = new EmbedBuilder();
+    private final EmbedBuilder builder = new EmbedBuilder();
 
     public Vote(JDA jda){
 
         File config = new File("./config-redis.yml");
         try {
             if (!config.exists()){
-                config.createNewFile();
 
                 YamlMappingBuilder builder = Yaml.createYamlMappingBuilder();
                 ConfigYml = builder.add(
@@ -45,9 +45,11 @@ public class Vote {
                 ).build();
 
                 try {
-                    PrintWriter writer = new PrintWriter(config);
-                    writer.print(ConfigYml.toString());
-                    writer.close();
+                    if (config.createNewFile()){
+                        PrintWriter writer = new PrintWriter(config);
+                        writer.print(ConfigYml.toString());
+                        writer.close();
+                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -120,29 +122,29 @@ public class Vote {
         try {
 
              vote = new String[]{
-                     (event.getOption("選択肢1") != null ? event.getOption("選択肢1").getAsString() : null),
-                     (event.getOption("選択肢2") != null ? event.getOption("選択肢2").getAsString() : null),
-                     (event.getOption("選択肢3") != null ? event.getOption("選択肢3").getAsString() : null),
-                     (event.getOption("選択肢4") != null ? event.getOption("選択肢4").getAsString() : null),
-                     (event.getOption("選択肢5") != null ? event.getOption("選択肢5").getAsString() : null),
-                     (event.getOption("選択肢6") != null ? event.getOption("選択肢6").getAsString() : null),
-                     (event.getOption("選択肢7") != null ? event.getOption("選択肢7").getAsString() : null),
-                     (event.getOption("選択肢8") != null ? event.getOption("選択肢8").getAsString() : null),
-                     (event.getOption("選択肢9") != null ?  event.getOption("選択肢9").getAsString(): null),
-                     (event.getOption("選択肢10") != null ? event.getOption("選択肢10").getAsString() : null),
-                     (event.getOption("選択肢11") != null ? event.getOption("選択肢11").getAsString() : null),
-                     (event.getOption("選択肢12") != null ? event.getOption("選択肢12").getAsString() : null),
-                     (event.getOption("選択肢13") != null ? event.getOption("選択肢13").getAsString() : null),
-                     (event.getOption("選択肢14") != null ? event.getOption("選択肢14").getAsString() : null),
-                     (event.getOption("選択肢15") != null ? event.getOption("選択肢15").getAsString() : null),
-                     (event.getOption("選択肢16") != null ? event.getOption("選択肢16").getAsString() : null),
-                     (event.getOption("選択肢17") != null ? event.getOption("選択肢17").getAsString() : null),
-                     (event.getOption("選択肢18") != null ? event.getOption("選択肢18").getAsString() : null),
-                     (event.getOption("選択肢19") != null ? event.getOption("選択肢19").getAsString() : null),
-                     (event.getOption("選択肢20") != null ? event.getOption("選択肢20").getAsString() : null)
+                     (event.getOption("選択肢1") != null ? Objects.requireNonNull(event.getOption("選択肢1")).getAsString() : null),
+                     (event.getOption("選択肢2") != null ? Objects.requireNonNull(event.getOption("選択肢2")).getAsString() : null),
+                     (event.getOption("選択肢3") != null ? Objects.requireNonNull(event.getOption("選択肢3")).getAsString() : null),
+                     (event.getOption("選択肢4") != null ? Objects.requireNonNull(event.getOption("選択肢4")).getAsString() : null),
+                     (event.getOption("選択肢5") != null ? Objects.requireNonNull(event.getOption("選択肢5")).getAsString() : null),
+                     (event.getOption("選択肢6") != null ? Objects.requireNonNull(event.getOption("選択肢6")).getAsString() : null),
+                     (event.getOption("選択肢7") != null ? Objects.requireNonNull(event.getOption("選択肢7")).getAsString() : null),
+                     (event.getOption("選択肢8") != null ? Objects.requireNonNull(event.getOption("選択肢8")).getAsString() : null),
+                     (event.getOption("選択肢9") != null ?  Objects.requireNonNull(event.getOption("選択肢9")).getAsString(): null),
+                     (event.getOption("選択肢10") != null ? Objects.requireNonNull(event.getOption("選択肢10")).getAsString() : null),
+                     (event.getOption("選択肢11") != null ? Objects.requireNonNull(event.getOption("選択肢11")).getAsString() : null),
+                     (event.getOption("選択肢12") != null ? Objects.requireNonNull(event.getOption("選択肢12")).getAsString() : null),
+                     (event.getOption("選択肢13") != null ? Objects.requireNonNull(event.getOption("選択肢13")).getAsString() : null),
+                     (event.getOption("選択肢14") != null ? Objects.requireNonNull(event.getOption("選択肢14")).getAsString() : null),
+                     (event.getOption("選択肢15") != null ? Objects.requireNonNull(event.getOption("選択肢15")).getAsString() : null),
+                     (event.getOption("選択肢16") != null ? Objects.requireNonNull(event.getOption("選択肢16")).getAsString() : null),
+                     (event.getOption("選択肢17") != null ? Objects.requireNonNull(event.getOption("選択肢17")).getAsString() : null),
+                     (event.getOption("選択肢18") != null ? Objects.requireNonNull(event.getOption("選択肢18")).getAsString() : null),
+                     (event.getOption("選択肢19") != null ? Objects.requireNonNull(event.getOption("選択肢19")).getAsString() : null),
+                     (event.getOption("選択肢20") != null ? Objects.requireNonNull(event.getOption("選択肢20")).getAsString() : null)
              };
 
-            contents = new VoteContents(event.getGuild().getId(), event.getMessageChannel().getId(), event.getOption("タイトル").getAsString(), vote, event.getOption("投票終了日時").getAsString().replaceAll("なし","9999-12-31 23:59:59"), event.getOption("投票形式") != null ? event.getOption("投票形式").getAsString() : "default");
+            contents = new VoteContents(Objects.requireNonNull(event.getGuild()).getId(), event.getMessageChannel().getId(), Objects.requireNonNull(event.getOption("タイトル")).getAsString(), vote, Objects.requireNonNull(event.getOption("投票終了日時")).getAsString().replaceAll("なし","9999-12-31 23:59:59"), event.getOption("投票形式") != null ? Objects.requireNonNull(event.getOption("投票形式")).getAsString() : "default");
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -158,8 +160,8 @@ public class Vote {
         jedis.close();
 
         builder.setDescription(
-                "タイトル : "+event.getOption("タイトル").getAsString()+"\n" +
-                "終了日付 : "+event.getOption("投票終了日時").getAsString() + "\n" +
+                "タイトル : "+ Objects.requireNonNull(event.getOption("タイトル")).getAsString()+"\n" +
+                "終了日付 : "+ Objects.requireNonNull(event.getOption("投票終了日時")).getAsString() + "\n" +
                 "※一度投票したものは取り消せません！"
         );
 
@@ -194,7 +196,7 @@ public class Vote {
     }
 
     public void add(MessageReactionAddEvent event){
-        if (event.getMember().getUser().isBot() || event.getMember().getUser().isSystem()){
+        if (event.getMember() != null && (event.getMember().getUser().isBot() || event.getMember().getUser().isSystem())){
             return;
         }
 
@@ -243,7 +245,7 @@ public class Vote {
         //System.out.println("a3");
 
         new Thread(()->{
-            event.getReaction().removeReaction(event.getUser()).queue();
+            event.getReaction().removeReaction(Objects.requireNonNull(event.getUser())).queue();
             builder.setTitle("ななみちゃんbot 投票機能");
             builder.setColor(Color.GREEN);
             builder.clearFields();
@@ -313,9 +315,7 @@ public class Vote {
             }
 
             String[] temp2 = new String[i];
-            for (int x = 0; x < temp2.length; x++){
-                temp2[x] = temp[x];
-            }
+            System.arraycopy(temp, 0, temp2, 0, temp2.length);
             temp = temp2;
 
             List<PersonalResult> resultList = new ArrayList<>();
@@ -384,9 +384,19 @@ public class Vote {
                             count++;
 
                             if (voteNameList.length() == 0){
-                                voteNameList.append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                if (personalResult.getNickname() == null && personalResult.getNickname() == null){
+                                    voteNameList.append("(不明)");
+                                } else {
+                                    voteNameList.append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                }
+
                             } else {
-                                voteNameList.append("\n").append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                if (personalResult.getNickname() == null && personalResult.getNickname() == null){
+                                    voteNameList.append("\n").append("(不明)");
+                                } else {
+                                    voteNameList.append("\n").append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                }
+
                             }
 
                         }
@@ -396,14 +406,81 @@ public class Vote {
                     i++;
                 }
 
-
-                jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).getHistoryAfter(MessageId, 1).queue(messageHistory -> {
-                    if (messageHistory.getMessageById(MessageId) != null && messageHistory.getMessageById(MessageId).getReactions() != null && messageHistory.getMessageById(MessageId).getReactions().size() > 0){
-                        messageHistory.getMessageById(MessageId).clearReactions().queue();
+                Objects.requireNonNull(Objects.requireNonNull(jda.getGuildById(contents.getGuildId())).getTextChannelById(contents.getMessageChannelId())).getHistoryAfter(MessageId, 1).queue(messageHistory -> {
+                    if (messageHistory.getMessageById(MessageId) != null && Objects.requireNonNull(messageHistory.getMessageById(MessageId)).getReactions().size() > 0){
+                        Objects.requireNonNull(messageHistory.getMessageById(MessageId)).clearReactions().queue();
                     }
 
                 });
-                jda.getGuildById(contents.getGuildId()).getTextChannelById(contents.getMessageChannelId()).sendMessageEmbeds(builder.build()).queue();
+
+                if (!builder.isValidLength()){
+                    StringBuffer buffer = new StringBuffer();
+
+                    for (String name : result.getVoteResult()) {
+                        int count = 0;
+
+                        StringBuilder buffer1 = new StringBuilder();
+
+                        for (PersonalResult personalResult : result.getPersonalResults()) {
+                            count++;
+
+                            if (buffer1.length() == 0){
+                                if (personalResult.getNickname() == null && personalResult.getNickname() == null){
+                                    buffer1.append("(不明)");
+                                } else {
+                                    buffer1.append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                }
+
+                            } else {
+                                if (personalResult.getNickname() == null && personalResult.getNickname() == null){
+                                    buffer1.append("\r\n").append("(不明)");
+                                } else {
+                                    buffer1.append("\r\n").append(personalResult.getNickname() == null ? personalResult.getUsername() : personalResult.getNickname());
+                                }
+
+                            }
+
+                        }
+
+                        buffer.append(name).append(" (").append(count).append(" 票)\r\n");
+                        buffer.append(buffer1).append("\r\n");
+                    }
+
+                    EmbedBuilder builder2 = new EmbedBuilder();
+                    builder2.setTitle("ななみちゃんbot 投票機能");
+                    builder2.setColor(Color.PINK);
+                    builder2.clearFields();
+                    builder2.setDescription("「"+contents.getTitle()+"」の投票が投票終了しました！\n結果は以下のとおりです！");
+                    VoteResult result2 = check(MessageId);
+                    builder2.addField("投票総数", result.getTotalCount()+" 票", false);
+                    if (contents.getVoteType().equals("only")){
+                        if (result2.getValidityCount() > 0){
+                            builder.addField("有効投票総数", result.getValidityCount()+" 票 ("+((result.getValidityCount()) / result.getTotalCount() * 100)+" %)", false);
+                        } else {
+                            builder.addField("有効投票総数", result.getValidityCount()+" 票 (0 %)", false);
+                        }
+                    }
+
+                    File file = new File("./vote.txt");
+                    try {
+                        if (file.createNewFile()){
+                            PrintWriter writer = new PrintWriter(file);
+                            writer.print(buffer);
+                            writer.close();
+
+                            Objects.requireNonNull(Objects.requireNonNull(jda.getGuildById(contents.getGuildId())).getTextChannelById(contents.getMessageChannelId())).sendMessageEmbeds(builder2.build()).setFiles(FileUpload.fromData(file)).queue();
+                            if (!file.delete()){
+                                throw new IOException();
+                            }
+                        }
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+                } else {
+                    Objects.requireNonNull(Objects.requireNonNull(jda.getGuildById(contents.getGuildId())).getTextChannelById(contents.getMessageChannelId())).sendMessageEmbeds(builder.build()).queue();
+                }
+
+
 
                 contents.setEndFlag(true);
                 jedis.set("nanamibot:vote:data:" + voteId, new Gson().toJson(contents));

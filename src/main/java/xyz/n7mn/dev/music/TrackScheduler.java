@@ -7,11 +7,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import xyz.n7mn.dev.music.MusicQueue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class TrackScheduler extends AudioEventAdapter {
@@ -43,15 +43,6 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
         // A track started playing
-/*
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle("ななみちゃんbot 音楽再生機能");
-        builder.setColor(Color.PINK);
-        builder.setDescription(track.getInfo().title + "を再生します！\nURL : "+track.getInfo().uri);
-
-        event.getChannel().sendMessageEmbeds(builder.build()).queue();
-
- */
     }
 
     @Override
@@ -62,7 +53,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
             List<MusicQueue> temp = new ArrayList<>();
             for (MusicQueue m : musicQueueList){
-                if (event.getGuild().getId().equals(m.getGuildId())){
+                if (Objects.requireNonNull(event.getGuild()).getId().equals(m.getGuildId())){
                     temp.add(m);
                 }
             }
@@ -134,7 +125,7 @@ public class TrackScheduler extends AudioEventAdapter {
             player.playTrack(track);
         }
 
-        musicQueueList.add(new MusicQueue(guild.getId(), event.getMember().getUser().getId(), event.getMember().getUser().getAsTag(), event.getMember().getNickname(), track, Pattern.compile("(.*)nicovideo(.*)").matcher(track.getInfo().uri).find()));
+        musicQueueList.add(new MusicQueue(guild.getId(), Objects.requireNonNull(event.getMember()).getUser().getId(), event.getMember().getUser().getAsTag(), event.getMember().getNickname(), track, Pattern.compile("(.*)nicovideo(.*)").matcher(track.getInfo().uri).find()));
         //System.out.println("全体残りキュー : "+musicQueueList.size() + " / 残りキュー : " + list.size());
 
     }

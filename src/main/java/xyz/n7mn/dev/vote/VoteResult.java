@@ -1,6 +1,5 @@
 package xyz.n7mn.dev.vote;
 
-import java.util.Date;
 import java.util.List;
 
 public class VoteResult {

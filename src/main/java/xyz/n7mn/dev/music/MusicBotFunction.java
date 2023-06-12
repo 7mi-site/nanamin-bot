@@ -30,7 +30,7 @@ public class MusicBotFunction {
 
                 try {
                     Response response = client.newCall(request).execute();
-                    String HtmlText = response.body().string();
+                    String HtmlText = response.body() != null ? response.body().string() : "";
                     Matcher matcher = Pattern.compile("<meta property=\"og:title\" content=\"(.*)\">").matcher(HtmlText);
                     response.close();
                     return matcher.find() ? matcher.group(1) : "";
@@ -61,7 +61,7 @@ public class MusicBotFunction {
 
                 try {
                     Response response = client.newCall(request).execute();
-                    String HtmlText = response.body().string();
+                    String HtmlText = response.body() != null ? response.body().string() : "";
                     Matcher matcher = Pattern.compile("<meta property=\"video:duration\" content=\"(\\d+)\">").matcher(HtmlText);
                     if (!matcher.find()){
                         return null;
@@ -80,7 +80,7 @@ public class MusicBotFunction {
     public static String getLengthStr(long length){
 
         long length1 = length / 1000;
-        String str = "";
+        String str;
 
         long hour = -1;
         long minute = -1;
