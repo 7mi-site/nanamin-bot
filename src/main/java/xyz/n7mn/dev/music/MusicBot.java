@@ -1,5 +1,6 @@
 package xyz.n7mn.dev.music;
 
+import com.google.gson.Gson;
 import com.sedmelluq.discord.lavaplayer.player.*;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -9,11 +10,17 @@ import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
+import okhttp3.*;
+import xyz.n7mn.dev.NicoVideoAudioSourceManager;
 import xyz.n7mn.nico_proxy.BilibiliCom;
 import xyz.n7mn.nico_proxy.BilibiliTv;
 import xyz.n7mn.nico_proxy.NicoNicoVideo;
+import xyz.n7mn.nico_proxy.data.RequestVideoData;
+import xyz.n7mn.nico_proxy.data.ResultVideoData;
+import xyz.n7mn.nico_proxy.data.TokenJSON;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,6 +40,8 @@ public class MusicBot {
         this.musicQueueList = musicQueueList;
 
         playerManager = new DefaultAudioPlayerManager();
+        playerManager.registerSourceManager(new NicoVideoAudioSourceManager());
+
         AudioSourceManagers.registerRemoteSources(playerManager);
         player = playerManager.createPlayer();
 
@@ -43,7 +52,21 @@ public class MusicBot {
                 public void run() {
                     nicoVideoHeartBeatList.forEach((id, token) -> {
                         String[] split = token.split("::");
-                        new NicoNicoVideo().SendHeartBeatVideo(split[0], split[1], null);
+                        RequestBody body = RequestBody.create(split[1], MediaType.get("application/json; charset=utf-8"));
+                        Request request1 = new Request.Builder()
+                                .url(split[0])
+                                .post(body)
+                                .build();
+                        try {
+                            final OkHttpClient client = new OkHttpClient();
+                            Response response1 = client.newCall(request1).execute();
+                            //System.out.println(response.body().string());
+                            response1.close();
+                        } catch (IOException e) {
+                            // e.printStackTrace();
+                            return;
+                        }
+
                         System.gc();
                     });
                 }
@@ -265,18 +288,34 @@ public class MusicBot {
 
             try {
                 if (nico_live.find()){
-                    VideoURL = new NicoNicoVideo().getLive(VideoURL, null);
+                    VideoURL = new NicoNicoVideo().getLive(new RequestVideoData(VideoURL, null)).getVideoURL();
                 } else if (nico_video.find()) {
                     NicoNicoVideo nicoVideo = new NicoNicoVideo();
-                    String[] video = nicoVideo.getVideo(VideoURL, null, false);
-                    VideoURL = video[0];
+                    ResultVideoData video = nicoVideo.getVideo(new RequestVideoData(VideoURL, null));
+                    VideoURL = video.getVideoURL();
 
-                    nicoVideo.SendHeartBeatVideo(video[1], video[2], null);
-                    nicoVideoHeartBeatList.put(VideoURL, video[1]+"::"+video[2]);
+                    TokenJSON json = new Gson().fromJson(video.getTokenJson(), TokenJSON.class);
+
+                    RequestBody body = RequestBody.create(json.getTokenValue(), MediaType.get("application/json; charset=utf-8"));
+                    Request request1 = new Request.Builder()
+                            .url(json.getTokenSendURL())
+                            .post(body)
+                            .build();
+                    try {
+                        final OkHttpClient client = new OkHttpClient();
+                        Response response1 = client.newCall(request1).execute();
+                        //System.out.println(response.body().string());
+                        response1.close();
+                    } catch (IOException e) {
+                        // e.printStackTrace();
+                        return;
+                    }
+
+                    nicoVideoHeartBeatList.put(VideoURL, json.getTokenSendURL()+"::"+json.getTokenValue());
                 } else if (bili_com.find()) {
-                    VideoURL = new BilibiliCom().getVideo(VideoURL, null);
+                    VideoURL = new BilibiliCom().getVideo(new RequestVideoData(VideoURL, null)).getVideoURL();
                 } else if (bili_tv.find()){
-                    VideoURL = new BilibiliTv().getVideo(VideoURL, null);
+                    VideoURL = new BilibiliTv().getVideo(new RequestVideoData(VideoURL, null)).getAudioURL();
                 }
             } catch (Exception e) {
                 EmbedBuilder builder = new EmbedBuilder();
